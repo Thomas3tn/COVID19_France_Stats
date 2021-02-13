@@ -2,25 +2,30 @@
     <div class="statContainer">
         <i class="fas fa-male statContainer__logo"></i>
         <div class="statContainer__statPart">
-            <p class="statContainer__title">statName{{ statName }}</p>
-            <p class="statContainer__number" id="confCasesStat">17.000 {{ statNumber }}</p>
+			<p class="statContainer__number" id="confCasesStat">{{ statNumber }}</p>
+            <p class="statContainer__title">{{ statName }}</p>
         </div>
     </div>
 </template>
 
 <script>
 export default {
+	data() {
+		return {
+			statLogo: "",
+		}
+	},
     props: {
         statName: {
             type: String,
             required: false
         },
         statNumber: {
-            type: Number,
+            type: String,
 			required: false,
-			default: 0
+			default: "N/A"
         }
-    }
+    },
 }
 </script>
 
@@ -29,7 +34,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin: 2rem 0;
+	padding: 1.5rem 1.5rem 1.5rem 0;
 	&__logo {
 		font-size: 2.5rem;
 		margin-right: 0.5rem;
@@ -41,6 +46,7 @@ export default {
 	}
 	&__title {
 		margin: 0;
+		font-size: 0.8rem;
 	}
 	&__number {
 		margin: 0;

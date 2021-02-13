@@ -6,7 +6,7 @@
         </div>
         <div class="footer__infosContainer">
             <div class="aboutContainer">
-                <h2>About</h2>
+                <h2>À propos</h2>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit quod nobis quo, 
                     delectus possimus obcaecati labore sunt in deserunt inventore et, suscipit earum 
                     sint saepe ducimus, dignissimos aliquam corporis voluptatibus!
@@ -14,10 +14,10 @@
             </div>
 
             <div class="quickLinksContainer">
-                <h2>Quick Links</h2>
+                <h2>Liens rapides</h2>
                 <ul>
-                    <li><a href="#" title="Privacy Policy">Privacy Policy</a></li>
-                    <li><a href="#" title="Source Code">Source Code</a></li>
+                    <li><a href="#" title="Privacy Policy">Politique de confidentialité</a></li>
+                    <li><a href="#" title="Source Code">Code source</a></li>
                     <li><a href="#" title="Ministère de la Santé">Ministère de la Santé</a></li>
                 </ul>
             </div>

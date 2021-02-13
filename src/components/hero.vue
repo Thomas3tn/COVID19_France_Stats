@@ -3,11 +3,11 @@
 
             <div class="hero__title">
                 <h1>COVID-19</h1>
-                <h2>France statistics</h2>
+                <h2>France statistiques</h2>
             </div>
 
             <div class="hero__seeMore">
-                <p>Start your search</p>
+                <p>Commencer votre recherche</p>
                 <a title="Start your search" href="#searchResults"><i class="fas fa-long-arrow-alt-down"></i></a>
             </div>
 

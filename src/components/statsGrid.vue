@@ -1,6 +1,6 @@
 <template>
-    <div class="statsGrid">
-        <div>
+    <div class="statsPage">
+        <div class="statsPage__container">
             <div>
                 <!--Land Shape-->
                 <h2>{{ territory }}</h2>
@@ -11,14 +11,14 @@
                 <stat-item></stat-item>
             </div>
         </div>
-        <div>
+        <div class="statsPage__container">
             <h2>Hôpital</h2>
             <div>
                 <stat-item></stat-item>
                 <stat-item></stat-item>
             </div>
         </div>
-        <div>
+        <div class="statsPage__container">
             <h2>EHPAD</h2>
             <div>
                 <stat-item></stat-item>
@@ -26,7 +26,7 @@
             </div>
             <stat-item></stat-item>
         </div>
-        <div>
+        <div class="statsPage__container">
             <h2>Issue</h2>
             <div>
                 <stat-item></stat-item>
