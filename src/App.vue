@@ -1,29 +1,29 @@
 <template>
   <hero></hero>
-  <search-results></search-results>
+  <search-section></search-section>
   <page-footer></page-footer>
 </template>
 
 <script>
-import hero from './components/hero.vue';
-import searchResults from "./components/searchResults.vue";
-import pageFooter from "./components/footer.vue";
+import Hero from "./components/AppSections/Hero.vue";
+import searchSection from "./components/AppSections/SearchSection.vue";
+import pageFooter from "./components/AppSections/Footer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    hero,
-    searchResults,
+    Hero,
+    searchSection,
     pageFooter
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
 body {
-	font-family: sans-serif;
-	margin: 0;
-	padding: 0;
-	scroll-behavior: smooth;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
 }
 </style>

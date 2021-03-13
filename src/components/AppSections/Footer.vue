@@ -2,7 +2,7 @@
     <footer class="footer">
 
         <div class="footer__topPageBtnContainer">
-            <button class="footer__topPageBtn">Top of Page</button>
+            <button class="footer__topPageBtn" @click="backToTopPage">Top of Page</button>
         </div>
         <div class="footer__infosContainer">
             <div class="aboutContainer">
@@ -25,6 +25,19 @@
 
     </footer>
 </template>
+
+<script>
+export default {
+    methods: {
+        backToTopPage: function() {
+
+            document.body.scrollTop = 0; //For Safari
+            document.documentElement.scrollTop = 0; //For Chrome, Firefox, IE
+
+        }
+    }
+}
+</script>
 
 <style lang="scss">
 .footer {

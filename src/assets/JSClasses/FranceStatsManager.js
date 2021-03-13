@@ -1,8 +1,40 @@
-export default class DatasManager {
+/*
+DatasManager Class
+
+-The constructor function give all the necessary informations (request url, locations infos for each types of locations (human readable location,
+locationType, accepted value and the sourceType) and create the request infos object that will contain and centralize all the request infos).
+
+-The request Manager function is the entry point and call the mains functions one after all.
+
+-The datas formatting object will transform the datas received into the JS object that Vue expect by using a router which call the right
+function depending on the date and the locationType of the request.
+
+-The utilitary functions object contain several subobjects which have several small functions divided from the type of datas they handle (number,
+date, location).
+
+-The datasProcessing object contain a router that call the right function from the locationtype and date the user has submitted. These functions
+only retrieve datas that will be used later.
+
+-The setRequestInfos function record all the request datas inside the class and determine what type of request is made (locationType, dateType),
+and therefore determine what sourceType will be used.
+
+-The requestRouter function send the right request according to the user request (according to the location, the date mentionned (or not), and
+if the user only request one day of datas).
+
+-The requestSender function handle the request and return datas.
+
+*/
+
+import UtilitaryFunctions from "./UtilitaryFunctions.js";
+
+export default class FranceStatsManager extends UtilitaryFunctions {
     constructor() {
+
+        super();
 
         //Liste tout département pour donnée jusqu'à un certain jour (données comprennent tout les jour précéndets)
         this.departementsListByDate = "https://coronavirusapi-france.now.sh/AllDataByDate";
+        this.departementEvolutionSummary = "https://coronavirusapi-france.now.sh/AllDataByDepartement"
 
         this.authorizedLocations = {
             countryNames: {
@@ -21,116 +53,117 @@ export default class DatasManager {
                 locationType: "departement",
                 sourceType: "sante-publique-france-data",
                 acceptedValues: [
-                    {locationName: "Ain", acceptedValues: "ain"},
-                    {locationName: "Aisne", acceptedValues: "aisne"},
-                    {locationName: "Allier", acceptedValues: "allier"},
-                    {locationName: "Alpes-de-Haute-Provence", acceptedValues: "alpes-de-haute-provence"},
-                    {locationName: "Hautes-Alpes", acceptedValues: "hautes-alpes"},
-                    {locationName: "Alpes-Maritimes", acceptedValues: "alpes-maritimes"},
-                    {locationName: "Ardèche", acceptedValues: "ardeche"},
-                    {locationName: "Ardennes", acceptedValues: "ardennes"},
-                    {locationName: "Ariège", acceptedValues: "ariege"},
-                    {locationName: "Aube", acceptedValues: "aube"},
-                    {locationName: "Aude", acceptedValues: "aude"},
-                    {locationName: "Aveyron", acceptedValues: "aveyron"},
-                    {locationName: "Bouches-du-Rhône", acceptedValues: "bouches-du-rhone"},
-                    {locationName: "Calvados", acceptedValues: "calvados"},
-                    {locationName: "Cantal", acceptedValues: "cantal"},
-                    {locationName: "Charente", acceptedValues: "charente"},
-                    {locationName: "Charente-Maritime", acceptedValues: "charente-maritime"},
-                    {locationName: "Cher", acceptedValues: "cher"},
-                    {locationName: "Corrèze", acceptedValues: "correze"},
-                    {locationName: "Corse-du-Sud", acceptedValues: "corse-du-sud"},
-                    {locationName: "Haute-Corse", acceptedValues: "haute-corse"},
-                    {locationName: "Côte-d'Or", acceptedValues: "cote-d-or"},
-                    {locationName: "Côtes d'Armor", acceptedValues: "cotes-d-armor"},
-                    {locationName: "Creuse", acceptedValues: "creuse"},
-                    {locationName: "Dordogne", acceptedValues: "dordogne"},
-                    {locationName: "Doubs", acceptedValues: "doubs"},
-                    {locationName: "Drôme", acceptedValues: "drome"},
-                    {locationName: "Eure", acceptedValues: "eure"},
-                    {locationName: "Eure-et-Loir", acceptedValues: "eure-et-loir"},
-                    {locationName: "Finistère", acceptedValues: "finistere"},
-                    {locationName: "Gard", acceptedValues: "gard"},
-                    {locationName: "Haute-Garonne", acceptedValues: "haute-garonne"},
-                    {locationName: "Gers", acceptedValues: "gers"},
-                    {locationName: "Gironde", acceptedValues: "gironde"},
-                    {locationName: "Hérault", acceptedValues: "herault"},
-                    {locationName: "Ille-et-Vilaine", acceptedValues: "ille-et-vilaine"},
-                    {locationName: "Indre", acceptedValues: "indre"},
-                    {locationName: "Indre-et-Loire", acceptedValues: "indre-et-loire"},
-                    {locationName: "Isère", acceptedValues: "isere"},
-                    {locationName: "Jura", acceptedValues: "jura"},
-                    {locationName: "Landes", acceptedValues: "landres"},
-                    {locationName: "Loir-et-Cher", acceptedValues: "loir-et-cher"},
-                    {locationName: "Loire", acceptedValues: "loire"},
-                    {locationName: "Haute-Loire", acceptedValues: "haute-loire"},
-                    {locationName: "Loire-Atlantique", acceptedValues: "loire-atlantique"},
-                    {locationName: "Loiret", acceptedValues: "loiret"},
-                    {locationName: "Lot", acceptedValues: "lot"},
-                    {locationName: "Lot-et-Garonne", acceptedValues: "lot-et-garonne"},
-                    {locationName: "Lozère", acceptedValues: "lozere"},
-                    {locationName: "Maine-et-Loire", acceptedValues: "maine-et-loire"},
-                    {locationName: "Manche", acceptedValues: "manche"},
-                    {locationName: "Marne", acceptedValues: "marne"},
-                    {locationName: "Haute-Marne", acceptedValues: "haute-marne"},
-                    {locationName: "Mayenne", acceptedValues: "mayenne"},
-                    {locationName: "Meurthe-et-Moselle", acceptedValues: "meurthe-et-moselle"},
-                    {locationName: "Meuse", acceptedValues: "meuse"},
-                    {locationName: "Morbihan", acceptedValues: "morbihan"},
-                    {locationName: "Moselle", acceptedValues: "moselle"},
-                    {locationName: "Nièvre", acceptedValues: "nievre"},
-                    {locationName: "Nord", acceptedValues: "nord"},
-                    {locationName: "Oise", acceptedValues: "oise"},
-                    {locationName: "Orne", acceptedValues: "orne"},
-                    {locationName: "Pas-de-Calais", acceptedValues: "pas-de-calais"},
-                    {locationName: "Puy-de-Dôme", acceptedValues: "puy-de-dome"},
-                    {locationName: "Pyrénées-Atlantiques", acceptedValues: "pyrenees-atlantiques"},
-                    {locationName: "Hautes-Pyrénées", acceptedValues: "hautes-pyrenees"},
-                    {locationName: "Pyrénées-Orientales", acceptedValues: "pyrenees-orientales"},
-                    {locationName: "Bas-Rhin", acceptedValues: "bas-rhin"},
-                    {locationName: "Haut-Rhin", acceptedValues: "haut-rhin"},
-                    {locationName: "Rhône", acceptedValues: "rhone"},
-                    {locationName: "Haute-Saône", acceptedValues: "haute-saone"},
-                    {locationName: "Saône-et-Loire", acceptedValues: "saone-et-loire"},
-                    {locationName: "Sarthe", acceptedValues: "sarthe"},
-                    {locationName: "Savoie", acceptedValues: "savoie"},
-                    {locationName: "Haute-Savoie", acceptedValues: "haute-savoie"},
-                    {locationName: "Paris", acceptedValues: "paris"},
-                    {locationName: "Seine-Maritime", acceptedValues: "seine-et-maritime"},
-                    {locationName: "Seine-et-Marne", acceptedValues: "seine-et-marne"},
-                    {locationName: "Yvelines", acceptedValues: "yvelines"},
-                    {locationName: "Deux-Sèvres", acceptedValues: "deux-sevres"},
-                    {locationName: "Somme", acceptedValues: "somme"},
-                    {locationName: "Tarn", acceptedValues: "tarn"},
-                    {locationName: "Tarn-et-Garonne", acceptedValues: "tarn-et-garonne"},
-                    {locationName: "Var", acceptedValues: "var"},
-                    {locationName: "Vaucluse", acceptedValues: "vaucluse"},
-                    {locationName: "Vendée", acceptedValues: "vendee"},
-                    {locationName: "Vienne", acceptedValues: "vienne"},
-                    {locationName: "Haute-Vienne", acceptedValues: "haute-vienne"},
-                    {locationName: "Vosges", acceptedValues: "vosges"},
-                    {locationName: "Yonne", acceptedValues: "yonne"},
-                    {locationName: "Territoire de Belfort", acceptedValues: "territoire de belfort"},
-                    {locationName: "Essonne", acceptedValues: "essonne"},
-                    {locationName: "Hauts-de-Seine", acceptedValues: "hautes-de-seine"},
-                    {locationName: "Seine-St-Denis", acceptedValues: "seine-st-denis"},
-                    {locationName: "Val-de-Marne", acceptedValues: "val-de-marne"},
-                    {locationName: "Val-D'Oise", acceptedValues: "val-d-oise"},
-                    {locationName: "Guadeloupe", acceptedValues: "guadeloupe"},
-                    {locationName: "Martinique", acceptedValues: "martinique"},
-                    {locationName: "Guyane", acceptedValues: "guyane"},
-                    {locationName: "La Réunion", acceptedValues: "la-reunion"},
-                    {locationName: "Mayotte", acceptedValues: "mayotte"}
+                    { locationName: "Ain", acceptedValues: "ain" },
+                    { locationName: "Aisne", acceptedValues: "aisne" },
+                    { locationName: "Allier", acceptedValues: "allier" },
+                    { locationName: "Alpes-de-Haute-Provence", acceptedValues: "alpes-de-haute-provence" },
+                    { locationName: "Hautes-Alpes", acceptedValues: "hautes-alpes" },
+                    { locationName: "Alpes-Maritimes", acceptedValues: "alpes-maritimes" },
+                    { locationName: "Ardèche", acceptedValues: "ardeche" },
+                    { locationName: "Ardennes", acceptedValues: "ardennes" },
+                    { locationName: "Ariège", acceptedValues: "ariege" },
+                    { locationName: "Aube", acceptedValues: "aube" },
+                    { locationName: "Aude", acceptedValues: "aude" },
+                    { locationName: "Aveyron", acceptedValues: "aveyron" },
+                    { locationName: "Bouches-du-Rhône", acceptedValues: "bouches-du-rhone" },
+                    { locationName: "Calvados", acceptedValues: "calvados" },
+                    { locationName: "Cantal", acceptedValues: "cantal" },
+                    { locationName: "Charente", acceptedValues: "charente" },
+                    { locationName: "Charente-Maritime", acceptedValues: "charente-maritime" },
+                    { locationName: "Cher", acceptedValues: "cher" },
+                    { locationName: "Corrèze", acceptedValues: "correze" },
+                    { locationName: "Corse-du-Sud", acceptedValues: "corse-du-sud" },
+                    { locationName: "Haute-Corse", acceptedValues: "haute-corse" },
+                    { locationName: "Côte-d'Or", acceptedValues: "cote-d-or" },
+                    { locationName: "Côtes d'Armor", acceptedValues: "cotes-d-armor" },
+                    { locationName: "Creuse", acceptedValues: "creuse" },
+                    { locationName: "Dordogne", acceptedValues: "dordogne" },
+                    { locationName: "Doubs", acceptedValues: "doubs" },
+                    { locationName: "Drôme", acceptedValues: "drome" },
+                    { locationName: "Eure", acceptedValues: "eure" },
+                    { locationName: "Eure-et-Loir", acceptedValues: "eure-et-loir" },
+                    { locationName: "Finistère", acceptedValues: "finistere" },
+                    { locationName: "Gard", acceptedValues: "gard" },
+                    { locationName: "Haute-Garonne", acceptedValues: "haute-garonne" },
+                    { locationName: "Gers", acceptedValues: "gers" },
+                    { locationName: "Gironde", acceptedValues: "gironde" },
+                    { locationName: "Hérault", acceptedValues: "herault" },
+                    { locationName: "Ille-et-Vilaine", acceptedValues: "ille-et-vilaine" },
+                    { locationName: "Indre", acceptedValues: "indre" },
+                    { locationName: "Indre-et-Loire", acceptedValues: "indre-et-loire" },
+                    { locationName: "Isère", acceptedValues: "isere" },
+                    { locationName: "Jura", acceptedValues: "jura" },
+                    { locationName: "Landes", acceptedValues: "landres" },
+                    { locationName: "Loir-et-Cher", acceptedValues: "loir-et-cher" },
+                    { locationName: "Loire", acceptedValues: "loire" },
+                    { locationName: "Haute-Loire", acceptedValues: "haute-loire" },
+                    { locationName: "Loire-Atlantique", acceptedValues: "loire-atlantique" },
+                    { locationName: "Loiret", acceptedValues: "loiret" },
+                    { locationName: "Lot", acceptedValues: "lot" },
+                    { locationName: "Lot-et-Garonne", acceptedValues: "lot-et-garonne" },
+                    { locationName: "Lozère", acceptedValues: "lozere" },
+                    { locationName: "Maine-et-Loire", acceptedValues: "maine-et-loire" },
+                    { locationName: "Manche", acceptedValues: "manche" },
+                    { locationName: "Marne", acceptedValues: "marne" },
+                    { locationName: "Haute-Marne", acceptedValues: "haute-marne" },
+                    { locationName: "Mayenne", acceptedValues: "mayenne" },
+                    { locationName: "Meurthe-et-Moselle", acceptedValues: "meurthe-et-moselle" },
+                    { locationName: "Meuse", acceptedValues: "meuse" },
+                    { locationName: "Morbihan", acceptedValues: "morbihan" },
+                    { locationName: "Moselle", acceptedValues: "moselle" },
+                    { locationName: "Nièvre", acceptedValues: "nievre" },
+                    { locationName: "Nord", acceptedValues: "nord" },
+                    { locationName: "Oise", acceptedValues: "oise" },
+                    { locationName: "Orne", acceptedValues: "orne" },
+                    { locationName: "Pas-de-Calais", acceptedValues: "pas-de-calais" },
+                    { locationName: "Puy-de-Dôme", acceptedValues: "puy-de-dome" },
+                    { locationName: "Pyrénées-Atlantiques", acceptedValues: "pyrenees-atlantiques" },
+                    { locationName: "Hautes-Pyrénées", acceptedValues: "hautes-pyrenees" },
+                    { locationName: "Pyrénées-Orientales", acceptedValues: "pyrenees-orientales" },
+                    { locationName: "Bas-Rhin", acceptedValues: "bas-rhin" },
+                    { locationName: "Haut-Rhin", acceptedValues: "haut-rhin" },
+                    { locationName: "Rhône", acceptedValues: "rhone" },
+                    { locationName: "Haute-Saône", acceptedValues: "haute-saone" },
+                    { locationName: "Saône-et-Loire", acceptedValues: "saone-et-loire" },
+                    { locationName: "Sarthe", acceptedValues: "sarthe" },
+                    { locationName: "Savoie", acceptedValues: "savoie" },
+                    { locationName: "Haute-Savoie", acceptedValues: "haute-savoie" },
+                    { locationName: "Paris", acceptedValues: "paris" },
+                    { locationName: "Seine-Maritime", acceptedValues: "seine-et-maritime" },
+                    { locationName: "Seine-et-Marne", acceptedValues: "seine-et-marne" },
+                    { locationName: "Yvelines", acceptedValues: "yvelines" },
+                    { locationName: "Deux-Sèvres", acceptedValues: "deux-sevres" },
+                    { locationName: "Somme", acceptedValues: "somme" },
+                    { locationName: "Tarn", acceptedValues: "tarn" },
+                    { locationName: "Tarn-et-Garonne", acceptedValues: "tarn-et-garonne" },
+                    { locationName: "Var", acceptedValues: "var" },
+                    { locationName: "Vaucluse", acceptedValues: "vaucluse" },
+                    { locationName: "Vendée", acceptedValues: "vendee" },
+                    { locationName: "Vienne", acceptedValues: "vienne" },
+                    { locationName: "Haute-Vienne", acceptedValues: "haute-vienne" },
+                    { locationName: "Vosges", acceptedValues: "vosges" },
+                    { locationName: "Yonne", acceptedValues: "yonne" },
+                    { locationName: "Territoire de Belfort", acceptedValues: "territoire de belfort" },
+                    { locationName: "Essonne", acceptedValues: "essonne" },
+                    { locationName: "Hauts-de-Seine", acceptedValues: "hautes-de-seine" },
+                    { locationName: "Seine-St-Denis", acceptedValues: "seine-st-denis" },
+                    { locationName: "Val-de-Marne", acceptedValues: "val-de-marne" },
+                    { locationName: "Val-D'Oise", acceptedValues: "val-d-oise" },
+                    { locationName: "Guadeloupe", acceptedValues: "guadeloupe" },
+                    { locationName: "Martinique", acceptedValues: "martinique" },
+                    { locationName: "Guyane", acceptedValues: "guyane" },
+                    { locationName: "La Réunion", acceptedValues: "la-reunion" },
+                    { locationName: "Mayotte", acceptedValues: "mayotte" }
                 ]
             }
-            
+
         }
 
         this.requestInfos = {
             locationName: "",
             locationType: "",
-            date: "",
+            startDate: "",
+            endDate: "",
             dateType: "",
             sourceType: ""
         }
@@ -149,52 +182,52 @@ export default class DatasManager {
             } else {
 
                 this.requestRouter()
-                .then((response) => {
+                    .then((response) => {
 
-                    //If user tried to access current datas of the day that are not available yet
-                    //A request is send again requesting the day before
-                    if (response.datas1.allFranceDataByDate.length === 0) {
-                        this.requestInfos.date = this.utilitaryFunctions.dateFunctionalities.getDayBeforeDate(this.requestInfos.date);
-                        console.log("New Request !");
-                        this.requestRouter()
-                        .then((response) => {
-                            console.log(response);
-                            let formattedDatas = this.datasProcessings.datasProcessingRouter(response);
-                            console.log(formattedDatas);
-                            if (formattedDatas) {
-                                resolve(formattedDatas);
-                            } else {
-                                reject(false);
-                            }
+                        //If user tried to access current datas of the day that are not available yet
+                        //A request is send again requesting the day before
+                        if (response.datas1.allFranceDataByDate.length === 0) {
+                            this.requestInfos.date = this.utilitaryFunctions.dateFunctionalities.getDayBeforeDate(this.requestInfos.date);
+                            console.log("New Request !");
+                            this.requestRouter()
+                                .then((response) => {
+                                    console.log(response);
+                                    let formattedDatas = this.datasProcessings.datasProcessingRouter(response);
+                                    console.log(formattedDatas);
+                                    if (formattedDatas) {
+                                        resolve(formattedDatas);
+                                    } else {
+                                        reject(false);
+                                    }
 
-                        })
-                        .catch((error) => {
-                            reject(error);
-                        });
-                    }
+                                })
+                                .catch((error) => {
+                                    reject(error);
+                                });
+                        }
 
-                    let formattedDatas = this.datasProcessing.datasProcessingRouter(response);
+                        let formattedDatas = this.datasProcessing.datasProcessingRouter(response);
 
-                    console.log(formattedDatas)
-                    if (formattedDatas) {
-                        resolve(formattedDatas);
-                    } else {
-                        reject(false);
-                    }
-                    
+                        console.log(formattedDatas)
+                        if (formattedDatas) {
+                            resolve(formattedDatas);
+                        } else {
+                            reject(false);
+                        }
 
-                })
-                .catch((error) => {
 
-                    reject(error);
+                    })
+                    .catch((error) => {
 
-                });
+                        reject(error);
+
+                    });
 
             }
 
         });
 
-        
+
 
     }
     datasFormatting = {
@@ -219,7 +252,7 @@ export default class DatasManager {
                 returnedDatas.stats = {};
                 returnedDatas.stats.statsHeader = {};
                 returnedDatas.stats.statsBody = [];
-    
+
                 returnedDatas.requestInfos = this.requestInfos;
                 returnedDatas.requestInfos.date = this.utilitaryFunctions.dateFunctionalities.addDateType(this.utilitaryFunctions.dateFunctionalities.enDateToFrDate(this.requestInfos.date));
                 if (datas.code) {
@@ -229,11 +262,11 @@ export default class DatasManager {
                     returnedDatas.stats.statsHeader.statName = "Cas confirmés";
                     returnedDatas.stats.statsHeader.statNumber = this.utilitaryFunctions.numberFunctionalities.convertStatNumberToStatString(datas.confirmedCases);
                 }
-    
+
                 if (datas.hospitalizations && datas.intensiveCare) {
-    
+
                     let currentSection = {
-                        statSectionTitle: "Hôpital", 
+                        statSectionTitle: "Hôpital",
                         stat1: {
                             statName: "Hospitalisations",
                             statNumber: this.utilitaryFunctions.numberFunctionalities.convertStatNumberToStatString(datas.hospitalizations)
@@ -244,12 +277,12 @@ export default class DatasManager {
                         }
                     }
                     returnedDatas.stats.statsBody.push(currentSection);
-    
+
                 }
                 if (datas.ehpadConfirmedCases && datas.ehpadDeaths) {
-    
+
                     let currentSection = {
-                        statSectionTitle: "EHPAD", 
+                        statSectionTitle: "EHPAD",
                         stat1: {
                             statName: "Cas Confirmés",
                             statNumber: this.utilitaryFunctions.numberFunctionalities.convertStatNumberToStatString(datas.ehpadConfirmedCases)
@@ -260,12 +293,12 @@ export default class DatasManager {
                         }
                     }
                     returnedDatas.stats.statsBody.push(currentSection);
-    
+
                 }
                 if (datas.cured && datas.deaths) {
-    
+
                     let currentSection = {
-                        statSectionTitle: "Issue", 
+                        statSectionTitle: "Issue",
                         stat1: {
                             statName: "Guéris",
                             statNumber: this.utilitaryFunctions.numberFunctionalities.convertStatNumberToStatString(datas.cured)
@@ -276,9 +309,9 @@ export default class DatasManager {
                         }
                     }
                     returnedDatas.stats.statsBody.push(currentSection);
-    
+
                 }
-    
+
                 return returnedDatas;
 
             },
@@ -287,7 +320,7 @@ export default class DatasManager {
                 let returnedDatas = {};
                 returnedDatas.requestInfos = {};
                 returnedDatas.departementsList = [];
-    
+
                 returnedDatas.requestInfos = this.requestInfos;
                 returnedDatas.requestInfos.date = this.utilitaryFunctions.dateFunctionalities.addDateType(this.utilitaryFunctions.dateFunctionalities.enDateToFrDate(this.requestInfos.date));
 
@@ -348,46 +381,46 @@ export default class DatasManager {
                 let month = newDate.getMonth() + 1;
                 let day = newDate.getDate();
                 if (month >= 0 && month <= 9) {
-                month = "0" + month;
+                    month = "0" + month;
                 }
                 if (day >= 0 && day <= 9) {
-                day = "0" + day;
+                    day = "0" + day;
                 }
                 let dateString = year + "-" + month + "-" + day;
                 return dateString;
-    
+
             },
             getFormattedCurrentDate: () => {
-    
+
                 let today = new Date();
-                let currentDate = today.getFullYear() + "-" + today.getMonth()+1 + "-" + today.getDate();
+                let currentDate = today.getFullYear() + "-" + today.getMonth() + 1 + "-" + today.getDate();
                 currentDate = this.utilitaryFunctions.dateFunctionalities.formatDateToTwoDigits(currentDate);
                 return currentDate;
-    
+
             },
             isDate1SupDate2: (date1, date2) => {
-    
+
                 let date1Year = date1.split("-")[0];
                 let date1Month = date1.split("-")[1];
                 let date1Day = date1.split("-")[2];
-    
+
                 let date2Year = date2.split("-")[0];
                 let date2Month = date2.split("-")[1];
                 let date2Day = date2.split("-")[2];
-    
+
                 let dateOne = new Date(date1Year, date1Month, date1Day);
                 let dateTwo = new Date(date2Year, date2Month, date2Day);
-    
+
                 if (dateOne > dateTwo) {
-    
+
                     return true
-    
+
                 } else {
-    
+
                     return false;
-    
+
                 }
-    
+
             },
             isDateisToday: (date) => {
 
@@ -397,13 +430,13 @@ export default class DatasManager {
                 } else {
                     return false;
                 }
-    
+
             },
             getDayBeforeDate: (date) => {
 
                 date = new Date(date);
                 let newDate = new Date(date.setDate(date.getDate() - 1));
-                let finalDate =  newDate.getFullYear() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getDate();
+                let finalDate = newDate.getFullYear() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getDate();
                 finalDate = this.utilitaryFunctions.dateFunctionalities.formatDateToTwoDigits(finalDate);
                 return finalDate;
             },
@@ -437,84 +470,84 @@ export default class DatasManager {
                     console.error("The formatNumber function accept only a parameter which a number");
                     return;
                 }
-    
+
                 number = number.toString().split("");
                 let invertNumber = [];
-                
+
                 for (let i = number.length; i > 0; i--) {
-                
-                    invertNumber.push(number[i-1]);
-                
+
+                    invertNumber.push(number[i - 1]);
+
                 }
-    
+
                 let formatedInvertNumber = [];
                 let b = 1;
                 invertNumber.forEach((currentElement) => {
-                
+
                     formatedInvertNumber.push(currentElement);
-                
+
                     if (b % 3 === 0) {
                         formatedInvertNumber.push(".");
                     }
                     b = b + 1;
-    
+
                 });
-    
+
                 let finalNumber = [];
-                
+
                 for (let i = formatedInvertNumber.length; i > 0; i--) {
-                
-                    finalNumber.push(formatedInvertNumber[i-1]);
-                
+
+                    finalNumber.push(formatedInvertNumber[i - 1]);
+
                 }
-    
-                
+
+
                 finalNumber = finalNumber.join("");
                 return finalNumber;
-    
+
             },
             convertStatNumberToStatString: (number, addSign = false) => {
 
                 if (typeof number === "number") {
 
                     if (addSign === true && number > 0) {
-    
+
                         number = number.toString();
                         return "+" + number
-        
+
                     } else {
-        
+
                         return number.toString();
-        
+
                     }
 
                 }
-    
+
             }
         },
         locationFunctionalities: {
             isLocationAuthorized: (locationUserInput) => {
 
                 for (const [key, value] of Object.entries(this.authorizedLocations)) {
-    
+
                     if (key === "departementsNames") {
-                        
+
                         let acceptedValues = value.acceptedValues;
-    
+
                         for (let i = 0; i < acceptedValues.length; i++) {
-    
+
                             if (acceptedValues[i].acceptedValues === locationUserInput) {
-    
+
                                 return {
                                     locationType: value.locationType,
                                     locationName: acceptedValues[i].locationName,
                                     sourceType: value.sourceType
                                 };
-    
+
                             }
-    
+
                         }
-    
+
                     } else {
 
                         if (value.acceptedValue === locationUserInput) {
@@ -526,59 +559,59 @@ export default class DatasManager {
                             }
 
                         }
-    
+
                     }
-    
+
                 }
-    
+
                 //If nothing has been found
                 return false;
-    
+
             },
             formatLocationInput: (value) => {
-    
+
                 let valueArray = value.trim().toLowerCase().split("");
                 for (let i = 0; i < valueArray.length; i++) {
-    
+
                     if (valueArray[i] === "à" || valueArray[i] === "â" || valueArray[i] === "ä") {
-    
+
                         valueArray[i] === "a";
-    
+
                     } else if (valueArray[i] === "é" || valueArray[i] === "è" | valueArray[i] === "ê" || valueArray[i] === "ë") {
-    
+
                         valueArray[i] === "e";
-    
+
                     } else if (valueArray[i] === "ï" || valueArray[i] === "î") {
-    
+
                         valueArray[i] === "i";
-    
+
                     } else if (valueArray[i] === "ô" || valueArray[i] === "ö") {
-    
+
                         valueArray[i] === "o";
-    
+
                     } else if (valueArray[i] === "ù" || valueArray[i] === "û" || valueArray[i] === "ü") {
-    
+
                         valueArray[i] === "u";
-    
+
                     } else if (valueArray[i] === "ÿ") {
-    
+
                         valueArray[i] === "y";
-    
+
                     } else if (valueArray[i] === "ç") {
-    
+
                         valueArray[i] === "c";
-    
+
                     } else if (valueArray[i] === " " || valueArray[i] === "'" || valueArray[i] === "\"") {
-    
+
                         valueArray[i] === "-";
-    
+
                     }
-    
+
                 }
-    
+
                 let newValue = valueArray.join("");
                 return newValue;
-    
+
             },
             addDepartementCode: (departementCode, departement = false) => {
 
@@ -593,7 +626,7 @@ export default class DatasManager {
                 }
 
             }
-        },        
+        },
         urlParamsCreater: (url, params = false) => {
 
             let location;
@@ -624,9 +657,7 @@ export default class DatasManager {
 
             if (this.requestInfos.locationType === "country") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-                    result = this.datasProcessing.datasProcessingFunctions.getLocationDailyEvolution(datasObject.datas1, datasObject.datas2);
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getOneLocationFromList(datasObject.datas1);
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getOneLocationFromList(datasObject.datas1);
@@ -634,9 +665,7 @@ export default class DatasManager {
 
             } else if (this.requestInfos.locationType === "departementsList") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-                    result = this.datasProcessing.datasProcessingFunctions.getLocationsListDailyEvolution(datasObject.datas1, datasObject.datas2);
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getLocationsList(datasObject.datas1);
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getLocationsList(datasObject.datas1);
@@ -644,9 +673,7 @@ export default class DatasManager {
 
             } else if (this.requestInfos.locationType === "departement") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-                    result = this.datasProcessing.datasProcessingFunctions.getLocationDailyEvolution(datasObject.datas1, datasObject.datas2);
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getOneLocationFromList(datasObject.datas1);
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
                     result = this.datasProcessing.datasProcessingFunctions.getOneLocationFromList(datasObject.datas1);
@@ -683,7 +710,7 @@ export default class DatasManager {
                         newDatas.hospitalizations = datas[i].hospitalises;
                         newDatas.hospitalizations += datas[i].nouvellesHospitalisations;
                         newDatas.intensiveCare = datas[i].reanimation;
-                        newDatas.intensiveCare += datas[i].nouvellesReanimations;               
+                        newDatas.intensiveCare += datas[i].nouvellesReanimations;
                         newDatas.deaths = datas[i].deces;
                         newDatas.cured = datas[i].gueris;
 
@@ -810,6 +837,47 @@ export default class DatasManager {
 
                 return newDatas;
 
+            },
+            getOneLocationEvolutionSummary: (datas) => {
+
+                let newDatas = [];
+                datas = datas.allDataByDepartement;
+
+                //Will be use to substract current day datas with the previous day datas
+                let oldDatas = {
+                    hospitalizations: 0,
+                    intensiveCare: 0,
+                    cured: 0,
+                    deaths: 0
+                }
+
+                for (let i = 0; i < datas.length; i++) {
+
+                    //If two datas set represent the same date
+                    if (datas[i].date === datas[i + 1].date) {
+                        if (datas[i].sourceType === "agences-regionales-sante" && datas[i + 1].sourceType === "sante-publique-france-data") {
+                            i++;
+                        }
+                    }
+
+                    newDatas.push({
+                        hospitalizations: datas[i].hospitalises - oldDatas.hospitalizations,
+                        intensiveCare: datas[i].reanimation - oldDatas.intensiveCare,
+                        cured: datas[i].gueris - oldDatas.cured,
+                        deaths: datas[i].deces - oldDatas.deaths,
+                        date: datas[i].date,
+                        source: datas[i].source.sourceNom
+                    });
+
+                    oldDatas.hospitalizations = datas[i].hospitalizations;
+                    oldDatas.intensiveCare = datas[i].intensiveCare;
+                    oldDatas.cured = datas[i].cured;
+                    oldDatas.deaths = datas[i].deaths;
+
+                }
+
+                return newDatas;
+
             }
         }
     }
@@ -839,22 +907,12 @@ export default class DatasManager {
 
                 //Determine date request type
 
-                if (params.date) {
+                if (params.startDate || params.endDate) {
 
-                    this.requestInfos.date = params.date;
-                    //let currentDate = this.utilitaryFunctions.dateFunctionalities.getFormattedCurrentDate();
-                    this.requestInfos.isDateToday = this.utilitaryFunctions.dateFunctionalities.isDateisToday(this.requestInfos.date);
-                    if (params.includeOnlyThisDay || params.includeOnlyThisDay) {
-                        this.requestInfos.incOnlyThisDayData = true;
-                    } else {
-                        this.requestInfos.incOnlyThisDayData = false;
-                    }
-                    //isDateToday incOnlyThisDayData
+                    params.startDate ? this.requestInfos.startDate = params.startDate : this.requestInfos.startDate = "2020-01-01";
+                    params.endDate ? this.requestInfos.endDate = params.endDate : this.requestInfos.endDate = this.utilitaryFunctions.dateFunctionalities.getFormattedCurrentDate();
 
-                    if ((this.requestInfos.date !== undefined && this.requestInfos.isDateToday === true && this.requestInfos.incOnlyThisDayData === true) || (this.requestInfos.date !== undefined && this.requestInfos.isDateToday === false && this.requestInfos.incOnlyThisDayData === true)) {
-                        //Données pour un jour uniquement
-                        this.requestInfos.dateType = "oneDayDatas";
-                    } else if ((this.requestInfos.date !== undefined && this.requestInfos.isDateToday === false && this.requestInfos.incOnlyThisDayData === false) || (this.requestInfos.date !== undefined && this.requestInfos.isDateToday === true && this.requestInfos.incOnlyThisDayData === false)) {
+                    if ((this.requestInfos.date !== undefined && this.requestInfos.isDateToday === false && this.requestInfos.incOnlyThisDayData === false) || (this.requestInfos.date !== undefined && this.requestInfos.isDateToday === true && this.requestInfos.incOnlyThisDayData === false)) {
                         //Données pour une période données (début-date)
                         this.requestInfos.dateType = "givenPeriodDatas";
                     } else if ((this.requestInfos.date === false) || (this.requestInfos.date !== undefined && this.requestInfos.isDateToday === true && this.requestInfos.incOnlyThisDayData === false)) {
@@ -864,18 +922,19 @@ export default class DatasManager {
 
                 } else {
 
-                    this.requestInfos.date = false;
+                    this.requestInfos.startDate = "2020-01-01";
+                    this.requestInfos.endDate = this.utilitaryFunctions.dateFunctionalities.getFormattedCurrentDate();
 
                 }
             }
 
-            console.log("Location: " + this.requestInfos.location + " | Date: " + this.requestInfos.date + " | isToday: " + this.requestInfos.isDateToday + " | includeOnlyThisDay: " + this.requestInfos.incOnlyThisDayData);
+            console.log("Location: " + this.requestInfos.locationName + " | Date: " + this.requestInfos.startDate + " | endDate: " + this.requestInfos.endDate);
             console.log(this.requestInfos);
 
         } else {
 
             console.error("No parameters have been provided.");
-            return;
+            return true;
 
         }
 
@@ -884,219 +943,152 @@ export default class DatasManager {
 
         return new Promise((resolve, reject) => {
 
+            let requestResult = {};
+
             if (this.requestInfos.locationType === "country") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-
-                    //Renvoi l'évolution sur un jour
-
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((chosenDayDatas) => {
-
-                        if (chosenDayDatas) {
-
-                            let previousDay = this.utilitaryFunctions.dateFunctionalities.getDayBeforeDate(this.requestInfos.date);
-                            this.requestSender(this.departementsListByDate, {date: previousDay})
-                            .then((previousDayDatas) => {
-
-                                resolve({datas1: chosenDayDatas, datas2: previousDayDatas});
-
-                            });
-
-                        } else {                           
-                            reject(false);
-                        }
-
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
-
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
 
                     //Situation de la France début-aujourd'hui
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
-                            
-                            resolve({datas1: response});
+                            if (response) {
 
-                        } else {                       
-                            reject(false);
-                        }
+                                resolve({ datas1: response });
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+                            } else {
+                                reject(false);
+                            }
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
 
                     //Situation de la France début-date
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
+                            if (response) {
 
-                            resolve({datas1: response});
+                                resolve({ datas1: response });
 
-                        } else {                       
-                            reject(false);
-                        }
-                        
+                            } else {
+                                reject(false);
+                            }
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 }
 
             } else if (this.requestInfos.locationType === "departementsList") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-
-                    //Situation pour tous départements pour jour unique
-                
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((chosenDayDatas) => {
-
-                        if (chosenDayDatas) {
-
-                            let previousDay = this.utilitaryFunctions.dateFunctionalities.getDayBeforeDate(this.requestInfos.date);
-                            this.requestSender(this.departementsListByDate, {date: previousDay})
-                            .then((previousDayDatas) => {
-
-                                resolve({datas1: chosenDayDatas, datas2: previousDayDatas});
-
-                            });
-
-                        } else {                       
-                            reject(false);
-                        }
-                        
-
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
-
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
 
                     //Situation pour liste départements depuis début
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
+                            if (response) {
 
-                            resolve({datas1: response});
+                                resolve({ datas1: response });
 
-                        } else {                       
-                            reject(false);
-                        }
-                        
+                            } else {
+                                reject(false);
+                            }
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
                     //Situation pour tous les départements jusqu'à date donnée
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
+                            if (response) {
 
-                            resolve({datas1: response});
+                                resolve({ datas1: response });
 
-                        } else {                       
-                            reject(false);
-                        }
-                        
+                            } else {
+                                reject(false);
+                            }
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 }
 
             } else if (this.requestInfos.locationType === "departement") {
 
-                if (this.requestInfos.dateType === "oneDayDatas") {
-
-                    //Situation pour un seul département pour un jour uniquement
-
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((dayChosenDatas) => {
-
-                        if (dayChosenDatas) {
-
-                            let previousDay = this.utilitaryFunctions.dateFunctionalities.getDayBeforeDate(this.requestInfos.date);
-                            this.requestSender(this.departementsListByDate, {date: previousDay})
-                            .then((datasDayBefore) => {
-
-                                resolve({datas1: dayChosenDatas, datas2: datasDayBefore});
-
-                            });
-
-                        } else {                           
-                            reject(false);
-                        }
-                        
-
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
-
-                } else if (this.requestInfos.dateType === "liveDatas") {
+                if (this.requestInfos.dateType === "liveDatas") {
 
                     //Situation pour un département depuis début
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
+                            if (response) {
 
-                            resolve({datas1: response});
+                                resolve({ datas1: response });
 
-                        } else {                       
-                            reject(false);
-                        }
-                        
+                            } else {
+                                reject(false);
+                            }
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 } else if (this.requestInfos.dateType === "givenPeriodDatas") {
 
                     //Situation pour un seul département depuis le début jusqu'à une date donnée
 
-                    this.requestSender(this.departementsListByDate, {date: this.requestInfos.date})
-                    .then((response) => {
+                    this.requestSender(this.departementsListByDate, { date: this.requestInfos.date })
+                        .then((response) => {
 
-                        if (response) {
+                            if (response) {
 
-                            resolve({datas1: response});
+                                requestResult.datas1 = response;
 
-                        } else {                           
-                            reject(false);
-                        }
-                        
+                                this.requestSender(this.departementEvolutionSummary, { location: this.requestInfos.locationName })
+                                    .then((response) => {
+                                        requestResult.datas2 = response;
+                                        resolve(requestResult);
+                                    })
+                                    .catch((error) => {
+                                        reject(error);
+                                    });
 
-                    })
-                    .catch((response) => {
-                        console.log(response);
-                    });
+                                resolve({ datas1: response });
+
+                            } else {
+                                reject(false);
+                            }
+
+
+                        })
+                        .catch((response) => {
+                            console.log(response);
+                        });
 
                 }
 
@@ -1115,24 +1107,24 @@ export default class DatasManager {
                 url = this.utilitaryFunctions.urlParamsCreater(url, datas);
             }
             console.log(url);
-    
+
             let xhr = new XMLHttpRequest();
             xhr.open("GET", url);
             xhr.addEventListener("readystatechange", () => {
-    
+
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-    
+
                     let response = JSON.parse(xhr.responseText);
                     console.log(response);
-    
+
                     if (response) {
                         resolve(response);
                     } else {
                         reject(false);
                     }
-    
+
                 }
-    
+
             });
             xhr.send();
 

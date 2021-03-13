@@ -89,13 +89,17 @@ export default class CountryStatsManager extends UtilitaryFunctions {
     datasRetriever = {
         datasRetrieverManager: (datas) => {
 
+            console.log("datasRetrieverManager");
+            console.log(datas);
+
             let retrievedDatas = {};
 
             let countryLiveRawDatas = this.datasRetriever.datasRetrieverFunctions.locationDatasRetriever(datas.liveRawDatas);
             let countryPeriodEvolutionDatas = {};
+            countryPeriodEvolutionDatas.countryPeriodEvolutionDatas = {};
                 
             for (const [key, value] of Object.entries(datas.periodEvolutionDatas)) {
-                countryPeriodEvolutionDatas[key] = this.datasRetrieverFunctions.locationDatasListRetriever(value);
+                countryPeriodEvolutionDatas.countryPeriodEvolutionDatas[key] = this.datasRetriever.datasRetrieverFunctions.locationDatasListRetriever(value);
             }
 
             retrievedDatas = Object.assign(countryLiveRawDatas, countryPeriodEvolutionDatas);
@@ -106,7 +110,8 @@ export default class CountryStatsManager extends UtilitaryFunctions {
         datasRetrieverFunctions: {
             locationDatasRetriever: (datas) => {
 
-                datas = datas.All;
+                datas = datas[this.requestInfos.locationName].All;
+
                 let returnedDatas = {};
                 returnedDatas.liveRawDatas = {};
                 returnedDatas.locationDetails = {};
@@ -115,22 +120,25 @@ export default class CountryStatsManager extends UtilitaryFunctions {
                 returnedDatas.liveRawDatas.deaths = datas.deaths;
                 returnedDatas.liveRawDatas.recovered = datas.recovered;
 
-                returnedDatas.locationDetails.population = datas.population;
+                returnedDatas.locationDetails.population = datas.locationPopulation;
+                returnedDatas.locationDetails.locationType = this.requestInfos.locationType;
 
                 if (this.requestInfos.locationType === "country") {
 
-                    returnedDatas.locationDetails.abbreviation = datas.abbreviation;
-                    returnedDatas.locationDetails.countryName = datas.country;
-                    returnedDatas.locationDetails.continent = datas.continent;
-                    returnedDatas.locationDetails.continentLocation = datas.location;
-                    returnedDatas.locationDetails.surfaceArea = datas.sq_km_area;
-                    returnedDatas.locationDetails.capitalCity = datas.capital_city;
-                    returnedDatas.locationDetails.lifeExpectancy = datas.life_expectancy;
-                    returnedDatas.locationDetails.lastUpdate = datas.updated;
+                    returnedDatas.locationDetails.locationAbbreviation = datas.abbreviation;
+                    returnedDatas.locationDetails.locationName = datas.country;
+                    returnedDatas.locationDetails.locationContinent = datas.continent;
+                    returnedDatas.locationDetails.continentPreciseLocation = datas.location;
+                    returnedDatas.locationDetails.locationSurfaceArea = datas.sq_km_area;
+                    returnedDatas.locationDetails.locationCapitalCity = datas.capital_city;
+                    returnedDatas.locationDetails.locationLifeExpectancy = datas.life_expectancy;
+                    returnedDatas.locationDetails.locationLastUpdate = datas.updated;
+
+                } else if (this.requestInfos.locationType === "world") {
+
+                    returnedDatas.locationDetails.locationName = "Monde";
 
                 }
-
-                
 
                 return returnedDatas;
 
@@ -142,6 +150,8 @@ export default class CountryStatsManager extends UtilitaryFunctions {
                 } else if (this.requestInfos.locationType === "world") {
                     datas = datas.Global.All.dates;
                 }
+
+                console.log(datas);
 
                 //Stocker chaque objet date/datas dans un tableau pour ensuite inverser l'order
                 let returnedDatas = {};
@@ -243,11 +253,10 @@ export default class CountryStatsManager extends UtilitaryFunctions {
 
             } else {
 
-                if (!params.location) {
+                if (params.locationName === "undefined") {
                     console.error("You have to provide the location name of your search");
                     return;
                 }
-
                 this.requestInfos.locationName = params.locationName;
                 this.CSMUtilitaryFunctions.locationFunctionalities.setLocationType(params.locationName);
 
@@ -286,19 +295,21 @@ export default class CountryStatsManager extends UtilitaryFunctions {
                 baseURL += "?";
                 let requestParameters = "";
 
-                for (let i = 0; i < urlInfos.params.length; i++) {
+                console.log(urlInfos.params);
+
+                for (let i = 0; i < urlInfos.params.paramsList.length; i++) {
 
                     if (i !== 0) {
                         requestParameters += "&";
                     }
 
-                    let currentParam = urlInfos.params[i].split("=");
+                    let currentParam = urlInfos.params.paramsList[i].split("=");
                     let currentParamValue = currentParam[1].split(":")[1];
-                    let currentParamKey = currentParam[0];
-                    urlInfos.manualValueInput && urlInfos.manualValueInput[currentParamKey] ? currentParamValue = encodeURIComponent(urlInfos.manualValueInput[currentParamKey]) : currentParamValue = encodeURIComponent(this.requestInfos[currentParamValue]);
+                    urlInfos.params.manualValueInput && urlInfos.params.manualValueInput[currentParamValue] ? currentParamValue = encodeURIComponent(urlInfos.params.manualValueInput[currentParamValue]) : currentParamValue = encodeURIComponent(this.requestInfos[currentParamValue]);
+                    currentParam[1] = currentParamValue;
                     currentParam = currentParam.join("=");
 
-                    requestParameters += urlInfos.params[i];
+                    requestParameters += currentParam;
 
                 }
 
@@ -318,16 +329,16 @@ export default class CountryStatsManager extends UtilitaryFunctions {
             requestResults.liveRawDatas = {};
             requestResults.periodEvolutionDatas = {};
 
-            this.requestSender(this.requestURL.baseURL, {path: this.requestURL.cases.path})
+            this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.cases.path})
                 .then((response) => {
                     requestResults.liveRawDatas = response;
-                    this.requestSender(this.requestURL.baseURL, {path: this.requestURL.history.path, params: {paramsList: this.requestURL.history.parameters, manualValueInput: {status: "confirmed"}}})
+                    this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "confirmed"}}})
                     .then((response) => {
                         requestResults.periodEvolutionDatas.confirmed = response;
-                        this.requestSender(this.requestURL.baseURL, {path: this.requestURL.history.path, params: {paramsList: this.requestURL.history.parameters, manualValueInput: {status: "deaths"}}})
+                        this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "deaths"}}})
                         .then((response) => {
                             requestResults.periodEvolutionDatas.deaths = response;
-                            this.requestSender(this.requestURL.baseURL, {path: this.requestURL.history.path, params: {paramsList: this.requestURL.history.parameters, manualValueInput: {status: "recovered"}}})
+                            this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "recovered"}}})
                             .then((response) => {
                                 requestResults.periodEvolutionDatas.recovered = response;
                                 resolve(requestResults);

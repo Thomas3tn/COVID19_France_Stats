@@ -4,49 +4,75 @@
         <search-form @form-submitted="recordDatas"></search-form>
 
         <div class="resultsContainer">
-            <stat-section-location v-if="requestResults.requestInfos.locationType === 'country' || requestResults.requestInfos.locationType === 'departement'" :requestResults="requestResults"></stat-section-location>
-            <stat-section-list v-else-if="requestResults.requestInfos.locationType === 'departementsList'" :requestResults="requestResults"></stat-section-list>
+            <country-dashboard v-if="locationType === 'country'" :countryDatas="requestResults"></country-dashboard>
         </div>
 
         </section>
 </template>
 
 <script>
-import searchForm from "./searchForm.vue";
-import DatasManager from "../assets/APIRequestManager.js";
-import statSectionLocation from "./statSectionLocation.vue";
-import statSectionList from "./statSectionList.vue";
+
+//Components
+import SearchForm from "../SearchResultsComponents/SearchForm.vue";
+import countryDashboard from "../SearchResultsComponents/CountryDashboard.vue";
+
+//JS API Datas Manager
+import FranceStatsManager from "../../assets/JSClasses/FranceStatsManager.js";
+import CountryStatsManager from "../../assets/JSClasses/CountryStatsManager.js";
 
 export default {
     data() {
         return {
-            requestResults: {
-                requestInfos: {
-                    locationType: "",
-                    locationName: "",
-                    date: "",
-                    sourceName: ""
-                },
-                stats: {}
-            }
+            locationType: "",
+            country: "",
+            departement: "",
+            startDate: "",
+            endDate: "",
+            requestResults: {}
         }
     },
     components: {
-        searchForm,
-        statSectionLocation,
-        statSectionList
+        SearchForm,
+        countryDashboard
     },
     methods: {
         recordDatas: function(searchCriteria) {
 
             console.log(searchCriteria);
 
-            this.location = searchCriteria.location;
-            this.date = searchCriteria.date;
-            this.includeOnlyThisDay = searchCriteria.includeOnlyThisDay;
+            this.country = searchCriteria.country;
+            this.departement = searchCriteria.departement;
+            this.startDate = searchCriteria.startDate;
+            this.endDate = searchCriteria.endDate;
 
-            let datasManager = new DatasManager();
-            datasManager.requestManager({location: this.location, date: this.date, includeOnlyThisDay: this.includeOnlyThisDay})
+            if (this.locationName === "France" && this.departement !== "") {
+                this.FranceDatasHandler();
+            } else if (this.locationName !== "" && this.departement === "") {
+                this.countryDatasHandler();
+            }
+
+        },
+        countryDatasHandler: function() {
+
+            let countryStatsManager = new CountryStatsManager();
+            countryStatsManager.requestManager({locationName: this.country})
+            .then((response) => {
+
+                console.log(response);
+                this.locationType = response.locationDetails.locationType;
+                this.locationName = response.locationDetails.locationName;
+                this.requestResults = response;
+
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        },
+        FranceDatasHandler: function() {
+
+            let franceStatsManager = new FranceStatsManager();
+            franceStatsManager.requestManager({location: this.location, date: this.date, includeOnlyThisDay: this.includeOnlyThisDay})
             .then((response) => {
 
                 this.requestResults.requestInfos.locationType = response.requestInfos.locationType;
@@ -96,10 +122,14 @@ export default {
     },
     mounted() {
 
-        let externalScript = document.createElement("script");
-        externalScript.setAttribute("script", "../assets/APIRequestManager.js");
-        document.head.appendChild(externalScript);
-        
+        let countryStatsManagerScript = document.createElement("script");
+        countryStatsManagerScript.setAttribute("script", "../assets/CountryStatsManager.js");
+        document.head.appendChild(countryStatsManagerScript);
+
+        let franceStatsManagerScript = document.createElement("script");
+        franceStatsManagerScript.setAttribute("script", "../assets/FranceStatsManager.js");
+        document.head.appendChild(franceStatsManagerScript);
+
     }
 }
 </script>

@@ -21,7 +21,7 @@ export default {
             required: false
         },
         statNumber: {
-            type: String,
+            type: [String, Number],
 			required: false,
 			default: "N/A"
         }
