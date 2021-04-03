@@ -1,25 +1,38 @@
 <template>
-    <div class="dashboard">
+    <div v-if="typeof liveRawDatas[searchCriteria.country] === 'undefined'">
+        <p>Aucune disponible pour cette localisation</p>
+    </div>
+    <div v-else class="dashboard">
         <div class="locationDetails">
             <div class="locationDetails__locationName">
-                <img :src="countryFlagURL">
-                <p>({{ locationDetails.locationAbbreviation }}) {{ locationDetails.locationName }}</p>
+                <img :src="currentCountryFlagURL">
+                <p>({{ liveRawDatas[searchCriteria.country]["All"]["abbreviation"] }}) {{ liveRawDatas[searchCriteria.country]["All"]["country"] }}</p>
+            </div>
+            <div>
+                <GoogleMap
+                api-key="AIzaSyBrX2QbmLhIX_J0hKBelUxLSZD7RiylBEU"
+                style="width: 100%; height: 200px"
+                :center="{lat: parseInt(liveRawDatas[searchCriteria.country]['All']['lat'], 10), lng: parseInt(liveRawDatas[searchCriteria.country]['All']['long'], 10)}"
+                :zoom="4"
+                >
+                    <Marker :options="{ position: {lat: parseInt(liveRawDatas[searchCriteria.country]['All']['lat'], 10), lng: parseInt(liveRawDatas[searchCriteria.country]['All']['long'], 10)}}" />
+                </GoogleMap>
             </div>
             <div>
                 <ul>
-                    <li>Localisation: {{ locationDetails.locationContinent }} ({{ locationDetails.continentPreciseLocation }})</li>
-                    <li>Superficie: {{ locationDetails.locationSurfaceArea }}</li>
-                    <li>Capitale: {{ locationDetails.locationCapitalCity }}</li>
+                    <li>Localisation: {{ liveRawDatas[searchCriteria.country]["All"]["continent"] }} ({{ liveRawDatas[searchCriteria.country]["All"]["location"] }})</li>
+                    <li>Superficie: {{ liveRawDatas[searchCriteria.country]["All"]["sq_km_area"] }} km²</li>
+                    <li>Capitale: {{ liveRawDatas[searchCriteria.country]["All"]["capital_city"] }}</li>
                 </ul>
             </div>
             <div>
                 <ul>
-                    <li>Population: {{ locationDetails.locationPopulation }}</li>
-                    <li>Espérance de vie: {{ locationDetails.locationLifeExpectancy }} ans</li>
+                    <li>Population: {{ liveRawDatas[searchCriteria.country]["All"]["population"] }} personnes</li>
+                    <li>Espérance de vie: {{ liveRawDatas[searchCriteria.country]["All"]["life_expectancy"] }} ans</li>
                 </ul>
             </div>
             <div>
-                <p>Dernière mise à jour: {{ locationDetails.locationLastUpdate }}</p>
+                <p>Dernière mise à jour: {{ liveRawDatas[searchCriteria.country]["All"]["updated"] }}</p>
             </div>
         </div>
         <div class="locationDatas">
@@ -27,9 +40,9 @@
                 <h2>Situation actuelle</h2>
             </div>
             <div class="locationDatas__liveDatasContainer">
-                <stat-item :statName="'Cas confirmés'" :statNumber="liveRawDatas.confirmedCases"></stat-item>
-                <stat-item :statName="'Décès'" :statNumber="liveRawDatas.deaths"></stat-item>
-                <stat-item :statName="'Guéris'" :statNumber="liveRawDatas.recovered"></stat-item>
+                <stat-item :statName="'Cas confirmés'" :statNumber="liveRawDatas[searchCriteria.country]['All']['confirmed']"></stat-item>
+                <stat-item :statName="'Décès'" :statNumber="liveRawDatas[searchCriteria.country]['All']['deaths']"></stat-item>
+                <stat-item :statName="'Guéris'" :statNumber="liveRawDatas[searchCriteria.country]['All']['recovered']"></stat-item>
             </div>
             <div>
                 <chart :chartId="'locationEvolutionPopulation'" :chartData="charts.doughnut.chartData" :chartOptions="charts.doughnut.chartOptions" :chartType="charts.doughnut.chartType"></chart>
@@ -42,20 +55,65 @@
 </template>
 
 <script>
+//Vue Elements
+import { computed, watch } from "vue";
+import { useStore } from "vuex";
+
 //Component
 import statItem from "./CountryDashboardComponents/statItem.vue";
 import Chart from "../APIComponents/Chart.vue";
+import { GoogleMap, Marker } from 'vue3-google-map';
 
 //JS object
 //import DatasCalculator from "../assets/DatasCalculator.js";
 
 export default {
+    props: {
+        searchCriteria: {
+            required: true,
+            type: Object
+        }
+    },
+    setup(props) {
+
+        let googleMapScript = document.createElement("script");
+        googleMapScript.setAttribute("src", "https://unpkg.com/vue3-google-map");
+        document.head.appendChild(googleMapScript);
+
+        //Vuex
+        const store = useStore();
+        let liveRawDatas = computed(() => store.state.worldDatas);
+        const center = { lat: 40.689247, lng: -74.044502 };
+
+        const countryFlagURL = {
+            urlFirstPart: "https://www.countryflags.io/",
+            urlSecondPart: "/flat/64.png"
+        }
+
+        const countryAbbreviation = computed(function() {
+            if (typeof liveRawDatas.value["France"]["All"]["abbreviation"] !== "undefined" && typeof props.searchCriteria.country !== "undefined") {
+                return liveRawDatas.value[props.searchCriteria.country]["All"]["abbreviation"];
+            } else {
+                return "FR";
+            }
+        })
+        const currentCountryFlagURL = computed(() => countryFlagURL.urlFirstPart + countryAbbreviation.value.toLowerCase() + countryFlagURL.urlSecondPart);
+
+        watch(props.searchCriteria.country, (newValue) => {
+            console.log(newValue);
+            this.countryAbbreviation = this.liveRawDatas[newValue.country]["All"]["abbreviation"];
+        })
+        
+        return {
+            countryFlagURL,
+            countryAbbreviation,
+            currentCountryFlagURL,
+            liveRawDatas,
+            center
+        }
+    },
     data() {
         return {
-            countryFlagURL: "https://www.countryflags.io/:locationAbbreviation:/flat/64.png",
-            countryPeriodEvolutionDatas: this.countryDatas.countryPeriodEvolutionDatas,
-            liveRawDatas: this.countryDatas.liveRawDatas,
-            locationDetails: this.countryDatas.locationDetails,
             charts: {
                 doughnut: {
                     chartType: "doughnut",
@@ -149,30 +207,11 @@ export default {
             }
         }
     },
-    created() {
-        let countryFlagURLArray = this.countryFlagURL.split("/");
-
-            for (let i = 0; i < countryFlagURLArray.length; i++) {
-
-                if (countryFlagURLArray[i] === ":locationAbbreviation:") {
-                    countryFlagURLArray[i] = this.locationDetails.locationAbbreviation.toLowerCase();
-                    break;
-                }
-
-            }
-
-            let countryFlagFinalURL = countryFlagURLArray.join("/");
-            this.countryFlagURL = countryFlagFinalURL;
-    },
-    props: {
-        countryDatas: {
-            required: true,
-            type: Object
-        }
-    },
     components: {
         statItem,
         Chart,
+        GoogleMap,
+        Marker
     }
 }
 </script>

@@ -1363,7 +1363,94 @@
 </template>
 
 <script>
+import { computed } from "vue";
+import { useStore } from "vuex";
+
 export default {
+    setup() {
+
+        const store = useStore();
+        let worldDatas = computed(() => store.state.worldDatas);
+        let isWorldDatasReceived = computed(() => store.state.isWorldDatasReceived);
+
+        return {
+            worldDatas,
+            isWorldDatasReceived
+        }
+
+    },
+    watch: {
+        worldDatas(newValue) {
+
+            if (newValue.Global !== "undefined" && newValue.Global.All !== "undefined" && newValue.Global.All.confirmed !== "undefined") {
+
+                let worldMapCountries = document.querySelectorAll("#worldMapSvg a");
+                worldMapCountries = Array.from(worldMapCountries);
+
+                for (let i = 0; i < worldMapCountries.length; i++) {
+
+                    if (typeof newValue[worldMapCountries[i].id] === "undefined") {
+
+                        //If no datas are available for this location
+                        let currentCountryChildElements = worldMapCountries[i].children;
+                        for (let a = 0; a < currentCountryChildElements[a].length; a++) {
+                            currentCountryChildElements[a].setAttribute("class", "noDatas");
+                        }
+
+                    } else {
+
+                        const countryConfirmedCases = newValue[worldMapCountries[i].id]["All"]["confirmed"];
+
+                        if (countryConfirmedCases >= 0 && countryConfirmedCases <= 100) {
+
+                        let currentCountryChildElements = worldMapCountries[i].children;
+
+                        for (let a = 0; a < currentCountryChildElements.length; a++) {
+                            currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl1");
+                        }
+
+                        } else if (countryConfirmedCases >= 101 && countryConfirmedCases <= 1000) {
+
+                            let currentCountryChildElements = worldMapCountries[i].children;
+
+                            for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl2");
+                            }
+
+                        } else if (countryConfirmedCases >= 1001 && countryConfirmedCases <= 50000) {
+
+                            let currentCountryChildElements = worldMapCountries[i].children;
+
+                            for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl3");
+                            }
+
+                        } else if (countryConfirmedCases >= 50001 && countryConfirmedCases <= 250000) {
+
+                            let currentCountryChildElements = worldMapCountries[i].children;
+
+                            for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl4");
+                            }
+
+                        } else if (countryConfirmedCases >= 250001) {
+
+                            let currentCountryChildElements = worldMapCountries[i].children;
+
+                            for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl5");
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    },
     methods: {
         transmitDatas: function(event) {
             this.$emit("clicked-country", {locationType: "country", locationName: event.currentTarget.id});
@@ -1374,13 +1461,37 @@ export default {
 
 <style lang="scss">
 .mapContainer path {
-    fill: #a4ced2;
     stroke: #FFF;
     stroke-width: 1px;
 }
 
 .mapContainer a:hover path {
-    fill: #3538d2;
+    transition: all 300ms;
     cursor: pointer;
+    stroke-width: 2px;
+}
+
+.noDatas {
+    fill: #FFFFFF;
+}
+
+.confirmedCasesLvl1 {
+    fill: #FFF5C7;
+}
+
+.confirmedCasesLvl2 {
+    fill: #FECCA7;
+}
+
+.confirmedCasesLvl3 {
+    fill: #FDA38B;
+}
+
+.confirmedCasesLvl4 {
+    fill: #F8746F;
+}
+
+.confirmedCasesLvl5 {
+    fill: #EC3E55;
 }
 </style>
