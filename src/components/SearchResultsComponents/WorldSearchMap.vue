@@ -1363,33 +1363,94 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
 
 export default {
-    setup() {
+    setup(props, context) {
 
         const store = useStore();
         let worldDatas = computed(() => store.state.worldDatas);
-        let isWorldDatasReceived = computed(() => store.state.isWorldDatasReceived);
+        let areWorldDatasReceived = computed(() => store.state.areWorldDatasReceived);
 
-        return {
-            worldDatas,
-            isWorldDatasReceived
-        }
+        onMounted(() => {
 
-    },
-    watch: {
-        worldDatas(newValue) {
+            //When the user return to the world map from the France map
+            if (areWorldDatasReceived.value === true) {
 
-            if (newValue.Global !== "undefined" && newValue.Global.All !== "undefined" && newValue.Global.All.confirmed !== "undefined") {
+                let worldMapCountries = document.querySelectorAll("#worldMapSvg a");
+                    worldMapCountries = Array.from(worldMapCountries);
+
+                    for (let i = 0; i < worldMapCountries.length; i++) {
+
+                        if (typeof worldDatas.value[worldMapCountries[i].id] === "undefined") {
+
+                            //If no datas are available for this location
+                            let currentCountryChildElements = worldMapCountries[i].children;
+                            for (let a = 0; a < currentCountryChildElements[a].length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "noDatas");
+                            }
+
+                        } else {
+
+                            const countryConfirmedCases = worldDatas.value[worldMapCountries[i].id]["All"]["confirmed"];
+
+                            if (countryConfirmedCases >= 0 && countryConfirmedCases <= 100) {
+
+                            let currentCountryChildElements = worldMapCountries[i].children;
+                            for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl1");
+                            }
+
+                            } else if (countryConfirmedCases >= 101 && countryConfirmedCases <= 1000) {
+
+                                let currentCountryChildElements = worldMapCountries[i].children;
+                                for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                    currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl2");
+                                }
+
+                            } else if (countryConfirmedCases >= 1001 && countryConfirmedCases <= 50000) {
+
+                                let currentCountryChildElements = worldMapCountries[i].children;
+                                for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                    currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl3");
+                                }
+
+                            } else if (countryConfirmedCases >= 50001 && countryConfirmedCases <= 250000) {
+
+                                let currentCountryChildElements = worldMapCountries[i].children;
+                                for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                    currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl4");
+                                }
+
+                            } else if (countryConfirmedCases >= 250001) {
+
+                                let currentCountryChildElements = worldMapCountries[i].children;
+                                for (let a = 0; a < currentCountryChildElements.length; a++) {
+                                    currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl5");
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+            }
+
+        });
+
+        watch(areWorldDatasReceived, (newValue) => {
+
+            //If API world datas are received
+            if (newValue === true) {
 
                 let worldMapCountries = document.querySelectorAll("#worldMapSvg a");
                 worldMapCountries = Array.from(worldMapCountries);
 
                 for (let i = 0; i < worldMapCountries.length; i++) {
 
-                    if (typeof newValue[worldMapCountries[i].id] === "undefined") {
+                    if (typeof worldDatas.value[worldMapCountries[i].id] === "undefined") {
 
                         //If no datas are available for this location
                         let currentCountryChildElements = worldMapCountries[i].children;
@@ -1399,12 +1460,11 @@ export default {
 
                     } else {
 
-                        const countryConfirmedCases = newValue[worldMapCountries[i].id]["All"]["confirmed"];
+                        const countryConfirmedCases = worldDatas.value[worldMapCountries[i].id]["All"]["confirmed"];
 
                         if (countryConfirmedCases >= 0 && countryConfirmedCases <= 100) {
 
                         let currentCountryChildElements = worldMapCountries[i].children;
-
                         for (let a = 0; a < currentCountryChildElements.length; a++) {
                             currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl1");
                         }
@@ -1412,7 +1472,6 @@ export default {
                         } else if (countryConfirmedCases >= 101 && countryConfirmedCases <= 1000) {
 
                             let currentCountryChildElements = worldMapCountries[i].children;
-
                             for (let a = 0; a < currentCountryChildElements.length; a++) {
                                 currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl2");
                             }
@@ -1420,7 +1479,6 @@ export default {
                         } else if (countryConfirmedCases >= 1001 && countryConfirmedCases <= 50000) {
 
                             let currentCountryChildElements = worldMapCountries[i].children;
-
                             for (let a = 0; a < currentCountryChildElements.length; a++) {
                                 currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl3");
                             }
@@ -1428,7 +1486,6 @@ export default {
                         } else if (countryConfirmedCases >= 50001 && countryConfirmedCases <= 250000) {
 
                             let currentCountryChildElements = worldMapCountries[i].children;
-
                             for (let a = 0; a < currentCountryChildElements.length; a++) {
                                 currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl4");
                             }
@@ -1436,7 +1493,6 @@ export default {
                         } else if (countryConfirmedCases >= 250001) {
 
                             let currentCountryChildElements = worldMapCountries[i].children;
-
                             for (let a = 0; a < currentCountryChildElements.length; a++) {
                                 currentCountryChildElements[a].setAttribute("class", "confirmedCasesLvl5");
                             }
@@ -1449,12 +1505,18 @@ export default {
 
             }
 
+        }, { immediate: true});
+
+        function transmitDatas(event) {
+            context.emit("clicked-country", {locationType: "country", locationName: event.currentTarget.id});
         }
-    },
-    methods: {
-        transmitDatas: function(event) {
-            this.$emit("clicked-country", {locationType: "country", locationName: event.currentTarget.id});
+
+        return {
+            worldDatas,
+            areWorldDatasReceived,
+            transmitDatas
         }
+
     }
 }
 </script>

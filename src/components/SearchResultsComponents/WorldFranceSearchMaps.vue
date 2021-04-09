@@ -14,53 +14,34 @@ import WorldSearchMap from "./WorldSearchMap.vue";
 import FranceSearchMap from "./FranceSearchMap.vue";
 
 export default {
-    setup() {
+    setup(props, context) {
 
         let displayedMap = ref("WorldSearchMap");
 
+        //Check and transmit clicked location to the parent component
+        function getSelectedLocation(selectedLocation) {
+
+            if (selectedLocation.locationName === "France") {
+                displayedMap.value = "FranceSearchMap";
+            }
+            context.emit("clicked-location", selectedLocation);
+
+        }
+
+        function worldMapRequest() {
+            displayedMap.value = "WorldSearchMap";
+        }
+
         return {
-            displayedMap
+            displayedMap,
+            getSelectedLocation,
+            worldMapRequest
         }
 
     },
     components: {
         WorldSearchMap,
         FranceSearchMap
-    },
-    methods: {
-        getSelectedLocation(selectedLocation) {
-
-            if (typeof selectedLocation !== "object") {
-                console.error("The getSelectedLocation first parameter has to be an object.");
-                return;
-            }
-
-            if (selectedLocation.locationName === "France") {
-                this.displayedMap = "FranceSearchMap";
-            }
-
-            this.$emit("clicked-location", selectedLocation);
-
-        },
-        worldMapRequest() {
-
-            this.displayedMap = "WorldSearchMap";
-
-        }
-    },
-    /*watch: {
-        displayedMap(newValue) {
-
-            //Will toggle map between world map and France map
-            if (newValue === "FranceSearchMap") {
-                this
-            }
-
-        }
-    }*/
+    }
 }
 </script>
-
-<style lang="scss">
-
-</style>
