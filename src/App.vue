@@ -1,8 +1,15 @@
 <template>
-  <hero></hero>
-  <pandemy-summary v-if="worldDatas.Global && worldDatas.Global.All && worldDatas.Global.All.confirmed"></pandemy-summary>
-  <search-section></search-section>
-  <page-footer></page-footer>
+  <template v-if="areWorldDatasReceived === true && areWorldLocationEvolutionDatasReceived === true && areFranceLocationEvolutionDatasReceived === true">
+    <hero></hero>
+    <pandemy-summary></pandemy-summary>
+    <search-section></search-section>
+    <page-footer></page-footer>
+  </template>
+  <template v-else>
+    <app-loader></app-loader>
+  </template>
+  
+
 </template>
 
 <script>
@@ -12,86 +19,69 @@ import { useStore } from "vuex";
 //import { useGetters, useActions } from 'vuex-composition-helpers';
 
 //Components
+import AppLoader from "./components/AppSections/AppLoader.vue";
 import Hero from "./components/AppSections/Hero.vue";
 import searchSection from "./components/AppSections/SearchSection.vue";
 import pageFooter from "./components/AppSections/Footer.vue";
 import PandemySummary from "./components/AppSections/PandemySummary.vue";
 
-//JS Files
-import CountryDatasManager from "./assets/JSClasses/CountryStatsManager.js";
-
 export default {
   name: "App",
   setup() {
 
-    let isDatasReceived = ref(false);
     const store = useStore();
     let worldDatas = computed(() => store.state.worldDatas);
+    let areWorldDatasReceived = ref(false);
+    let areWorldLocationEvolutionDatasReceived = ref(false);
+    let areFranceLocationEvolutionDatasReceived = ref(false);
+    let areDepartementsDatasReceived = ref(false);
 
-    fetch("https://covid-api.mmediagroup.fr/v1/cases")
-    .then(response => response.json())
+    store.dispatch("setWorldDatas")
     .then(response => {
-      console.log(response);
-      //setWorldDatas(response);
-      store.dispatch("setWorldDatas", { datas: response });
-      console.log(worldDatas);
-      isDatasReceived.value = true;
+      areWorldDatasReceived.value = response;
     })
-    .catch(() => {
-      console.error("An error has occured.");
-    })
+    .catch(response => {
+      areWorldDatasReceived.value = response;
+    });
 
-    console.log(worldDatas);
-
-    /*let countryDatasManager = new CountryDatasManager();
-    countryDatasManager.requestManager({locationName: "allCountries", requestedDatasType: "liveDatas"})
+    store.dispatch("setWorldLocationEvolutionDatas", "Global")
     .then(response => {
-
-      console.log(response);
-      provide("liveRawDatas", response);
-      isDatasReceived.value = true;
-      liveRawDatas.value = response.liveRawDatas;
-
+      areWorldLocationEvolutionDatasReceived.value = response;
     })
-    .catch(() => {
+    .catch(response => {
+      areWorldLocationEvolutionDatasReceived.value = response;
+    });
 
-      console.error("Failed to retrieved worldDatas");
+    store.dispatch("setWorldLocationEvolutionDatas", "France")
+    .then(response => {
+      areFranceLocationEvolutionDatasReceived.value = response;
+    })
+    .catch(response => {
+      areFranceLocationEvolutionDatasReceived.value = response;
+    });
 
-    });*/
+    store.dispatch("setDepartementsDatas")
+    .then(response => {
+      areDepartementsDatasReceived.value = response;
+    })
+    .catch(response => {
+      areDepartementsDatasReceived.value = response;
+    });
 
     return {
+      areWorldDatasReceived,
+      areWorldLocationEvolutionDatasReceived,
+      areFranceLocationEvolutionDatasReceived,
       worldDatas,
-      isDatasReceived,
-      //setWorldDatas
     }
 
-  },
-  data() {
-    return {
-      test: "1.111.111",
-      country: ""
-    }
   },
   components: {
+    AppLoader,
     Hero,
     PandemySummary,
     searchSection,
     pageFooter
-  },
-  methods: {
-    getCountryPeriodDatas(searchCriteria) {
-      
-      let countryDatasManager = new CountryDatasManager();
-      countryDatasManager.requestManager({locationName: searchCriteria.country, requestedDatasType: "periodDatas"})
-      .then((response) => {
-        this.requestResults.periodDatas = response;
-        this.country = searchCriteria.country
-      })
-      .catch(error => {
-          console.log(error);
-      });
-
-    }
   }
 };
 </script>

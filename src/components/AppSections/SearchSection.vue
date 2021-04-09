@@ -1,135 +1,109 @@
 <template>
     <section id="searchResults">
 
-        <search-form @form-submitted="recordDatas"></search-form>
+        <world-france-search-maps @clicked-location="transmitClickedLocation"></world-france-search-maps>
+
+        <search-form @form-submitted="recordDatas" :clickedCountry="clickedLocation"></search-form>
 
         <div class="resultsContainer">
-            <country-dashboard v-if="locationType === 'country'" :countryDatas="requestResults"></country-dashboard>
+            <app-loader v-if="isContentLoading === true"></app-loader>
+            <country-dashboard v-if="areSearchCriteriaReceived === true && areLocationEvolutionDatasReceived === true && isContentLoading === false" :searchCriteria="searchCriteria"></country-dashboard>
         </div>
 
         </section>
 </template>
 
 <script>
+//Vuex
+import { useStore } from "vuex";
+import { onMounted, reactive, ref } from "vue";
 
 //Components
 import SearchForm from "../SearchResultsComponents/SearchForm.vue";
 import countryDashboard from "../SearchResultsComponents/CountryDashboard.vue";
-
-//JS API Datas Manager
-import FranceStatsManager from "../../assets/JSClasses/FranceStatsManager.js";
-import CountryStatsManager from "../../assets/JSClasses/CountryStatsManager.js";
+import WorldFranceSearchMaps from "../SearchResultsComponents/WorldFranceSearchMaps.vue";
+import AppLoader from "./AppLoader.vue";
 
 export default {
-    data() {
-        return {
+    setup() {
+
+        //Vuex
+        const store = useStore();
+        
+        //Datas checkers
+        let areSearchCriteriaReceived = ref(false);
+        let areLocationEvolutionDatasReceived = ref(false);
+        let isContentLoading = ref(false);
+
+        //Store user submission elements
+        const clickedLocation = reactive({
             locationType: "",
+            locationName: ""
+        });
+        const searchCriteria = reactive({
             country: "",
             departement: "",
             startDate: "",
-            endDate: "",
-            requestResults: {}
+            endDate: ""
+        });
+
+        function transmitClickedLocation(clickedLocationInfos) {
+            console.log(clickedLocationInfos);
+            clickedLocation.locationType = clickedLocationInfos.locationType;
+            clickedLocation.locationName = clickedLocationInfos.locationName;
+            console.log(clickedLocation);
         }
+
+        function recordDatas(requestCriteria) {
+
+            isContentLoading.value = true;
+            areLocationEvolutionDatasReceived.value = false;
+            searchCriteria.country = requestCriteria.country;
+            searchCriteria.departement = requestCriteria.departement;
+            searchCriteria.startDate = requestCriteria.startDate;
+            searchCriteria.endDate = requestCriteria.endDate;
+            areSearchCriteriaReceived.value = true;
+
+            store.dispatch("setWorldLocationEvolutionDatas", searchCriteria.country)
+            .then(response => {
+                areLocationEvolutionDatasReceived.value = response;
+                isContentLoading.value = false;
+            })
+            .catch(response => {
+                areLocationEvolutionDatasReceived.value = response;
+                isContentLoading.value = false;
+            });
+
+        }
+
+        onMounted(() => {
+
+            let countryStatsManagerScript = document.createElement("script");
+            countryStatsManagerScript.setAttribute("script", "../assets/CountryStatsManager.js");
+            document.head.appendChild(countryStatsManagerScript);
+
+            let franceStatsManagerScript = document.createElement("script");
+            franceStatsManagerScript.setAttribute("script", "../assets/FranceStatsManager.js");
+            document.head.appendChild(franceStatsManagerScript);
+
+        });
+
+        return {
+            clickedLocation,
+            searchCriteria,
+            areSearchCriteriaReceived,
+            areLocationEvolutionDatasReceived,
+            isContentLoading,
+            transmitClickedLocation,
+            recordDatas,
+        }
+
     },
     components: {
         SearchForm,
-        countryDashboard
-    },
-    methods: {
-        recordDatas: function(searchCriteria) {
-
-            console.log(searchCriteria);
-
-            this.country = searchCriteria.country;
-            this.departement = searchCriteria.departement;
-            this.startDate = searchCriteria.startDate;
-            this.endDate = searchCriteria.endDate;
-
-            if (this.locationName === "France" && this.departement !== "") {
-                this.FranceDatasHandler();
-            } else if (this.locationName !== "" && this.departement === "") {
-                this.countryDatasHandler();
-            }
-
-        },
-        countryDatasHandler: function() {
-
-            let countryStatsManager = new CountryStatsManager();
-            countryStatsManager.requestManager({locationName: this.country})
-            .then((response) => {
-
-                console.log(response);
-                this.locationType = response.locationDetails.locationType;
-                this.locationName = response.locationDetails.locationName;
-                this.requestResults = response;
-
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
-        },
-        FranceDatasHandler: function() {
-
-            let franceStatsManager = new FranceStatsManager();
-            franceStatsManager.requestManager({location: this.location, date: this.date, includeOnlyThisDay: this.includeOnlyThisDay})
-            .then((response) => {
-
-                this.requestResults.requestInfos.locationType = response.requestInfos.locationType;
-                this.requestResults.requestInfos.date = response.requestInfos.date;
-                this.requestResults.requestInfos.locationName = response.requestInfos.locationName;
-                this.requestResults.requestInfos.sourceName = response.requestInfos.sourceName;
-                console.log(this.requestResults.requestInfos.locationType);
-
-                this.requestResults.stats = {};
-
-                if (this.requestResults.requestInfos.locationType === "departementsList") {
-
-                    this.requestResults.stats.departementsList = [];
-
-                    for (let i = 0; i < response.departementsList.length; i++) {
-
-                        this.requestResults.stats.departementsList.push(response.departementsList[i]);
-                        console.log(response.departementsList[i]);
-
-                    }
-
-                } else {
-
-                    this.requestResults.stats.statsHeader = {};
-                    this.requestResults.stats.statsBody = [];
-
-                    if (this.requestResults.stats.statsBody.length !== 0) {
-                    this.requestResults.stats.statsBody = [];
-                    }
-                    if (response.stats.statsHeader.confirmedCases) {
-                        this.requestResults.stats.statsHeader = response.stats.statsHeader.confirmedCases;
-                    }
-                    for (let i = 0; i < response.stats.statsBody.length; i++) {
-                        this.requestResults.stats.statsBody.push(response.stats.statsBody[i]);
-                    }
-
-                }
-
-                
-
-            })
-            .catch((response) => {
-                console.log(response);
-            });
-
-        }
-    },
-    mounted() {
-
-        let countryStatsManagerScript = document.createElement("script");
-        countryStatsManagerScript.setAttribute("script", "../assets/CountryStatsManager.js");
-        document.head.appendChild(countryStatsManagerScript);
-
-        let franceStatsManagerScript = document.createElement("script");
-        franceStatsManagerScript.setAttribute("script", "../assets/FranceStatsManager.js");
-        document.head.appendChild(franceStatsManagerScript);
-
+        countryDashboard,
+        WorldFranceSearchMaps,
+        AppLoader
     }
 }
 </script>
