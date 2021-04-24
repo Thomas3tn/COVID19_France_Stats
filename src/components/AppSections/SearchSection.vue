@@ -1,13 +1,13 @@
 <template>
     <section id="searchResults">
 
-        <world-france-search-maps @clicked-location="transmitClickedLocation"></world-france-search-maps>
+        <world-france-search-maps :formSelectedLocation="addedFormLocation" @clicked-location="transmitClickedLocation"></world-france-search-maps>
 
-        <search-form @form-submitted="recordDatas" :clickedCountry="clickedLocation"></search-form>
+        <search-form @form-submitted="recordDatas" @added-form-location="transmitAddedFormLocation" :clickedCountry="clickedLocation"></search-form>
 
-        <div class="resultsContainer">
+        <div class="resultsContainer" id="locationDashboard">
             <app-loader v-if="isContentLoading === true"></app-loader>
-            <country-dashboard v-if="areSearchCriteriaReceived === true && areLocationEvolutionDatasReceived === true && isContentLoading === false" :searchCriteria="searchCriteria"></country-dashboard>
+            <country-dashboard v-if="isContentLoading === false && areRequestResultsReceived === true" :formRequestCriteria="formRequestCriteria"></country-dashboard>
         </div>
 
         </section>
@@ -16,7 +16,7 @@
 <script>
 //Vuex
 import { useStore } from "vuex";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 
 //Components
 import SearchForm from "../SearchResultsComponents/SearchForm.vue";
@@ -31,8 +31,7 @@ export default {
         const store = useStore();
         
         //Datas checkers
-        let areSearchCriteriaReceived = ref(false);
-        let areLocationEvolutionDatasReceived = ref(false);
+        let areRequestResultsReceived = ref(false);
         let isContentLoading = ref(false);
 
         //Store user submission elements
@@ -40,62 +39,66 @@ export default {
             locationType: "",
             locationName: ""
         });
-        const searchCriteria = reactive({
+        let formRequestCriteria = reactive({
             country: "",
             departement: "",
             startDate: "",
             endDate: ""
         });
 
+        let addedFormLocation = reactive({
+            mapToDisplay: "",
+            locationName: ""
+        });
+
+        //Transmit clicked location from maps to search form
         function transmitClickedLocation(clickedLocationInfos) {
-            console.log(clickedLocationInfos);
+
             clickedLocation.locationType = clickedLocationInfos.locationType;
             clickedLocation.locationName = clickedLocationInfos.locationName;
-            console.log(clickedLocation);
+
         }
 
-        function recordDatas(requestCriteria) {
+        //Execute when user submit a search request
+        function recordDatas(formRequest) {
 
             isContentLoading.value = true;
-            areLocationEvolutionDatasReceived.value = false;
-            searchCriteria.country = requestCriteria.country;
-            searchCriteria.departement = requestCriteria.departement;
-            searchCriteria.startDate = requestCriteria.startDate;
-            searchCriteria.endDate = requestCriteria.endDate;
-            areSearchCriteriaReceived.value = true;
+            document.getElementById("locationDashboard").scrollIntoView();
+            areRequestResultsReceived.value = false;
+            formRequestCriteria.country = formRequest.country;
+            formRequestCriteria.departement = formRequest.departement;
+            formRequestCriteria.startDate = formRequest.startDate;
+            formRequestCriteria.endDate = formRequest.endDate;
 
-            store.dispatch("setWorldLocationEvolutionDatas", searchCriteria.country)
+            store.dispatch("setWorldLocationEvolutionDatas", formRequest.country)
             .then(response => {
-                areLocationEvolutionDatasReceived.value = response;
+                areRequestResultsReceived.value = response;
                 isContentLoading.value = false;
             })
             .catch(response => {
-                areLocationEvolutionDatasReceived.value = response;
+                areRequestResultsReceived.value = response;
                 isContentLoading.value = false;
             });
 
         }
 
-        onMounted(() => {
+        //Transmit added search from location to maps
+        function transmitAddedFormLocation(datas) {
 
-            let countryStatsManagerScript = document.createElement("script");
-            countryStatsManagerScript.setAttribute("script", "../assets/CountryStatsManager.js");
-            document.head.appendChild(countryStatsManagerScript);
+            addedFormLocation.mapToDisplay = datas.mapToDisplay;
+            addedFormLocation.locationName = datas.locationName;
 
-            let franceStatsManagerScript = document.createElement("script");
-            franceStatsManagerScript.setAttribute("script", "../assets/FranceStatsManager.js");
-            document.head.appendChild(franceStatsManagerScript);
-
-        });
+        }
 
         return {
             clickedLocation,
-            searchCriteria,
-            areSearchCriteriaReceived,
-            areLocationEvolutionDatasReceived,
+            formRequestCriteria,
+            areRequestResultsReceived,
             isContentLoading,
             transmitClickedLocation,
             recordDatas,
+            transmitAddedFormLocation,
+            addedFormLocation
         }
 
     },
