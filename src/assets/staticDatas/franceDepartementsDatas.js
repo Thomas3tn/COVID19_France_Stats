@@ -153,7 +153,7 @@ export default {
         long: -0.7212876
     },
     DEP18: {
-        popultion: 303408,
+        population: 303408,
         capital_city: "Bourges",
         sq_km_area: 7235,
         location: "Centre-Val de Loire",
