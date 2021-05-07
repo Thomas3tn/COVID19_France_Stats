@@ -2,9 +2,7 @@
     <section id="searchResults">
 
         <world-france-search-maps :formSelectedLocation="addedFormLocation" @clicked-location="transmitClickedLocation"></world-france-search-maps>
-
         <search-form @form-submitted="recordDatas" @added-form-location="transmitAddedFormLocation" :clickedCountry="clickedLocation"></search-form>
-
         <div class="resultsContainer" id="locationDashboard">
             <app-loader v-if="isContentLoading === true"></app-loader>
             <country-dashboard v-if="isContentLoading === false && areRequestResultsReceived === true" :formRequestCriteria="formRequestCriteria"></country-dashboard>
@@ -16,7 +14,7 @@
 <script>
 //Vuex
 import { useStore } from "vuex";
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 
 //Components
 import SearchForm from "../SearchResultsComponents/SearchForm.vue";
@@ -29,6 +27,7 @@ export default {
 
         //Vuex
         const store = useStore();
+        const departementsLiveDatas = computed(() => store.state.departementsLiveDatas.datas);
         
         //Datas checkers
         let areRequestResultsReceived = ref(false);
@@ -42,8 +41,6 @@ export default {
         let formRequestCriteria = reactive({
             country: "",
             departement: "",
-            startDate: "",
-            endDate: ""
         });
 
         let addedFormLocation = reactive({
@@ -67,18 +64,37 @@ export default {
             areRequestResultsReceived.value = false;
             formRequestCriteria.country = formRequest.country;
             formRequestCriteria.departement = formRequest.departement;
-            formRequestCriteria.startDate = formRequest.startDate;
-            formRequestCriteria.endDate = formRequest.endDate;
 
-            store.dispatch("setWorldLocationEvolutionDatas", formRequest.country)
-            .then(response => {
-                areRequestResultsReceived.value = response;
-                isContentLoading.value = false;
-            })
-            .catch(response => {
-                areRequestResultsReceived.value = response;
-                isContentLoading.value = false;
-            });
+            if (formRequest.departement === "") {
+
+                store.dispatch("setWorldLocationEvolutionDatas", {location: formRequest.country})
+                .then(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                })
+                .catch(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                });
+
+            } else if (formRequest.country === "France" && formRequest.departement !== "") {
+
+                //formRequest object contain departement code
+                //API request need departement name
+                const departementName = departementsLiveDatas.value[formRequest.departement]["nom"];
+                console.log(departementName);
+
+                store.dispatch("setFranceDepartementsEvolutionDatas", departementName)
+                .then(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                })
+                .catch(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                });
+
+            }
 
         }
 
@@ -114,7 +130,9 @@ export default {
 <style lang="scss">
 .resultsContainer {
     margin: 0 auto;
-    width: 75%;
+    padding: 5rem 0;
+    width: 100%;
+    background-color: #93B1A7;
     &__sourceLink {
         text-align: center;
     }

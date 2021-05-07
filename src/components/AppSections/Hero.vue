@@ -1,61 +1,106 @@
 <template>
     <section class="hero">
 
-            <div class="hero__title">
-                <h1>COVID-19</h1>
-                <h2>France statistiques</h2>
+            <div class="hero__titlesContainer">
+				<h2 class="hero__firstTitle">La pandémie de</h2>
+                <h1 class="hero__secondTitle">COVID-19</h1>
+                <h2 class="hero__thirdTitle">Statistiques françaises et internationales</h2>
             </div>
 
-            <div class="hero__seeMore">
-                <p>Commencer votre recherche</p>
-                <a title="Start your search" href="#searchResults"><i class="fas fa-long-arrow-alt-down"></i></a>
-            </div>
+            <a title="Commencer votre recherche" href="#searchResults" class="hero__seeMore">
+				<div class="hero__seeMoreContentContainer">
+					<p>Commencer</p> <i class="fas fa-long-arrow-alt-down hero__seeMoreArrow"></i>
+				</div>
+			</a>
 
         </section>
 </template>
 
 <style lang="scss">
+@keyframes appearance {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes shakeUpAndDown {
+	0% {
+		transform: translateY(0%);
+	}
+	25% {
+		transform: translateY(-10%);
+	}
+	50% {
+		transform: translateY(0%);
+	}
+	75% {
+		transform: translateY(10%);
+	}
+	100% {
+		transform: translateY(0%);
+	}
+}
+
 .hero {
+	animation: appearance 800ms both ease-in-out;
 	color: white;
 	height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: url("https://images.pexels.com/photos/3970329/pexels-photo-3970329.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+	background: url("../../assets/img/heroBg.jpg")
 		no-repeat center;
 	background-size: cover;
 	background-attachment: fixed;
-	&__title {
+	&__titlesContainer {
 		text-align: center;
-		h1 {
-			font-size: 7rem;
-			letter-spacing: 0.5rem;
+		position: relative;
+		bottom: 0%;
+		text-transform: uppercase;
+		h2 {
 			margin: 0;
-		}
-		p {
-			margin: 0;
-			font-size: 4rem;
 		}
 	}
+	&__firstTitle {
+		letter-spacing: 0.2rem;
+	}
+	&__secondTitle {
+		font-size: 7rem;
+		letter-spacing: 0.5rem;
+		margin: 0;
+	}
+	&__thirdTitle {
+		letter-spacing: 0.1rem;
+	}
 	&__seeMore {
-		display: flex;
-		flex-direction: column;
+		display: block;
+		border: none;
+		text-decoration: none;
+		background-color: rgba(0, 0, 0, 0);
+		color: white;
+		cursor: pointer;
+		text-align: center;
+		scroll-behavior: smooth;
 		position: absolute;
-		bottom: 10%;
+		bottom: 7%;
 		left: 50%;
 		transform: translate(-50%, 50%);
-		p {
-			font-size: 1.5rem;
+		&__seeMoreContentContainer {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			p {
+				font-size: 2.5rem;
+			}
 		}
-		a {
-			border: none;
-			background-color: rgba(0, 0, 0, 0);
-			color: white;
-			font-size: 3rem;
-			cursor: pointer;
-			text-align: center;
-			scroll-behavior: smooth;
-		}
+	}
+	&__seeMoreArrow {
+		animation: shakeUpAndDown 750ms both infinite;
+		font-size: 2.5rem;
 	}
 }
 </style>

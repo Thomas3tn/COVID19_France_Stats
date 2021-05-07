@@ -1,9 +1,10 @@
 <template>
-  <template v-if="areWorldDatasReceived === true && areWorldLocationEvolutionDatasReceived === true && areFranceLocationEvolutionDatasReceived === true">
+  <template v-if="areWorldLiveDatasReceived === true && areWorldLocationEvolutionConfirmedReceived === true && areFranceLocationEvolutionDatasReceived === true && areGlobalLocationEvolutionDatasReceived === true && areDepartementsLiveDatasReceived === true">
     <hero></hero>
     <pandemy-summary></pandemy-summary>
     <search-section></search-section>
     <page-footer></page-footer>
+    <datas-save-agreement-popup v-if="isDatasSaveAgreementPopupDisplayed === true" @close-dsa-popup="unmountDSAPopup"></datas-save-agreement-popup>
   </template>
   <template v-else>
     <app-loader></app-loader>
@@ -14,9 +15,8 @@
 
 <script>
 //Vue Elements
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
-//import { useGetters, useActions } from 'vuex-composition-helpers';
 
 //Components
 import AppLoader from "./components/AppSections/AppLoader.vue";
@@ -24,35 +24,45 @@ import Hero from "./components/AppSections/Hero.vue";
 import searchSection from "./components/AppSections/SearchSection.vue";
 import pageFooter from "./components/AppSections/Footer.vue";
 import PandemySummary from "./components/AppSections/PandemySummary.vue";
+import DatasSaveAgreementPopup from "./components/AppSections/DatasSaveAgreementPopup.vue";
 
 export default {
   name: "App",
   setup() {
 
+    //Vuex
     const store = useStore();
-    let worldDatas = computed(() => store.state.worldDatas);
-    let areWorldDatasReceived = ref(false);
-    let areWorldLocationEvolutionDatasReceived = ref(false);
+
+    //Datas checkers
+    let areWorldLiveDatasReceived = ref(false);
+    let areWorldLocationEvolutionConfirmedReceived = ref(false);
     let areFranceLocationEvolutionDatasReceived = ref(false);
-    let areDepartementsDatasReceived = ref(false);
+    let areGlobalLocationEvolutionDatasReceived = ref(false);
+    let areDepartementsLiveDatasReceived = ref(false);
+    let isDatasSaveAgreementPopupDisplayed = ref(true);
 
-    store.dispatch("setWorldDatas")
+    function unmountDSAPopup() {
+      isDatasSaveAgreementPopupDisplayed.value = false;
+    }
+
+    //APIs Calls
+    store.dispatch("setWorldLiveDatas")
     .then(response => {
-      areWorldDatasReceived.value = response;
+      areWorldLiveDatasReceived.value = response;
     })
     .catch(response => {
-      areWorldDatasReceived.value = response;
+      areWorldLiveDatasReceived.value = response;
     });
 
-    store.dispatch("setWorldLocationEvolutionDatas", "Global")
+    store.dispatch("setWorldLocationEvolutionDatas", {status: "confirmed"})
     .then(response => {
-      areWorldLocationEvolutionDatasReceived.value = response;
+      areWorldLocationEvolutionConfirmedReceived.value = response;
     })
     .catch(response => {
-      areWorldLocationEvolutionDatasReceived.value = response;
+      areWorldLocationEvolutionConfirmedReceived.value = response;
     });
 
-    store.dispatch("setWorldLocationEvolutionDatas", "France")
+    store.dispatch("setWorldLocationEvolutionDatas", {location: "France", status: ["confirmed", "deaths"]})
     .then(response => {
       areFranceLocationEvolutionDatasReceived.value = response;
     })
@@ -60,19 +70,30 @@ export default {
       areFranceLocationEvolutionDatasReceived.value = response;
     });
 
-    store.dispatch("setDepartementsDatas")
+    store.dispatch("setWorldLocationEvolutionDatas", {location: "Global", status: ["confirmed", "deaths"]})
     .then(response => {
-      areDepartementsDatasReceived.value = response;
+      areGlobalLocationEvolutionDatasReceived.value = response;
     })
     .catch(response => {
-      areDepartementsDatasReceived.value = response;
+      areGlobalLocationEvolutionDatasReceived.value = response;
+    });
+
+    store.dispatch("setDepartementsLiveDatas")
+    .then(response => {
+      areDepartementsLiveDatasReceived.value = response;
+    })
+    .catch(response => {
+      areDepartementsLiveDatasReceived.value = response;
     });
 
     return {
-      areWorldDatasReceived,
-      areWorldLocationEvolutionDatasReceived,
+      areWorldLiveDatasReceived,
+      areWorldLocationEvolutionConfirmedReceived,
       areFranceLocationEvolutionDatasReceived,
-      worldDatas,
+      areGlobalLocationEvolutionDatasReceived,
+      areDepartementsLiveDatasReceived,
+      isDatasSaveAgreementPopupDisplayed,
+      unmountDSAPopup
     }
 
   },
@@ -81,7 +102,8 @@ export default {
     Hero,
     PandemySummary,
     searchSection,
-    pageFooter
+    pageFooter,
+    DatasSaveAgreementPopup
   }
 };
 </script>
