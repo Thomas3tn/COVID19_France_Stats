@@ -10,7 +10,10 @@ export default createStore({
     },
     franceDepartementsEvolutionDatas: {},
     areWorldLiveDatasReceived: false,
-    areDepartementsLiveDatasReceived: false
+    areDepartementsLiveDatasReceived: false,
+    areWorldEvolutionDatasRequestsReceived: {
+      confirmed: false
+    }
   },
   getters: {},
   mutations: {
@@ -37,51 +40,56 @@ export default createStore({
     //WorldLocationEvolutionDatas
     SET_WORLD_LOCATION_EVOLUTION_DATAS(state, payload) {
 
-      console.log("Vuex datas recorder called");
       //If payload is a list of countries
-      if (Object.entries(payload).length > 1) {
+      if (payload.locationType === "countriesList") {
 
-        //If state.worldLocationEvolutionDatas is not empty
-        if (Object.entries(state.worldLocationEvolutionDatas).length > 0) {
-
-          state.worldLocationEvolutionDatas.global_request_creation_date[status] = payload.creation_date;
+        if (Object.entries(state.worldLocationEvolutionDatas.datas).length > 0) {
 
           for (const [key, value] of Object.entries(payload.datas)) {
-            state.worldLocationEvolutionDatas[key] = {...value};
+
+            if (typeof state.worldLocationEvolutionDatas.datas[key] === "undefined") {
+              state.worldLocationEvolutionDatas.datas[key] = {};
+            }
+            state.worldLocationEvolutionDatas.datas[key] = Object.assign(state.worldLocationEvolutionDatas.datas[key], value);
+
           }
+          state.worldLocationEvolutionDatas.global_request_creation_date = Object.assign(state.worldLocationEvolutionDatas.global_request_creation_date, payload.creation_date);
 
         } else {
-          state.worldLocationEvolutionDatas.datas = payload;
+          
+          state.worldLocationEvolutionDatas.datas = payload.datas;
+          state.worldLocationEvolutionDatas.global_request_creation_date = Object.assign(state.worldLocationEvolutionDatas.global_request_creation_date, payload.creation_date);
+        
         }
 
       } else {
-        state.worldLocationEvolutionDatas[Object.keys(payload)[0]] = {...payload[Object.keys(payload)[0]]};
-        state.worldLocationEvolutionDatas[Object.keys(payload)[0]] = {...payload.creation_date};
-      }
 
-      console.log(state.worldLocationEvolutionDatas);
+        if (typeof state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]] === "undefined") {
+          state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]] = {};
+        }
+
+        state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]] = Object.assign(state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]], payload.datas[Object.keys(payload.datas)[0]])
+        state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]]["creation_date"] = payload.creation_date;
+
+      }
 
     },
     COPY_LOCAL_STORAGE_WORLD_LOCATION_EVOLUTION_DATAS(state) {
 
       //If worldLocationEvolutionDatas local storage data exists and state object is empty
-      if (localStorage.getItem("worldLocationEvolutionDatas") !== null && Object.entries(state.worldLocationEvolutionDatas).length === 0) {
-
-        const localStorageDatas = JSON.parse(localStorage.getItem("worldLocationEvolutionDatas"));
-        for (const [key, value] of Object.entries(localStorageDatas)) {
-
-          if ((Date.now() - 21600000) < value.creation_date) {
-            state.worldLocationEvolutionDatas[key] = value;
-          }
-
-        }
-
+      if (localStorage.getItem("worldLocationEvolutionDatas") !== null && Object.entries(state.worldLocationEvolutionDatas.datas).length === 0) {
+        state.worldLocationEvolutionDatas = JSON.parse(localStorage.getItem("worldLocationEvolutionDatas"));
       }
 
     },
     SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE(state) {
-      console.log("localStorager recorder called");
       localStorage.setItem("worldLocationEvolutionDatas", JSON.stringify(state.worldLocationEvolutionDatas));
+    },
+    SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION(state, payload) {
+
+      for (let i = 0; i < payload.status.length; i++) {
+        state.areWorldEvolutionDatasRequestsReceived[payload.status] = true;
+      }
     },
     //FranceDepartementEvolutionDatas
     SET_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS(state, payload) {
@@ -244,13 +252,12 @@ export default createStore({
         commit("COPY_LOCAL_STORAGE_WORLD_LOCATION_EVOLUTION_DATAS");
         //Vérifier si intègre copie global request creation date
 
-        console.log(params);
+        let locationType;
         let urlLocationKeyValue;
         let urlStatusKeysValues = [];
 
-        typeof params.location !== "undefined" ? urlLocationKeyValue = "country=" + encodeURIComponent(params.location) : urlLocationKeyValue = "";
-        console.log(urlLocationKeyValue);
-
+        typeof params.location === "undefined" || params.location === "" ? locationType = "countriesList" : locationType = "country";
+        locationType === "country" ? urlLocationKeyValue = "country=" + encodeURIComponent(params.location) : urlLocationKeyValue = "";
         if (typeof params.status !== "undefined") {
 
           if (typeof params.status === "string") {
@@ -264,49 +271,45 @@ export default createStore({
           }
 
         } else {
-          //If no status has been filled, we assumed a request need to be done for each of them
+          //If no status have been filled, we assumed a request need to be done for each of them
           urlStatusKeysValues.push("status=" + encodeURIComponent("confirmed"), "status=" + encodeURIComponent("deaths"), "status=" + encodeURIComponent("recovered"));
         }
 
-        //Response object
-        let locationEvolutionDatas = {
-          datas: {},
-        };
-
         //Inspect if existing datas that are not outdated are already store in vuex
         //Check if worldLocationEvolutionDatas object contain some datas
-        if (Object.entries(state.worldLocationEvolutionDatas).length > 0) {
+        if (Object.entries(state.worldLocationEvolutionDatas.datas).length > 0) {
 
-          for (let i = 0; i < urlStatusKeysValues.length; i++) {
+          if (Object.entries(state.worldLocationEvolutionDatas.global_request_creation_date).length > 0) {
 
-            let currentStatus = urlStatusKeysValues[i].split("=")[1];
+            for (let i = 0; i < urlStatusKeysValues.length; i++) {
 
-            if ((typeof state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus]) !== "undefined" && ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus])) {
-              
-              for (const [key, value] of Object.entries(state.worldLocationEvolutionDatas.datas)) {
-
-                if (typeof locationEvolutionDatas[key] === "undefined") {
-                  locationEvolutionDatas[key] = {};
-                }
-                locationEvolutionDatas.datas[key] = value[currentStatus];
-
+              let currentStatus = urlStatusKeysValues[i].split("=")[1];
+  
+              //We remove the current status if a global request that is not outdated has already been made
+              if ((typeof state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus]) !== "undefined" && ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus])) {
+                
+                urlStatusKeysValues.splice(i, 1);
+                i = i - 1;
+                state.areWorldEvolutionDatasRequestsReceived[currentStatus] = true;
+  
               }
-              
-              urlStatusKeysValues.splice(i, 1);
-              i = i - 1;
+  
             }
 
           }
 
-          //If location is a country
-          if (typeof params.location !== "undefined" || params.location !== "") {
+          if (locationType === "country") {
 
-            if ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.datas[params.location]["creation_date"]) {
+            if (typeof state.worldLocationEvolutionDatas.datas[params.location] !== "undefined") {
 
-              for (let i = 0; i < urlStatusKeysValues.length; i++) {
-                if (urlStatusKeysValues[i] !== "creation_date") {
-                  urlStatusKeysValues.splice(i, 1);
+              if ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.datas[params.location]["creation_date"]) {
+
+                for (let i = 0; i < urlStatusKeysValues.length; i++) {
+                  if (urlStatusKeysValues[i] !== "creation_date") {
+                    urlStatusKeysValues.splice(i, 1);
+                  }
                 }
+  
               }
 
             }
@@ -315,108 +318,97 @@ export default createStore({
 
         }
 
-        //If all requested datas exist and are not outdated, we stopped execution immediately
+        //If all requested datas exist and are not outdated, we stopped the execution immediately
         if (urlStatusKeysValues.length === 0) {
           resolve(true);
         }
 
-        try {
+        //Response object
+        let locationEvolutionDatas = {
+          locationName: params.location,
+          datas: {},
+          creation_date: null
+        };
 
-          locationEvolutionDatas.creation_date = Date.now();
-          
-          let statusIndex = 0;
-          //Replace params.location and urlStatusKeysValues
-          
-          if (typeof urlStatusKeysValues[counter] !== "undefined") {
+        let retrievedStatusDatas = {
+          success: 0,
+          failure: 0
+        };
 
-            fetch("https://covid-api.mmediagroup.fr/v1/history?" + urlStatusKeysValues[counter] + "&" + urlLocationKeyValue)
-            .then(response => response.json())
-            .then(response => {
+          for (let statusIndex = 0; statusIndex < urlStatusKeysValues.length; statusIndex++) {
 
-              console.log(response);
-              if (urlLocationKeyValue === "") {
+            (function() {
 
-                for (const [key, value] of Object.entries(response)) {
-                  if (typeof locationEvolutionDatas.datas[key] === "undefined") {
-                    locationEvolutionDatas.datas[key] = {};
-                  }
-                  locationEvolutionDatas.datas[key][urlStatusKeysValues[counter].split("=")[1]] = value.All.dates;
-                }
+              const currentStatusIndex = statusIndex;
 
-              } else {
+              fetch("https://covid-api.mmediagroup.fr/v1/history?" + urlStatusKeysValues[currentStatusIndex] + "&" + urlLocationKeyValue)
+              .then(response => response.json())
+              .then(response => {
 
-                if (typeof locationEvolutionDatas.datas[params.location] === "undefined") {
-                  locationEvolutionDatas.datas[params.location] = {};
-                }
-                locationEvolutionDatas.datas[params.location][urlStatusKeysValues[counter].split("=")[1]] = response.All.dates;
+                if (locationType === "countriesList") {
 
-              }
-              console.log(locationEvolutionDatas);
-              statusIndex++;
-
-              if (typeof urlStatusKeysValues[counter] !== "undefined") {
-
-                fetch("https://covid-api.mmediagroup.fr/v1/history?" + urlStatusKeysValues[counter] + "&" + urlLocationKeyValue)
-                .then(response => response.json())
-                .then(response => {
-
-                  if (urlLocationKeyValue === "") {
-
-                    for (const [key, value] of Object.entries(response)) {
-                      locationEvolutionDatas.datas[key][urlStatusKeysValues[counter].split("=")[1]] = value.All.dates;
+                  for (const [key, value] of Object.entries(response)) {
+                    if (typeof locationEvolutionDatas.datas[key] === "undefined") {
+                      locationEvolutionDatas.datas[key] = {};
                     }
+                    //If we retrieve list of countries, a create an object that will store creation timestamp for each status request
+                    if (typeof locationEvolutionDatas.creation_date !== "undefined" && locationType === "countriesList") {
+                      locationEvolutionDatas.creation_date = {};
+                    }
+                    locationEvolutionDatas.creation_date[urlStatusKeysValues[currentStatusIndex].split("=")[1]] = Date.now();
+                    locationEvolutionDatas.datas[key][urlStatusKeysValues[currentStatusIndex].split("=")[1]] = value.All.dates;
+                  }
+  
+                } else {
+  
+                  if (typeof locationEvolutionDatas.datas[params.location] === "undefined") {
+                    locationEvolutionDatas.datas[params.location] = {};
+                  }
+                  if (typeof locationEvolutionDatas.creation_date !== "undefined") {
+                    locationEvolutionDatas.creation_date = Date.now();
+                  }
+                  locationEvolutionDatas.datas[params.location][urlStatusKeysValues[currentStatusIndex].split("=")[1]] = response.All.dates;
+  
+                }
+
+                retrievedStatusDatas.success = retrievedStatusDatas.success + 1;
+
+              })
+              .catch(() => {
+                console.error("Unable to retrieve evolution datas");
+                retrievedStatusDatas.failure = retrievedStatusDatas.failure + 1;
+              })
+              .finally(() => {
+
+                if (retrievedStatusDatas.success === urlStatusKeysValues.length) {
+
+                  locationEvolutionDatas.locationType = locationType;
+                  commit("SET_WORLD_LOCATION_EVOLUTION_DATAS", locationEvolutionDatas);
+                  commit("SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
+                  resolve(true);
+
+                  if (locationType === "countriesList") {
+
+                    let statusToConfirmed = [];
+                    for (let i = 0; i < urlStatusKeysValues.length; i++) {
+                      statusToConfirmed.push(urlStatusKeysValues.split("=")[1]);
+                    }
+
+                    commit("SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION", {status: statusToConfirmed});
+                  }
       
-                  } else {
-                    locationEvolutionDatas.datas[params.location][urlStatusKeysValues[counter].split("=")[1]] = response.All.dates;
-                  }
-                  console.log(locationEvolutionDatas);
-                  counter++;
+                } else if (retrievedStatusDatas.failure === urlStatusKeysValues.length) {
+      
+                  console.error("Unable to retrieve evolution datas");
+                  reject(false);
+      
+                }
 
-                  if (typeof urlStatusKeysValues[counter] !== "undefined") {
+              });
 
-                    fetch("https://covid-api.mmediagroup.fr/v1/history?" + urlStatusKeysValues[counter] + "&" + urlLocationKeyValue)
-                    .then(response => response.json())
-                    .then(response => {
-
-                      console.log(response);
-                      if (urlLocationKeyValue === "") {
-
-                        for (const [key, value] of Object.entries(response)) {
-                          locationEvolutionDatas.datas[key][urlStatusKeysValues[counter].split("=")[1]] = value.All.dates;
-                        }
-          
-                      } else {
-                        locationEvolutionDatas.datas[params.location][urlStatusKeysValues[counter].split("=")[1]] = response.All.dates;
-                      }
-                      console.log(locationEvolutionDatas);
-
-                    })
-
-                  } else {
-                    throw "noMoreStatusRequest";
-                  }
-
-                })
-
-              } else {
-                throw "noMoreStatusRequest";
-              }
-
-            })
-            .finally(() => {
-
-              commit("SET_WORLD_LOCATION_EVOLUTION_DATAS", locationEvolutionDatas);
-              commit("SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
-              resolve(true);
-
-            });  
+            })();
 
           }
-
-        } catch {
-          reject(false);
-          console.error("Unable to retrieve evolution datas");
-        }       
 
       });
 
