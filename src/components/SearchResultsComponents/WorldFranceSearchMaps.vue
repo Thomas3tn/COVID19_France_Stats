@@ -22,7 +22,7 @@ export default {
     },
     setup(props, context) {
 
-        let displayedMap = ref("FranceSearchMap");
+        let displayedMap = ref("WorldSearchMap");
         let worldSelectedLocation = ref("");
         let franceSelectedLocation = ref("");
 
