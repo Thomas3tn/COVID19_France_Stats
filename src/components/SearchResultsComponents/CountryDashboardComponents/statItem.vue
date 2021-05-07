@@ -26,7 +26,6 @@ export default {
 	setup(props) {
 
 			let logo;
-			console.log(props.statName);
 			switch (props.statName) {
 				case "Cas confirmés":
 					logo = faMale;
