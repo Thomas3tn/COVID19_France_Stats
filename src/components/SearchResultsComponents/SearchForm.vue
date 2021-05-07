@@ -1,14 +1,14 @@
 <template>    
-    <form @submit.prevent="transmitDatas" class="form">
+    <form @submit.prevent="transmitDatas" class="form" id="searchForm">
 
         <div class="form__inputsContainer">
             <div class="form__textInputsContainer">
 
                 <div class="inputContainer">
-                    <i class="fas fa-flag"></i>
+                    <i class="fas fa-flag inputContainer__logo"></i>
                     <div class="inputContainer__inputPart">
-                        <label class="inputContainer__title" for="countryInput">Pays</label>
-                        <select v-model="requestCriteria.country" id="countryInput">
+                        <label class="inputContainer__title" for="countryInput">Pays<abbr title="Champs obligatoire" class="inputContainer__mandatoryInput inputContainer__abbr">*</abbr></label>
+                        <select v-model="requestCriteria.country" id="countryInput" title="Sélectionner le pays de votre choix">
                             <option value="Global">Monde</option>
                             <optgroup label="Europe">
                                 <option value="Europe">Europe</option>
@@ -227,7 +227,7 @@
                     <i class="fas fa-map-marker-alt inputContainer__logo"></i>
                     <div class="inputContainer__inputPart">
                         <label class="inputContainer__title" for="searchLocationInput">Département</label>
-                        <select name="locationName" v-model="requestCriteria.departement" placeholder="Choisir Localisation" class="inputContainer__input" id="searchLocationInput">
+                        <select name="locationName" v-model="requestCriteria.departement" title="Sélectionner le département de votre choix" class="inputContainer__input" id="searchLocationInput">
                             <option value="departementsList">LD - Liste départements</option>
                             <option value="DEP-01">01 - Ain</option>
                             <option value="DEP-02">02 - Aisne</option>
@@ -334,22 +334,6 @@
                     </div>
                 </div>
 
-                <div class="inputContainer">
-                    <i class="far fa-calendar-alt inputContainer__logo"></i>
-                    <div class="inputContainer__inputPart">
-                        <label for="startDateInput" class="inputContainer__title">Date de départ <abbr title="Date à laquelle commence votre sélection de données.">?</abbr></label>
-                        <input type="date" v-model.trim.lazy="requestCriteria.startDate" placeholder="Ex: 05/06/2020" class="inputContainer__input" id="startDateInput"/>
-                    </div>
-                </div>
-
-                <div class="inputContainer">
-                    <i class="far fa-calendar-alt inputContainer__logo"></i>
-                    <div class="inputContainer__inputPart">
-                        <label for="endDateInput" class="inputContainer__title">Date de fin <abbr title="Date à laquelle termine votre sélection de données.">?</abbr></label>
-                        <input type="date" v-model.trim.lazy="requestCriteria.endDate" placeholder="Ex: 05/06/2020" class="inputContainer__input" id="endDateInput"/>
-                    </div>
-                </div>
-
             </div>
         </div>               
         
@@ -373,8 +357,6 @@ export default {
         const requestCriteria = reactive({
             country: "",
             departement: "",
-            startDate: "",
-            endDate: ""
         });
 
         watch(props.clickedCountry, newValue => {
@@ -426,8 +408,6 @@ export default {
             searchCriteria.country = requestCriteria.country;
             searchCriteria.departement = requestCriteria.departement;
             typeof searchCriteria.departement === "undefined" ? searchCriteria.locationType = "country" : searchCriteria.locationType = "departement";
-            searchCriteria.startDate = requestCriteria.startDate;
-            searchCriteria.endDate = requestCriteria.endDate;
             context.emit("form-submitted", searchCriteria);
 
         }
@@ -443,11 +423,14 @@ export default {
 
 <style lang="scss">
 .form {
+    position: relative;
+    top: 27px;
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
     flex-wrap: wrap;
-	margin: 5rem 2rem;
+    width: 90%;
+	margin: 0 auto ;
 	background-color: lightgrey;
     padding: 0.5rem 1rem;
 	&__inputsContainer {
@@ -478,7 +461,7 @@ export default {
     margin-right: 1rem;
     &__logo {
         font-size: 1.4rem;
-        margin: 0.5rem;
+        margin-right: 1rem;
     }
     &__inputPart {
         display: flex;
@@ -487,6 +470,14 @@ export default {
     &__title {
         margin: 0;
         font-size: 0.8rem;
+    }
+    &__mandatoryInput {
+        color: red;
+    }
+    &__abbr {
+        &:hover {
+            cursor: pointer;
+        }
     }
 }
 
