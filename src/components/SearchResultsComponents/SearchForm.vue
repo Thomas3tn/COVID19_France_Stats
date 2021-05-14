@@ -5,20 +5,35 @@
             <div class="form__textInputsContainer">
 
                 <div class="inputContainer">
+                    <i class="fas fa-globe-europe inputContainer__logo"></i>
+                    <div class="inputContainer__inputPart">
+                        <label for="continentInput" class="inputContainer__title">Continent</label>
+                        <select v-model="requestCriteria.continent" id="continentInput" title="Sélectionner le continent de votre choix">
+                            <option value="Global">Monde</option>
+                            <option value="Africa">Afrique</option>
+                            <option value="North America">Amérique du Nord</option>
+                            <option value="South America">Amérique du Sud</option>
+                            <option value="Asia">Asie</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Oceania">Océanie</option>
+                            <option value="Other">Autre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="inputContainer" v-if="requestCriteria.continent !== ''">
                     <i class="fas fa-flag inputContainer__logo"></i>
                     <div class="inputContainer__inputPart">
                         <label class="inputContainer__title" for="countryInput">Pays<abbr title="Champs obligatoire" class="inputContainer__mandatoryInput inputContainer__abbr">*</abbr></label>
                         <select v-model="requestCriteria.country" id="countryInput" title="Sélectionner le pays de votre choix">
-                            <option value="Global">Monde</option>
-                            <optgroup label="Europe">
-                                <option value="Europe">Europe</option>
+                            <template v-if="requestCriteria.continent === 'Europe'">
                                 <option value="Albania">Albanie</option>
                                 <option value="Germany">Allemagne</option>
                                 <option value="Andorra">Andorre</option>
                                 <option value="Austria">Autriche</option>
                                 <option value="Belgium">Belgique</option>
                                 <option value="Belarus">Biélorussie</option>
-                                <option value="Bosnia and Herzegovina">Bosnie-Herzéovine</option>
+                                <option value="Bosnia and Herzegovina">Bosnie-Herzégovine</option>
                                 <option value="Bulgaria">Bulgarie</option>
                                 <option value="Cyprus">Chypre</option>
                                 <option value="Croatia">Croatie</option>
@@ -58,9 +73,8 @@
                                 <option value="Switzerland">Suisse</option>
                                 <option value="Ukraine">Ukraine</option>
                                 <option value="Holy See">Vatican</option>
-                            </optgroup>
-                            <optgroup label="Afrique">
-                                <option value="Africa">Afrique</option>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'Africa'">
                                 <option value="South Africa">Afrique du Sud</option>
                                 <option value="Algeria">Algérie</option>
                                 <option value="Angola">Angola</option>
@@ -76,9 +90,9 @@
                                 <option value="Congo (Kinshasa)">République démocratique du Congo</option>
                                 <option value="Cote d'Ivoire">Côte d'Ivoire</option>
                                 <option value="Djibouti">Djibouti</option>
-                                <option value="Egypt">Egypte</option>
-                                <option value="Eritrea">Erythrée</option>
-                                <option value="Ethiopia">Ethiopie</option>
+                                <option value="Egypt">Égypte</option>
+                                <option value="Eritrea">Érythrée</option>
+                                <option value="Ethiopia">Éthiopie</option>
                                 <option value="Eswatini">Eswatini</option>
                                 <option value="Gabon">Gabon</option>
                                 <option value="Gambia">Gambie</option>
@@ -108,54 +122,54 @@
                                 <option value="Sierra Leone">Sierra Leone</option>
                                 <option value="Somalia">Somalie</option>
                                 <option value="Sudan">Soudan</option>
-                                <option value="South SUdan">Soudan du Sud</option>
+                                <option value="South Sudan">Soudan du Sud</option>
                                 <option value="Tanzania">Tanzanie</option>
                                 <option value="Chad">Tchad</option>
                                 <option value="Togo">Togo</option>
                                 <option value="Tunisia">Tunisie</option>
                                 <option value="Zambia">Zambie</option>
                                 <option value="Zimbabwe">Zimbabwe</option>
-                            </optgroup>
-                            <optgroup label="Amérique">
-                                <option value="America">Amérique</option>
-                                <option value="Antigua and Barbuda">Antigua-et-Barbuda</option>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'South America'">
                                 <option value="Argentina">Argentine</option>
-                                <option value="Bahamas">Bahamas</option>
-                                <option value="Barbados">Barbade</option>
-                                <option value="Belize">Belize</option>
                                 <option value="Bolivia">Bolivie</option>
                                 <option value="Brazil">Brésil</option>
-                                <option value="Canada">Canada</option>
                                 <option value="Chile">Chili</option>
                                 <option value="Colombia">Colombie</option>
+                                <option value="Ecuador">Équateur</option>
+                                <option value="Guyana">Guyana</option>
+                                <option value="Paraguay">Paraguay</option>
+                                <option value="Peru">Pérou</option>
+                                <option value="Suriname">Suriname</option>
+                                <option value="Uruguay">Uruguay</option>
+                                <option value="Venezuela">Venezuela</option>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'North America'">
+                                <option value="Antigua and Barbuda">Antigua-et-Barbuda</option>
+                                <option value="Bahamas">Bahamas</option>
+                                <option value="Barbados">Barbade</option>
+                                <option value="Belize">Bélize</option>
+                                <option value="Canada">Canada</option>
                                 <option value="Costa Rica">Costa Rica</option>
                                 <option value="Cuba">Cuba</option>
                                 <option value="Dominican Republic">République dominicaine</option>
                                 <option value="Dominica">Dominique</option>
-                                <option value="Ecuador">Equateur</option>
-                                <option value="US">Etats-Unis</option>
+                                <option value="US">États-Unis</option>
                                 <option value="Grenada">Grenade</option>
                                 <option value="Guatemala">Guatemala</option>
-                                <option value="Guyana">Guyana</option>
                                 <option value="Haiti">Haïti</option>
                                 <option value="Honduras">Honduras</option>
                                 <option value="Jamaica">Jamaïque</option>
                                 <option value="Mexico">Mexique</option>
                                 <option value="Nicaragua">Nicaragua</option>
                                 <option value="Panama">Panama</option>
-                                <option value="Paraguay">Paraguay</option>
-                                <option value="Peru">Pérou</option>
                                 <option value="Saint Kitts and Nevis">Saint-Christophe-et-Niévès</option>
                                 <option value="Saint Lucia">Sainte-Lucie</option>
                                 <option value="Saint Vincent and the Grenadines">Saint-Vincent-et-les-Grenadines</option>
                                 <option value="El Salvador">Salvador</option>
-                                <option value="Suriname">Suriname</option>
                                 <option value="Trinidad and Tobago">Trinité-et-Tobago</option>
-                                <option value="Uruguay">Uruguay</option>
-                                <option value="Venezuela">Venezuela</option>
-                            </optgroup>
-                            <optgroup label="Asie">
-                                <option value="Asia">Asie</option>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'Asia'">
                                 <option value="Afghanistan">Afghanistan</option>
                                 <option value="Saudi Arabia">Arabie Saoudite</option>
                                 <option value="Armenia">Arménie</option>
@@ -202,9 +216,8 @@
                                 <option value="Turkey">Turquie</option>
                                 <option value="Vietnam">Viêt Nam</option>
                                 <option value="Yemen">Yémen</option>
-                            </optgroup>
-                            <optgroup label="Océanie">
-                                <option value="Oceania">Océanie</option>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'Oceania'">
                                 <option value="Australia">Australie</option>
                                 <option value="Fiji">Fidjii</option>
                                 <option value="Marshall Islands">Îles Marshall</option>
@@ -214,11 +227,14 @@
                                 <option value="Solomon Islands">Salomon</option>
                                 <option value="Samoa">Samoa</option>
                                 <option value="Vanuatu">Vanuatu</option>
-                            </optgroup>
-                            <optgroup label="Navires de croisière">
-                                <option value="Diamond Princess">Diamond Princess</option>
-                                <option value="MS Zaandam">MS Zaandam</option>
-                            </optgroup>
+                            </template>
+                            <template v-if="requestCriteria.continent === 'Other'">
+                                <optgroup label="Navires de croisière">
+                                    <option value="Diamond Princess">Diamond Princess</option>
+                                    <option value="MS Zaandam">MS Zaandam</option>
+                                </optgroup>
+                            </template>
+                            
                         </select>
                     </div>
                 </div>
@@ -347,7 +363,7 @@ import { reactive, watch } from "vue";
 
 export default {
     props: {
-        clickedCountry: {
+        clickedLocation: {
             type: Object,
             required: false
         }
@@ -355,11 +371,12 @@ export default {
     setup(props, context) {
 
         const requestCriteria = reactive({
+            continent: "",
             country: "",
             departement: "",
         });
 
-        watch(props.clickedCountry, newValue => {
+        watch(props.clickedLocation, newValue => {
 
             if (Array.isArray(newValue.locationType)) {
 

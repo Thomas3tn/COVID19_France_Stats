@@ -1,5 +1,12 @@
 <template>
-<button @click="loadWorldMap">Retour</button>
+<button @click="loadWorldMap" class="searchMap__worldMapBtn" title="Retour carte du monde">
+   <font-awesome-icon :icon="faAngleLeft" class="searchMap__worldMapBtn--arrow"/>
+   <font-awesome-icon :icon="faGlobeAmericas" class="searchMap__worldMapBtn--globe"/>
+</button>
+<div class="searchMap__headerContainer">
+   <h2 class="searchMap__header">FRANCE <span class="searchMap__header--status">HOSPITALISATIONS</span></h2>
+   <p class="searchMap__subHeader">État du nombre d'hospitalisations par milliers d'habitants</p>
+</div>
 <svg
    viewBox="-290 0 1250 545"
    id="franceMapSvg"
@@ -442,6 +449,8 @@ import { onMounted, computed, watch } from "vue";
 //Vuex
 import { useStore } from "vuex";
 
+import { faAngleLeft, faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
+
 export default {
    props: {
       selectedLocationRequested: {
@@ -539,7 +548,9 @@ export default {
       return {
          departementsLiveDatas,
          loadWorldMap,
-         transmitDatas
+         transmitDatas,
+         faAngleLeft,
+         faGlobeAmericas
       }
 
    }

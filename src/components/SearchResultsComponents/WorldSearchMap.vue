@@ -1,4 +1,8 @@
 <template>
+    <div class="searchMap__headerContainer">
+        <h2 class="searchMap__header">MONDE <span class="searchMap__header--status">CAS CONFIRMÉS</span></h2>
+        <p class="searchMap__subHeader">État du monde hebdomadaire face à la pandémie de COVID-19</p>
+    </div>
     <svg id="worldMapSvg" version="1.2" viewBox="105 -28 1850 886">
         <a id="Afghanistan" @click="transmitDatas" xlink:title="Afghanistan">
             <path d="M1383 261.6l1.5 1.8-2.9 0.8-2.4 1.1-5.9 0.8-5.3 1.3-2.4 2.8 1.9 2.7 1.4 3.2-2 2.7 0.8 2.5-0.9 2.3-5.2-0.2 3.1 4.2-3.1 1.7-1.4 3.8 1.1 3.9-1.8 1.8-2.1-0.6-4 0.9-0.2 1.7-4.1 0-2.3 3.7 0.8 5.4-6.6 2.7-3.9-0.6-0.9 1.4-3.4-0.8-5.3 1-9.6-3.3 3.9-5.8-1.1-4.1-4.3-1.1-1.2-4.1-2.7-5.1 1.6-3.5-2.5-1 0.5-4.7 0.6-8 5.9 2.5 3.9-0.9 0.4-2.9 4-0.9 2.6-2-0.2-5.1 4.2-1.3 0.3-2.2 2.9 1.7 1.6 0.2 3 0 4.3 1.4 1.8 0.7 3.4-2 2.1 1.2 0.9-2.9 3.2 0.1 0.6-0.9-0.2-2.6 1.7-2.2 3.3 1.4-0.1 2 1.7 0.3 0.9 5.4 2.7 2.1 1.5-1.4 2.2-0.6 2.5-2.9 3.8 0.5 5.4 0z">
@@ -1380,16 +1384,25 @@ export default {
 
         const store = useStore();
         let worldEvolutionDatas = computed(() => store.state.worldLocationEvolutionDatas.datas);
-        console.log(worldEvolutionDatas);
         let areworldEvolutionDatasReceived = computed(() => store.state.areWorldEvolutionDatasRequestsReceived.confirmed);
 
+        const continentsCountries = {
+            Africa: ["South Africa", "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cameroon", "Cabo Verde", "Central African Republic", "Comoros", "Congo (Brazzaville)", "Congo (Kinshasa)", "Cote d'Ivoire", "Djibouti", "Egypt", "Eritrea", "Ethiopia", "Eswatini", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Equatorial Guinea", "Kenya", "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Morocco", "Mauritius", "Mauritania", "Mozambique", "Namibia", "Niger", "Nigeria", "Uganda", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "Sudan", "South Sudan", "Tanzania", "Chad", "Togo", "Tunisia", "Zambia", "Zimbabwe"],
+            Asia: ["Afghanistan", "Saudi Arabia", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh", "Bhutan", "Burma", "Brunei", "Cambodia", "China", "Korea, South", "United Arab Emirates", "Georgia", "India", "Indonesia", "Irak", "Iran", "Israel", "Japan", "Jordan", "Kazakhstan", "Kyrgyzstan", "Kuwait", "Laos", "Lebanon", "Malaysia", "Maldives", "Mongolia", "Nepal", "Oman", "Uzbekistan", "Pakistan", "West Bank and Gaza", "Philippines", "Qatar", "Singapore", "Sri Lanka", "Syria", "Taiwan", "Tajikistan", "Thailand", "Timor-Leste", "Turkey", "Vietnam", "Yemen"],
+            Europe: ["Albania", "Germany", "Andorra", "Austria", "Belgium", "Belarus", "Bosnia and Herzegovina", "Bulgaria", "Cyprus", "Croatia", "Denmark", "Spain", "Estonia", "Finland", "France", "Greece", "Hungary", "Ireland", "Iceland", "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "North Macedonia", "Malta", "Moldova", "Monaco", "Montenegro", "Norway", "Netherlands", "Poland", "Portugal", "Czechia", "Romania", "United Kingdom", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Sweden", "Switzerland", "Ukraine", "Holy See"],
+            North_America: ["Antigua and Barbuda", "Bahamas", "Barbados", "Belize", "Canada", "Costa Rica", "Cuba", "Dominican Republic", "Dominica", "US", "Grenada", "Guatemala", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "El Salvador", "Trinidad and Tobago"],
+            South_America: ["Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Peru", "Suriname", "Uruguay", "Venezuela"],
+            Oceania: ["Australia", "Fiji", "Marshall Islands", "Micronesia", "New Zeland", "Papua New Guinea", "Solomon Islands", "Samoa", "Vanuatu"]
+        }
+
         let datasCalculator = new DatasCalulator();
-        let worldMapCountries = Array.from(document.querySelectorAll("#worldMapSvg a"));
 
         onMounted(() => {
 
             //When the user return to the world map from the France map
             if (areworldEvolutionDatasReceived.value === true) {
+
+                let worldMapCountries = Array.from(document.querySelectorAll("#worldMapSvg a"));
 
                 for (let i = 0; i < worldMapCountries.length; i++) {
 
@@ -1404,7 +1417,6 @@ export default {
                     } else {
 
                         const confirmedWeeklyEvolution = datasCalculator.datasListFunctionalities.getWeeklyDailyEvolution(worldEvolutionDatas.value[worldMapCountries[i].id]["confirmed"], "weeklyEvolution");
-                        console.log(confirmedWeeklyEvolution);
 
                         if (confirmedWeeklyEvolution >= 0 && confirmedWeeklyEvolution <= 100) {
 
@@ -1453,10 +1465,10 @@ export default {
 
         watch(areworldEvolutionDatasReceived.value, (newValue) => {
 
-            console.log(areworldEvolutionDatasReceived.value);
-
             //If API world datas are received
             if (newValue === true) {
+
+                let worldMapCountries = Array.from(document.querySelectorAll("#worldMapSvg a"));
 
                 for (let i = 0; i < worldMapCountries.length; i++) {
 
@@ -1471,7 +1483,6 @@ export default {
                     } else {
 
                         const confirmedWeeklyEvolution = datasCalculator.datasListFunctionalities.getWeeklyDailyEvolution(worldEvolutionDatas.value[worldMapCountries[i].id]["confirmed"], "weeklyEvolution");
-                        console.log(confirmedWeeklyEvolution);
 
                         if (confirmedWeeklyEvolution >= 0 && confirmedWeeklyEvolution <= 100) {
 
@@ -1527,52 +1538,25 @@ export default {
         });
 
         function transmitDatas(event) {
-            context.emit("clicked-country", {locationType: "country", locationName: event.currentTarget.id});
+
+            let continentName;
+
+            for (const [key, value] of Object.entries(continentsCountries)) {
+                if (value.includes(event.currentTarget.id)) {
+                    continentName = key.split("_").join(" ");
+                }
+            }
+
+            //context.emit("clicked-country", {locationType: "country", locationName: event.currentTarget.id});
+            context.emit("clicked-country", {locationType: ["continent", "country"], locationName: [continentName, event.currentTarget.id]});
         }
 
         return {
             worldEvolutionDatas,
             areworldEvolutionDatasReceived,
-            transmitDatas
+            transmitDatas,
         }
 
     }
 }
 </script>
-
-<style lang="scss">
-.mapContainer path {
-    stroke: #FFF;
-    stroke-width: 1px;
-}
-
-.mapContainer a:hover path {
-    transition: all 300ms;
-    cursor: pointer;
-    stroke-width: 2px;
-}
-
-.noDatas {
-    fill: #FFFFFF;
-}
-
-.confirmedCasesLvl1 {
-    fill: #FFF5C7;
-}
-
-.confirmedCasesLvl2 {
-    fill: #FECCA7;
-}
-
-.confirmedCasesLvl3 {
-    fill: #FDA38B;
-}
-
-.confirmedCasesLvl4 {
-    fill: #F8746F;
-}
-
-.confirmedCasesLvl5 {
-    fill: #EC3E55;
-}
-</style>

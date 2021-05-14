@@ -2,7 +2,7 @@
     <section id="searchResults">
 
         <world-france-search-maps :formSelectedLocation="addedFormLocation" @clicked-location="transmitClickedLocation"></world-france-search-maps>
-        <search-form @form-submitted="recordDatas" @added-form-location="transmitAddedFormLocation" :clickedCountry="clickedLocation"></search-form>
+        <search-form @form-submitted="onFormSubmission" @added-form-location="transmitAddedFormLocation" :clickedLocation="clickedLocation"></search-form>
         <div class="resultsContainer" id="locationDashboard">
             <app-loader v-if="isContentLoading === true"></app-loader>
             <country-dashboard v-if="isContentLoading === false && areRequestResultsReceived === true" :formRequestCriteria="formRequestCriteria"></country-dashboard>
@@ -41,12 +41,27 @@ export default {
         let formRequestCriteria = reactive({
             country: "",
             departement: "",
+            locationType: ""
         });
 
         let addedFormLocation = reactive({
             mapToDisplay: "",
             locationName: ""
         });
+
+        function getLocationType(formRequestCriteria) {
+
+            const continentsName = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
+
+            if (continentsName.includes(formRequestCriteria.country) && formRequestCriteria.departement === "") {
+                return "continent";
+            } else if (formRequestCriteria.country !== "" && formRequestCriteria.departement === "") {
+                return "country";
+            } else if (formRequestCriteria.country === "France" && formRequestCriteria.departement !== "") {
+                return "departement";
+            }
+
+        }
 
         //Transmit clicked location from maps to search form
         function transmitClickedLocation(clickedLocationInfos) {
@@ -56,16 +71,17 @@ export default {
 
         }
 
-        //Execute when user submit a search request
-        function recordDatas(formRequest) {
+        //Executed when user submit a search request
+        function onFormSubmission(formRequest) {
 
             isContentLoading.value = true;
             document.getElementById("locationDashboard").scrollIntoView();
             areRequestResultsReceived.value = false;
             formRequestCriteria.country = formRequest.country;
             formRequestCriteria.departement = formRequest.departement;
+            formRequestCriteria.locationType = getLocationType(formRequest);
 
-            if (formRequest.departement === "") {
+            if (formRequestCriteria.locationType === "country") {
 
                 store.dispatch("setWorldLocationEvolutionDatas", {location: formRequest.country})
                 .then(response => {
@@ -77,14 +93,13 @@ export default {
                     isContentLoading.value = false;
                 });
 
-            } else if (formRequest.country === "France" && formRequest.departement !== "") {
+            } else if (formRequestCriteria.locationType === "departement") {
 
-                //formRequest object contain departement code
-                //API request need departement name
+                //formRequest object contain departement code but API request need departement name
                 const departementName = departementsLiveDatas.value[formRequest.departement]["nom"];
                 console.log(departementName);
 
-                store.dispatch("setFranceDepartementsEvolutionDatas", departementName)
+                store.dispatch("setFranceDepartementsEvolutionDatas", {code: formRequest.departement, name: departementName})
                 .then(response => {
                     areRequestResultsReceived.value = response;
                     isContentLoading.value = false;
@@ -112,7 +127,7 @@ export default {
             areRequestResultsReceived,
             isContentLoading,
             transmitClickedLocation,
-            recordDatas,
+            onFormSubmission,
             transmitAddedFormLocation,
             addedFormLocation
         }
