@@ -1,13 +1,13 @@
 <template>
     <div class="diseaseDatasPanel">
         <current-situation-panel :currentSituationDatas="diseaseDatas.currentSituation"></current-situation-panel>
-        <detailed-geo-datas-panel :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
-        <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas"></weekly-daily-datas-panel>
+        <detailed-geo-datas-panel v-if="detailedGeoDatasPanelCountries.includes(diseaseDatas.country)" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
         <div class="diseaseDatasPanel__vaccRelDatasContainer">
-            <!--<vaccination-chart v-if="Object.entries(diseaseDatas.vaccinationDatas).length > 0" :vaccinationDatas="diseaseDatas.vaccinationDatas"></vaccination-chart>-->
+            <vaccination-chart v-if="Object.entries(diseaseDatas.vaccinationDatas).length > 0" :vaccinationDatas="diseaseDatas.vaccinationDatas"></vaccination-chart>
             <relative-datas-panel :relativeDatas="diseaseDatas.relativeDatas"></relative-datas-panel>
         </div>
-        <location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas"></location-evolution-graph>
+        <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></weekly-daily-datas-panel>
+        <location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></location-evolution-graph>
     </div>
 </template>
 
@@ -15,7 +15,7 @@
 import CurrentSituationPanel from "./CurrentSituationPanel.vue";
 import DetailedGeoDatasPanel from "./DetailedGeoDatasPanel.vue";
 import WeeklyDailyDatasPanel from "./WeeklyDailyDatasPanel.vue";
-//import VaccinationChart from "./VaccinationChart.vue";
+import VaccinationChart from "./VaccinationChart.vue";
 import RelativeDatasPanel from "./RelativeDatasPanel.vue";
 import LocationEvolutionGraph from "./LocationEvolutionGraph";
 
@@ -26,11 +26,20 @@ export default {
             required: true
         }
     },
+    setup() {
+
+        const detailedGeoDatasPanelCountries = ["France", "US", "Canada", "India", "Brazil", "China", "Russia"];
+
+        return {
+            detailedGeoDatasPanelCountries
+        }
+
+    },
     components: {
         CurrentSituationPanel,
         DetailedGeoDatasPanel,
         WeeklyDailyDatasPanel,
-        //VaccinationChart,
+        VaccinationChart,
         RelativeDatasPanel,
         LocationEvolutionGraph
     }
@@ -39,6 +48,7 @@ export default {
 
 <style lang="scss">
 .datasPanel {
+    overflow: hidden;
     background-color: white;
     margin: 3rem 0rem 3rem 1rem;
     padding: 0 1rem;
@@ -58,7 +68,7 @@ export default {
         &:first-child {
             margin-top: 0;
         }
-        &:last-of-type {
+        &:last-child {
             margin-bottom: 0;
         }
     }
