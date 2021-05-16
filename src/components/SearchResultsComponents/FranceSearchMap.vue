@@ -9,7 +9,7 @@
 </div>
 <svg
    viewBox="-290 0 1250 545"
-   id="franceMapSvg"
+   id="franceSearchMapSvg"
    version="1.0">
    <a id="DEP-2B" @click="transmitDatas" xlink:title="2B - Haute-Corse">
       <path d="M 562.13712,441.70296 L 559.29258,443.60941 L 559.68597,445.48559 L 561.19903,447.39204 L 559.50441,448.69326 L 560.26093,450.20631 L 559.11102,451.5378 L 559.11102,453.23242 L 561.01746,454.95729 L 561.01746,457.59 L 559.86754,460.04115 L 558.56632,460.61611 L 557.05327,458.5281 L 554.39029,458.73992 L 553.81534,458.34653 L 551.54576,458.34653 L 549.48801,460.25297 L 548.70122,463.46064 L 543.79893,464.39873 L 540.01631,467.6064 L 539.25978,469.69441 L 537.3836,469.51285 L 536.41524,468.36293 L 535.87055,471.60086 L 534.53906,472.14556 L 534.14567,475.17166 L 534.72063,476.50315 L 532.63262,478.0162 L 532.05766,479.52925 L 534.17593,479.92264 L 534.53906,480.95152 L 538.29143,480.95152 L 539.3203,481.61726 L 542.07406,481.10282 L 543.25424,481.79883 L 542.7398,482.64613 L 544.61598,485.21832 L 548.21704,485.21832 L 549.09461,487.79051 L 551.63654,487.79051 L 551.48524,489.33382 L 553.54299,491.90601 L 554.57186,492.42045 L 555.93361,493.26776 L 555.93361,496.53595 L 556.96248,497.38326 L 559.02023,497.38326 L 559.53467,498.23056 L 559.86754,502.8605 L 561.07798,503.70781 L 560.56354,504.40381 L 560.89642,507.12731 L 564.83035,506.976 L 568.1288,504.79721 L 568.00776,499.19892 L 572.54691,492.78358 L 572.54691,482.19222 L 570.67073,478.59116 L 570.09577,467.24327 L 568.76428,465.15526 L 566.31314,463.27908 L 565.91975,456.25852 L 567.06967,453.05085 L 565.55661,447.93674 L 564.61852,443.79097 L 563.83174,442.64106 L 562.13712,441.70296 z "/>
@@ -464,64 +464,64 @@ export default {
       const store = useStore();
       let departementsLiveDatas = computed(() => store.state.departementsLiveDatas.datas);
 
-      onMounted(() => {
+      const mapKeys = {
+         key1: {
+            min: 0,
+            max: 10,
+            class: "confirmedCasesLvl1"
+         },
+         key2: {
+               min: 10,
+               max: 25,
+               class: "confirmedCasesLvl2"
+         },
+         key3: {
+               min: 25,
+               max: 50,
+               class: "confirmedCasesLvl3"
+         },
+         key4: {
+               min: 50,
+               max: 100,
+               class: "confirmedCasesLvl4"
+         },
+         key5: {
+               min: 100,
+               max: 100000000000000000000,
+               class: "confirmedCasesLvl5"
+         },
+      }
 
-         //Check if API datas are received
+      function setDetailedMap(locationDatas, staticDatas, mapKeys) {
 
-            let departementsPaths = document.querySelectorAll("#franceMapSvg a");
-            departementsPaths = Array.from(departementsPaths);
+         let mapPaths = document.querySelectorAll("#franceSearchMapSvg a");
 
-            for (let i = 0; i < departementsPaths.length; i++) {
+         for (let i = 0; i < mapPaths.length; i++) {
 
-               //Calculer hopitalisations pour 100.000 habitant pour current departmennt
-               let currDepStatDatasKey = departementsPaths[i].id.split("-")[0] + departementsPaths[i].id.split("-")[1];
-               let hospPerThous = (departementsLiveDatas.value[departementsPaths[i].id].hospitalises / departementsStaticDatas[currDepStatDatasKey]["population"]) * 100000;
+            //Calculer hopitalisations pour 100.000 habitant pour current departmennt
+            let currDepStatDatasKey = mapPaths[i].id.split("-")[0] + mapPaths[i].id.split("-")[1];
+            let hospPerThous = (locationDatas[mapPaths[i].id].hospitalises / staticDatas[currDepStatDatasKey]["population"]) * 100000;
 
-               if (hospPerThous < 10) {
+            for (const keyValue of Object.entries(mapKeys)) {
 
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "noDatas");
+                  if (hospPerThous >= keyValue[1].min && hospPerThous <= keyValue[1].max) {
+
+                     let currentMapPathChildren = mapPaths[i].children;
+                     for (let a = 0; a < currentMapPathChildren.length; a++) {
+                        currentMapPathChildren[a].setAttribute("class", keyValue[1].class);
+                     }
+
                   }
-
-               } else if (hospPerThous >= 10 && hospPerThous < 25 ) {
-
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "confirmedCasesLvl1");
-                  }
-
-               } else if (hospPerThous >= 25 && hospPerThous < 50) {
-
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "confirmedCasesLvl2");
-                  }
-
-               } else if (hospPerThous >= 50 && hospPerThous < 100) {
-
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "confirmedCasesLvl3");
-                  }
-
-               } else if (hospPerThous >= 100 && hospPerThous < 150) {
-
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "confirmedCasesLvl4");
-                  }
-
-               } else if (hospPerThous >= 150) {
-
-                  let currentDepartementChildElements = departementsPaths[i].children;
-                  for (let a = 0; a < currentDepartementChildElements.length; a++) {
-                     currentDepartementChildElements[a].setAttribute("class", "confirmedCasesLvl5");
-                  }
-
-               }
 
             }
+
+         }
+
+      }
+
+      onMounted(() => {
+
+         setDetailedMap(departementsLiveDatas.value, departementsStaticDatas, mapKeys);
 
       });
 
