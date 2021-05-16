@@ -39,6 +39,7 @@ export default {
             locationName: ""
         });
         let formRequestCriteria = reactive({
+            continent: "",
             country: "",
             departement: "",
             locationType: ""
@@ -49,11 +50,13 @@ export default {
             locationName: ""
         });
 
+        console.log(formRequestCriteria);
+
         function getLocationType(formRequestCriteria) {
 
             const continentsName = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
 
-            if (continentsName.includes(formRequestCriteria.country) && formRequestCriteria.departement === "") {
+            if (continentsName.includes(formRequestCriteria.continent) && formRequestCriteria.departement === "" && formRequestCriteria.country === "") {
                 return "continent";
             } else if (formRequestCriteria.country !== "" && formRequestCriteria.departement === "") {
                 return "country";
@@ -73,12 +76,13 @@ export default {
 
         //Executed when user submit a search request
         function onFormSubmission(formRequest) {
-
+            console.log(formRequest);
             isContentLoading.value = true;
             document.getElementById("locationDashboard").scrollIntoView();
             areRequestResultsReceived.value = false;
             formRequestCriteria.country = formRequest.country;
             formRequestCriteria.departement = formRequest.departement;
+            formRequestCriteria.continent = formRequest.continent;
             formRequestCriteria.locationType = getLocationType(formRequest);
 
             if (formRequestCriteria.locationType === "country") {
@@ -108,6 +112,11 @@ export default {
                     areRequestResultsReceived.value = response;
                     isContentLoading.value = false;
                 });
+
+            } else if (formRequestCriteria.locationType === "continent") {
+                
+                areRequestResultsReceived.value = true;
+                isContentLoading.value = false;
 
             }
 

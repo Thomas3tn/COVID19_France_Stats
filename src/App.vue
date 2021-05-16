@@ -109,11 +109,13 @@ export default {
 </script>
 
 <style lang="scss">
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
   line-height: 1.4;
 }
 </style>

@@ -424,6 +424,7 @@ export default {
             let searchCriteria = {};
             searchCriteria.country = requestCriteria.country;
             searchCriteria.departement = requestCriteria.departement;
+            searchCriteria.continent = requestCriteria.continent;
             typeof searchCriteria.departement === "undefined" ? searchCriteria.locationType = "country" : searchCriteria.locationType = "departement";
             context.emit("form-submitted", searchCriteria);
 
