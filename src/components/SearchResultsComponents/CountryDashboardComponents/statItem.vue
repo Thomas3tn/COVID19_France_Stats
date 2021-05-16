@@ -55,7 +55,7 @@ export default {
 					logo = faUsers;
 					break;
 
-				case "Infections/km2":
+				case "Infections/km²":
 					logo = faMapMarkedAlt;
 					break;
 
