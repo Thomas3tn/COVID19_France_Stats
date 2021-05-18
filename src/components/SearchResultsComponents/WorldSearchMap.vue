@@ -1465,7 +1465,7 @@ export default {
             setDetailedMap(worldEvolutionDatas.value, mapKeys);
         });
 
-        watch(areworldEvolutionDatasReceived.value, (newValue) => {
+        watch(() => areworldEvolutionDatasReceived.value, (newValue) => {
 
             //If API world datas are received
             if (newValue === true) {
