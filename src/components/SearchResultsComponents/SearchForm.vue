@@ -390,12 +390,6 @@ export default {
             
         });
 
-        watch(requestCriteria.country, newValue => {
-            if (newValue !== "France" && requestCriteria.departement !== "") {
-                requestCriteria.departement = "";
-            }
-        });
-
         watch(() => { return { ...requestCriteria }}, (newValue, oldValue) => {
 
             if ((newValue.country !== oldValue.country) || (newValue.departement !== oldValue.departement)) {
@@ -415,6 +409,16 @@ export default {
 
                 context.emit("added-form-location", {mapToDisplay: mapToDisplay, locationName: locationName});
 
+            }
+
+            //If user select a continent and a country and then change continent, we delete the selected country
+            if (oldValue.continent !== newValue.continent && (oldValue.country !== "" && oldValue.country === newValue.country)) {
+                requestCriteria.country = "";
+            }
+
+            //If user select a country and a departement and then change country, we delete the selected departement
+            if (oldValue.country !== newValue.country && (oldValue.departement !== "" && oldValue.departement === newValue.departement)) {
+                requestCriteria.departement = "";
             }
 
         }, {deep: true});
