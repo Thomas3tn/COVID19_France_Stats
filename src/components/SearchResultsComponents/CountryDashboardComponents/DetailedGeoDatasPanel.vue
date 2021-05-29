@@ -12,30 +12,52 @@
                 <brazil-map v-else-if="displayedCountry === 'Brazil'"></brazil-map>
                 <china-map v-else-if="displayedCountry === 'China'"></china-map>
                 <russia-map v-else-if="displayedCountry === 'Russia'"></russia-map>
+                <south-america-map v-else-if="displayedCountry === 'South America'"></south-america-map>
+                <north-america-map v-else-if="displayedCountry === 'North America'"></north-america-map>
+                <europe-map v-else-if="displayedCountry === 'Europe'"></europe-map>
+                <africa-map v-else-if="displayedCountry === 'Africa'"></africa-map>
+                <asia-map v-else-if="displayedCountry === 'Asia'"></asia-map>
+                <ocenia-map v-else-if="displayedCountry === 'Oceania'"></ocenia-map>
+                <world-map v-else-if="displayedCountry === 'Global'"></world-map>
             </div>
-            <form>
-                <h4>Données à afficher</h4>
-                <template v-if="displayedCountry === 'France'">
-                    <input type="radio" @click="changeDisplayedDatas" id="hospitalizationsInput" name="displayedStatus" value="hospitalizations"/><label for="hospitalizationsInput">Hospitalisations</label>
-                    <input type="radio" @click="changeDisplayedDatas" id="intensiveCareInput" name="displayedStatus" value="intensive_care"/><label for="intensiveCareInput">Réanimations</label>
-                    <input type="radio" @click="changeDisplayedDatas" id="deathsInput" name="displayedStatus" value="deaths"/><label for="deathsInput">Décès</label>
-                    <input type="radio" @click="changeDisplayedDatas" id="recoveredInput" name="displayedStatus" value="recovered"/><label for="recoveredInput">Guéris</label>
-                </template>
-                <template v-else>
-                    <input type="radio" @click="changeDisplayedDatas" id="confirmedInput" value="confirmed" name="displayedStatus" checked="true"/><label for="confirmedInput">Cas confirmés</label>
-                    <input type="radio" @click="changeDisplayedDatas" id="deathsInput" value="deaths" name="displayedStatus"/><label for="deathsInput">Décès</label>
-                    <input type="radio" @click="changeDisplayedDatas" id="recoveredInput" value="recovered" name="displayedStatus"/><label for="recoveredInput">Guéris</label>
-                </template>
-            </form>
+            <div class="detailedGeoDatasPanel__formRankingContainer">
+                <form @submit.prevent="onFormSubmission" class="detailedGeoDatasForm">
+                    <h4 class="detailedGeoDatasForm__header">Données à afficher</h4>
+                    <div class="detailedGeoDatasForm__inputTypeContainer">
+                        <p>Type de données</p>
+                        <div class="detailedGeoDatasForm__datatypeContainer">
+                            <input type="radio" @click="changeDisplayedDatastype" id="relativeDatasDetailedMapInput" name="displayedDatastype" value="relativeDatas" checked="checked" title="Données relatives"/><label for="relativeDatasDetailedMapInput" title="Données relatives">Données relatives</label>
+                            <input type="radio" @click="changeDisplayedDatastype" id="rawDatasDetailedMapInput" name="displayedDatastype" value="rawDatas" title="Données brutes"/><label for="rawDatasDetailedMapInput" title="Données brutes">Données brutes</label>
+                        </div>
+                    </div>
+                    <div class="detailedGeoDatasPanel__inputTypeContainer">
+                        <p>Type de status</p>
+                        <div class="detailedGeoDatasForm__statusContainer">
+                            <template v-for="item in currentStatusKeys" :key="item.idName">
+                                <template v-if="displayedDatas === item.idName">
+                                    <label :for="item.idName + 'DetailedMapInput'" :title="item.dashboardName"><input type="radio" @click="changeDisplayedDatas" :id="item.idName + 'DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName" checked/>{{ item.dashboardName }}</label>
+                                </template>
+                                <template v-else>
+                                    <label :for="item.idName + 'DetailedMapInput'" :title="item.dashboardName"><input type="radio" @click="changeDisplayedDatas" :id="item.idName + 'DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName"/>{{ item.dashboardName }}</label>
+                                </template>
+                            </template>
+                            
+                        </div>
+                    </div>
+                    <input type="submit" value="Valider" title="Valider" class="detailedGeoDatasForm__submitBtn"/>
+                </form>
+                <regions-list-panel :regionsDatas="locationRegionsDatas" :displayedStatus="displayedDatas"></regions-list-panel>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { computed, ref, watch, onMounted } from "vue";
-import { useStore } from "vuex";
+//Vue & Vuex Elements
+import { ref, onMounted, reactive } from "vue";
 
 //Vue Components
+import RegionsListPanel from "./RegionsListPanel.vue";
 import franceMap from "./FranceMap.vue";
 import usMap from "./UsMap.vue";
 import canadaMap from "./CanadaMap.vue";
@@ -43,6 +65,16 @@ import indiaMap from "./IndiaMap";
 import BrazilMap from "./BrazilMap.vue";
 import ChinaMap from "./ChinaMap.vue";
 import RussiaMap from "./RussiaMap.vue";
+import SouthAmericaMap from "./SouthAmericaMap.vue";
+import NorthAmericaMap from "./NorthAmericaMap.vue";
+import EuropeMap from "./EuropeMap.vue";
+import AfricaMap from "./AfricaMap.vue";
+import AsiaMap from "./AsiaMap.vue";
+import OceniaMap from "./OceniaMap.vue";
+import WorldMap from "./WorldMap.vue";
+
+//JS Class
+import DatasCalculator from "../../../assets/JSClasses/DatasCalculator.js";
 
 export default {
     props: {
@@ -50,171 +82,197 @@ export default {
             type: String,
             required: false,
             default: "France"
+        },
+        locationRegionsDatas: {
+            type: Object,
+            required: false
         }
     },
     setup(props) {
 
-        //Vuex
-        const store = useStore();
-        let locationDatas;
-        props.country === "France" ? locationDatas = store.departementsLiveDatas.datas : locationDatas = computed(() => store.state.worldLiveDatas.datas[props.displayedCountry]);
-            console.log(locationDatas);
-        //Variables
-        let displayedDatas = ref("confirmed");
-        //Calculate %region compared to country total
+        console.log(props.locationRegionsDatas);
+        console.log(props.displayedCountry);
+
+        const datasCalculator = new DatasCalculator();
+
+        const mapKeys = {
+            relativeDatas: {
+                key1: {
+                    min: 0,
+                    max: 0,
+                    class: "confirmedCasesLvl1"
+                },
+                key2: {
+                    min: 0,
+                    max: 5,
+                    class: "confirmedCasesLvl2"
+                },
+                key3: {
+                    min: 5,
+                    max: 12,
+                    class: "confirmedCasesLvl3"
+                },
+                key4: {
+                    min: 12,
+                    max: 25,
+                    class: "confirmedCasesLvl4"
+                },
+                key5: {
+                    min: 25,
+                    max: 38,
+                    class: "confirmedCasesLvl5"
+                },
+                key6: {
+                    min: 38,
+                    max: 100,
+                    class: "confirmedCasesLvl6"
+                }
+            },
+            rawDatas: {
+                confirmed: {
+
+                },
+                deaths: {
+
+                },
+                recovered: {
+
+                },
+                hospitalizations: {
+
+                },
+                intensiveCare: {
+                    
+                }
+            }
+        }
+
+        //Form
+        let formCriteria = reactive({
+            displayedDatastype: "relativeDatas",
+            displayedStatus: ""
+        });
+
+        //Transmitted map options
+        let displayedDatas = ref("");
 
         //Functions
         function changeDisplayedDatas(event) {
-            displayedDatas.value = event.currentTarget.value;
+            formCriteria.displayedStatus = event.currentTarget.value;
         }
 
-        let regionsTotal = ref(0);
+        function changeDisplayedDatastype(event) {
+            formCriteria.displayedDatastype = event.currentTarget.value;
+        }
 
-        onMounted(() => {
+        function setDetailedMap(displayedDatastype, displayedDatas, locationDatas, mapKeys) {
 
             let mapPaths = document.querySelectorAll("#currentSituationMap svg a");
 
-                for (let i = 0; i < mapPaths.length; i++) {
+            for (let i = 0; i < mapPaths.length; i++) {
 
-                    console.log(mapPaths[i].id);
+                if (typeof locationDatas[mapPaths[i].id] !== "undefined") {
 
-                    if (displayedDatas.value === "confirmed") {
+                    let currentRegionData;
+                    if (props.displayedCountry === "Global") {
+                        console.log(mapPaths[i].id, displayedDatas)
+                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / locationDatas.Global[displayedDatas]) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
+                    } else {
+                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / locationDatas.All[displayedDatas]) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
+                    }
 
-                        let regionNationalPart = 100 * (locationDatas.value[mapPaths[i].id]["confirmed"] / locationDatas.value.All.confirmed);
-                        console.log(regionNationalPart);
-                        regionsTotal.value += regionNationalPart;
+                    for (const keyValue of Object.entries(mapKeys[displayedDatastype])) {
 
-                        if (regionNationalPart === 0) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 0 && regionNationalPart <= 5) {
+                        if (currentRegionData > keyValue[1].min && currentRegionData >= keyValue[1].max) {
 
                             let currentMapPathChildren = mapPaths[i].children;
                             for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
+                                currentMapPathChildren[a].setAttribute("class", keyValue[1].class);
                             }
 
-                        } else if (regionNationalPart > 5 && regionNationalPart <= 12) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 25 && regionNationalPart <= 38) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 50 && regionNationalPart <= 75) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 75) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-                            
                         }
 
                     }
 
-                }
+                } else {
 
-        });
-
-        //Watcher
-        watch(() => displayedDatas.value, (newValue, oldValue) => {
-
-            console.log(newValue, oldValue);
-            
-            if (newValue !== oldValue) {
-
-                let mapPaths = Array.from(document.querySelectorAll("#currentSituationMap svg a"));
-
-                for (let i = 0; i < mapPaths.length; i++) {
-
-                    if (displayedDatas.value === "confirmed") {
-
-                        let regionNationalPart = 100 * (locationDatas[mapPaths[i].id][newValue] / locationDatas.All[newValue]);
-
-                        if (regionNationalPart === 0) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 0 && regionNationalPart <= 5) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 5 && regionNationalPart <= 12) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 25 && regionNationalPart <= 38) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 50 && regionNationalPart <= 75) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-
-                        } else if (regionNationalPart > 75) {
-
-                            let currentMapPathChildren = mapPaths[i].children;
-                            for (let a = 0; a < currentMapPathChildren.length; a++) {
-                                currentMapPathChildren[a].setAttribute("class", "confirmedCasesLvl1");
-                            }
-                            
-                        }
-
+                    //If current location has no datas
+                    let currentMapPathChildren = mapPaths[i].children;
+                    for (let a = 0; a < currentMapPathChildren.length; a++) {
+                        currentMapPathChildren[a].setAttribute("class", "noDatas");
                     }
 
                 }
 
             }
 
-        }, {immediate: true});
+        }
+
+        function onFormSubmission() {
+            setDetailedMap(formCriteria.displayedDatastype, displayedDatas.value, props.locationRegionsDatas, mapKeys);
+            displayedDatas.value = formCriteria.displayedStatus;
+        }
+
+        //Get all input form status
+        const diseaseStatusValues = ["confirmed", "deaths", "recovered", "hospitalizations", "intensive_care"];
+        let currentStatusKeys = [];
+
+        if (props.displayedCountry === "Global") {
+
+            currentStatusKeys = [{idName: "confirmed", dashboardName: "Cas confirmés"}, {idName: "deaths", dashboardName: "Décès"}, {idName: "recovered", dashboardName: "Guéris"}];
+
+        } else {
+
+            for (const keyValue of Object.entries(props.locationRegionsDatas.All)) {
+
+                if (diseaseStatusValues.includes(keyValue[0]) && typeof keyValue[1] !== "undefined") {
+
+                    let currentStatus = {};
+                    currentStatus.idName = keyValue[0],
+                    currentStatus.dashboardName = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(keyValue[0]);
+                    currentStatusKeys.push(currentStatus);
+
+                }
+
+            }
+
+        }
+
+        
+
+        //Set displayed status as the first map key element
+        displayedDatas.value = currentStatusKeys[0].idName;
+
+        onMounted(() => {
+            setDetailedMap(formCriteria.displayedDatastype, displayedDatas.value, props.locationRegionsDatas, mapKeys);
+        });
+
 
         return {
             changeDisplayedDatas,
-            regionsTotal
+            changeDisplayedDatastype,
+            currentStatusKeys,
+            onFormSubmission,
+            displayedDatas,
         }
 
     },
     components: {
+        RegionsListPanel,
         franceMap,
         usMap,
         canadaMap,
         indiaMap,
         BrazilMap,
         ChinaMap,
-        RussiaMap
+        RussiaMap,
+        SouthAmericaMap,
+        NorthAmericaMap,
+        EuropeMap,
+        AfricaMap,
+        AsiaMap,
+        OceniaMap,
+        WorldMap
     }
 }
 </script>
@@ -225,8 +283,27 @@ export default {
         background-color: #FFF;
         path {
             stroke: #FFF;
-            stroke-width: 2px;
+            stroke-width: 0.5px;
         }
+    }
+    &__formRankingContainer {
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+        div, form {
+            flex: 1;
+        }
+    }
+}
+
+.detailedGeoDatasForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    &__statusContainer {
+        display: flex;
+        flex-direction: column;
     }
 }
 </style>

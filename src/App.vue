@@ -15,7 +15,7 @@
 
 <script>
 //Vue Elements
-import { ref } from "vue";
+import { ref, reactive, provide } from "vue";
 import { useStore } from "vuex";
 
 //Components
@@ -85,6 +85,21 @@ export default {
     .catch(response => {
       areDepartementsLiveDatasReceived.value = response;
     });
+
+    //Charts status colors
+    const chartStatusKey = reactive({
+      confirmed: "#FF6866",
+      deaths: "#3A3A3A",
+      recovered: "#4BFF35",
+      hospitalizations: "#FFC042",
+      intensive_care: "#FF6866",
+      people_vaccinated: "#2D6AFF",
+      people_partially_vaccinated: "#2DF2FF",
+      administered: "#2DFF90",
+      population: "#F9FF40"
+    });
+
+    provide("chartStatusKey", chartStatusKey);
 
     return {
       areWorldLiveDatasReceived,

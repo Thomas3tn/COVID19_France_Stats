@@ -50,13 +50,13 @@ export default {
             locationName: ""
         });
 
-        console.log(formRequestCriteria);
-
         function getLocationType(formRequestCriteria) {
 
             const continentsName = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
 
-            if (continentsName.includes(formRequestCriteria.continent) && formRequestCriteria.departement === "" && formRequestCriteria.country === "") {
+            if (formRequestCriteria.continent === "Global" && formRequestCriteria.country === "" && formRequestCriteria.departement === "") {
+                return "global";
+            } else if (continentsName.includes(formRequestCriteria.continent) && formRequestCriteria.departement === "" && formRequestCriteria.country === "") {
                 return "continent";
             } else if (formRequestCriteria.country !== "" && formRequestCriteria.departement === "") {
                 return "country";
@@ -76,7 +76,7 @@ export default {
 
         //Executed when user submit a search request
         function onFormSubmission(formRequest) {
-            console.log(formRequest);
+
             isContentLoading.value = true;
             document.getElementById("locationDashboard").scrollIntoView();
             areRequestResultsReceived.value = false;
@@ -118,7 +118,21 @@ export default {
                 areRequestResultsReceived.value = true;
                 isContentLoading.value = false;
 
+            } else if (formRequestCriteria.locationType === "global") {
+
+                store.dispatch("setWorldLocationEvolutionDatas", {location: formRequest.continent})
+                .then(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                })
+                .catch(response => {
+                    areRequestResultsReceived.value = response;
+                    isContentLoading.value = false;
+                });
+
             }
+
+            console.log(formRequestCriteria.locationType);
 
         }
 

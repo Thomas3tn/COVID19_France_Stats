@@ -20,8 +20,8 @@
                         </select>
                     </div>
                 </div>
-
-                <div class="inputContainer" v-if="requestCriteria.continent !== ''">
+                
+                <div class="inputContainer" v-if="requestCriteria.continent !== '' && requestCriteria.continent !== 'Global'">
                     <i class="fas fa-flag inputContainer__logo"></i>
                     <div class="inputContainer__inputPart">
                         <label class="inputContainer__title" for="countryInput">Pays<abbr title="Champs obligatoire" class="inputContainer__mandatoryInput inputContainer__abbr">*</abbr></label>

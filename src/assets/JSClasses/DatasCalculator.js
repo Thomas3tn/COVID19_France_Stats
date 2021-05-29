@@ -1,10 +1,106 @@
 //Contain all methods that convert, transform or create news datas from existing ones
 
 export default class DatasCalculator {
+    translationFunctionalities = {
+        getTranslatedKeyFromEng(key) {
+
+            let currentKey = "";
+            switch (key) {
+                case "confirmed":
+                    currentKey = "Cas confirmés";
+                    break;
+            
+                case "deaths":
+                    currentKey = "Décès";
+                    break;
+                
+                case "recovered":
+                    currentKey = "Guéris";
+                    break;
+                
+                case "administered":
+                    currentKey = "Doses administrées";
+                    break;
+                
+                case "people_vaccinated":
+                    currentKey = "Personnes vaccinées";
+                    break;
+                
+                case "people_partially_vaccinated":
+                    currentKey = "Personnes partiellement vaccinées";
+                    break;
+
+                case "population":
+                    currentKey = "Population non vaccinée";
+                    break;
+
+                case "hospitalizations":
+                    currentKey = "Hospitalisations";
+                    break;
+
+                case "newHospitalizations":
+                    currentKey = "Nouvelles Hospitalisations";
+                    break;
+
+                case "intensive_care":
+                    currentKey = "Réanimations";
+                    break;
+
+                case "new_intensive_care":
+                    currentKey = "Nouvelles Réanimations";
+                    break;
+            
+                default:
+                    currentKey = key;
+                    break;
+            }
+
+            return currentKey;
+
+        },
+        getTranslatedKeyFromFra(key) {
+
+            let currentKey = "";
+            switch (key) {
+                case "deces":
+                    currentKey = "deaths";
+                    break;
+            
+                case "gueris":
+                    currentKey = "recovered";
+                    break;
+                
+                case "hospitalises":
+                    currentKey = "hospitalizations";
+                    break;
+                
+                case "reanimation":
+                    currentKey = "intensive_care";
+                    break;
+                
+                case "nouvellesHospitalisations":
+                    currentKey = "new_hospitalizations";
+                    break;
+                
+                case "nouvellesReanimations":
+                    currentKey = "new_intensive_care";
+                    break;
+            
+                default:
+                    currentKey = key;
+                    break;
+            }
+
+            return currentKey;
+
+        }
+    }
     datasListFunctionalities = {
         getWeeklyDailyEvolution(dataset, dateTypeToReturn = false) {
 
-            if (dateTypeToReturn !== false && (dateTypeToReturn !== "weeklyEvolution" || dateTypeToReturn !== "dailyEvolution")) {
+            const dateTypeToReturnAuthKeys = ["weeklyEvolution", "dailyEvolution"];
+
+            if (dateTypeToReturn !== false && dateTypeToReturnAuthKeys.includes(dateTypeToReturn) === false) {
                 console.error("The getWeeklyDailyEvolution function second optional parameter accept only three value: false (default), 'weeklyEvolution' or 'dailyEvolution'");
                 return;
             }
@@ -38,7 +134,7 @@ export default class DatasCalculator {
             } else {
                 if (typeof dailyEvolution !== "undefined" && typeof weeklyEvolution === "undefined") {
                     return dailyEvolution;
-                } else if (typeof weeklyEvolution === "undefined" && typeof dailyEvolution === "undefined") {
+                } else if (typeof weeklyEvolution !== "undefined" && typeof dailyEvolution === "undefined") {
                     return weeklyEvolution;
                 } else {
                     console.error("The getWeeklyDailyEvolution function has nothing to return");
@@ -51,14 +147,11 @@ export default class DatasCalculator {
 
             let startDateData, endDateData;
             const customStartDate = new Date(customPeriodDates.startDate.split("-")[0], customPeriodDates.startDate.split("-")[1] - 1, customPeriodDates.startDate.split("-")[2]).getTime();
-            console.log(customPeriodDates.startDate.split("-")[2], customPeriodDates.startDate.split("-")[1] - 1, customPeriodDates.startDate.split("-")[0]);
             const customEndDate = new Date(customPeriodDates.endDate.split("-")[0], customPeriodDates.endDate.split("-")[1] - 1, customPeriodDates.endDate.split("-")[2]).getTime();
-            console.log(customStartDate, customEndDate);
 
             for (const [key, value] of Object.entries(dataset)) {
 
                 const currentDate = new Date(key.split("-")[0], key.split("-")[1] - 1, key.split("-")[2]).getTime();
-                console.log(new Date(key.split("-")[0], key.split("-")[1] - 1, key.split("-")[2]));
 
                 if (currentDate === customEndDate || currentDate === customStartDate) {
 
@@ -79,6 +172,109 @@ export default class DatasCalculator {
             console.log(endDateData, startDateData);
 
             return endDateData - startDateData;
+
+        },
+        getDepartementWeeklyDailyEvolution(dataset, dateTypeToReturn = false) {
+
+            let todayDatas = {};
+            let yesterdayDatas = {};
+            let weekAgoData = {};
+            let dailyDatas = {};
+            let weeklyDatas = {};
+
+            for (let i = 0; i < dataset.length; i++) {
+
+                if (i === 0) {
+                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
+                        todayDatas[key] = value;
+                    }
+                }
+
+                if (i === 1 && (dateTypeToReturn === false || dateTypeToReturn === "dailyEvolution")) {
+
+                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
+                        yesterdayDatas[key] = value;
+                    }
+
+                    //Get dailyEvolution
+                    for (const [key, value] of Object.entries(todayDatas)) {
+                        dailyDatas[key] = value - yesterdayDatas[key];
+                    }
+
+                }
+
+                if (i === 6 && (dateTypeToReturn === false || dateTypeToReturn === "weeklyEvolution")) {
+
+                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
+                        weekAgoData[key] = value;
+                    }
+
+                    for (const [key, value] of Object.entries(todayDatas)) {
+                        weeklyDatas[key] = value - weekAgoData[key];
+                    }
+
+                    break;
+
+                }
+
+            }
+
+            if (typeof dailyDatas !== "undefined" && typeof weeklyDatas !== "undefined") {
+                return { dailyDatas, weeklyDatas };
+            } else {
+                if (typeof dailyDatas !== "undefined" && typeof weeklyDatas === "undefined") {
+                    return dailyDatas;
+                } else if (typeof weeklyDatas !== "undefined" && typeof dailyDatas === "undefined") {
+                    return weeklyDatas;
+                } else {
+                    console.error("The getWeeklyDailyEvolution function has nothing to return");
+                    return;
+                }
+            }
+
+        },
+        getDepartementCustomPeriodEvolution(dataset, customPeriodDates) {
+
+            let startDateData = {};
+            let endDateData = {};
+            const customStartDate = new Date(customPeriodDates.startDate.split("-")[0], customPeriodDates.startDate.split("-")[1] - 1, customPeriodDates.startDate.split("-")[2]).getTime();
+            const customEndDate = new Date(customPeriodDates.endDate.split("-")[0], customPeriodDates.endDate.split("-")[1] - 1, customPeriodDates.endDate.split("-")[2]).getTime();
+
+            for (let i = 0; i < dataset.length; i++) {
+
+                const currentDate = new Date(dataset[i].date.split("-")[0], dataset[i].date.split("-")[1] - 1, dataset[i].date.split("-")[2]).getTime();
+
+                if (currentDate === customStartDate || currentDate === customEndDate) {
+
+                    if (currentDate === customStartDate) {
+
+                        for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
+                            startDateData[key] = value;
+                        }
+
+                    } else if (currentDate === customEndDate) {
+
+                        for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
+                            endDateData[key] = value;
+                        }
+
+                    }
+
+                    if (typeof startDateData !== "undefined" && typeof endDateData !== "undefined") {
+                        break;
+                    }
+
+                }
+
+            }
+
+            let customPeriodDatas = {};
+
+            for (const [key, value] of Object.entries(endDateData)) {
+                customPeriodDatas[key] = value - startDateData[key];
+            }
+
+            return customPeriodDatas;
 
         }
     }
@@ -171,6 +367,58 @@ export default class DatasCalculator {
             }
 
             return dateElement;
+
+        }
+    }
+    arrayFunctionalities = {
+        sortRegionsArray(array) {
+
+            let newArray = [];
+
+            for (let i = 0; i < array.length; i++) {
+
+                if (newArray.length === 0) {
+
+                    newArray.push(array[i]);
+
+                } else {
+
+                    for (let c = 0; c < newArray.length; c++) {
+
+                        if (array[i].locationData < newArray[c].locationData) {
+
+                            if (c === 0) {
+
+                                newArray.unshift(array[i]);
+
+                            } else if (array[i].locationData > newArray[c - 1].locationData) {
+
+                                newArray.splice(c, 0, array[i]);
+
+                            }
+
+                            break;
+
+                        } else if (array[i].locationData === newArray[c].locationData) {
+
+                            newArray.splice(c, 0, array[i]);
+                            break;
+
+                        } else if (c === newArray.length - 1 && array[i].locationData > newArray[c].locationData) {
+
+                            newArray.push(array[i]);
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            console.log(newArray);
+            return newArray;
 
         }
     }

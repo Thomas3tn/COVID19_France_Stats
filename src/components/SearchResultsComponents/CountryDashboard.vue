@@ -1,9 +1,15 @@
 <template>
-    <div v-if="areDatascomputed === true" class="dashboard">
+    <div v-if="areDatasComputed === true" class="dashboard">
         <div class="dashboard__datasContainer">
-            <location-aside-panel :locationInfos="datas.locationInfos"></location-aside-panel>
-            <country-disease-datas-panel :diseaseDatas="datas.diseaseDatas"></country-disease-datas-panel>
-            
+            <template v-if="formRequestCriteria.locationType === 'global'">
+                <world-disease-datas-panel :diseaseDatas="datas.diseaseDatas"></world-disease-datas-panel>
+            </template>
+            <template v-else>
+                <location-aside-panel :locationInfos="datas.locationInfos" :locationType="formRequestCriteria.locationType"></location-aside-panel>
+                <country-disease-datas-panel v-if="formRequestCriteria.locationType === 'country'" :diseaseDatas="datas.diseaseDatas"></country-disease-datas-panel>
+                <departement-disease-datas-panel v-if="formRequestCriteria.locationType === 'departement'" :diseaseDatas="datas.diseaseDatas"></departement-disease-datas-panel>
+                <continent-disease-datas-panel v-if="formRequestCriteria.locationType === 'continent'" :diseaseDatas="datas.diseaseDatas"></continent-disease-datas-panel>
+            </template>
         </div>
         <a href="#searchForm" class="dashboardBackToTopBtn" title="Retour au formulaire">
         <font-awesome-icon :icon="faLongArrowAltUp" class="dashboardBackToTopBtn__arrow dashboardBackToTopBtn__arrow--left"/>
@@ -22,9 +28,15 @@ import { faLongArrowAltUp } from "@fortawesome/free-solid-svg-icons";
 //Vue components
 import LocationAsidePanel from "./CountryDashboardComponents/LocationAsidePanel.vue";
 import CountryDiseaseDatasPanel from "./CountryDashboardComponents/CountryDiseaseDatasPanel.vue";
+import DepartementDiseaseDatasPanel from "./CountryDashboardComponents/DepartementDiseaseDatasPanel.vue";
+import ContinentDiseaseDatasPanel from "./CountryDashboardComponents/ContinentDiseaseDatasPanel.vue";
+import WorldDiseaseDatasPanel from "./CountryDashboardComponents/WorldDiseaseDatasPanel.vue";
 
 //Static Datas
 import departementsStaticDatas from "../../assets/staticDatas/franceDepartementsDatas.js";
+import continentsStaticDatas from "../../assets/staticDatas/continentsStaticDatas.js";
+
+import DashboardDatasCreator from "../../assets/JSClasses/dashboardDatasCreator.js";
 
 export default {
     props: {
@@ -35,9 +47,11 @@ export default {
     },
     setup(props) {
 
+        console.log(props.formRequestCriteria);
+
         //Vuex
         const store = useStore();
-        let areDatascomputed = ref(false);
+        let areDatasComputed = ref(false);
 
         //Datas object
         let datas = reactive({
@@ -47,7 +61,8 @@ export default {
                 evolutionDatas: {},
                 currentSituation: {},
                 vaccinationDatas: {},
-                relativeDatas: {}
+                relativeDatas: {},
+                regionsDatas: {}
             }
         });
 
@@ -61,117 +76,27 @@ export default {
         //Watch for new user request
         watch(() => { return { ...props.formRequestCriteria } }, (newValue, oldValue) => {
 
-            console.log(newValue);
-
             if (newValue !== oldValue) {
 
-                areDatascomputed.value = false;
+                areDatasComputed.value = false;
+                const dashboardDatasCreator = new DashboardDatasCreator();
 
-                //Get live datas
-                newValue.departement === "" ? datas.diseaseDatas.evolutionDatas = worldLocationEvolutionDatas.value[newValue.country] : datas.diseaseDatas.evolutionDatas = franceDepartementsEvolutionDatas[newValue.departement];
-
-                //Get evolution datas
-                let locationDatas = {};
-                if (newValue.departement !== "") {
-                    //Creating france static datas object key
-                    let staticDatasKey = newValue.departement.split("-")[0] + newValue.departement.split("-")[1];
-                    locationDatas = Object.assign(departementsLiveDatas.value[newValue.departement], departementsStaticDatas[staticDatasKey]);
-                } else {
-                    locationDatas = worldLiveDatas.value[newValue.country]["All"];
+                if (newValue.locationType === "country") {
+                    newValue.country === "France" ? datas = dashboardDatasCreator.getCountryDatas(newValue.country, datas, worldLiveDatas.value, departementsLiveDatas.value): datas = dashboardDatasCreator.getCountryDatas(newValue.country, datas, worldLiveDatas.value);
+                    datas.diseaseDatas.evolutionDatas = worldLocationEvolutionDatas.value[newValue.country];
+                } else if (newValue.locationType === "departement") {
+                    datas = dashboardDatasCreator.getDepartementDatas(newValue.departement, datas, departementsLiveDatas.value, departementsStaticDatas);
+                    datas.diseaseDatas.evolutionDatas = franceDepartementsEvolutionDatas.value[newValue.departement];
+                    console.log(datas);
+                } else if (newValue.locationType === "continent") {
+                    datas = dashboardDatasCreator.getContinentDatas(newValue.continent, datas, worldLiveDatas.value, continentsStaticDatas);
+                } else if (newValue.locationType === "global") {
+                    datas = dashboardDatasCreator.getGlobalDatas(datas, worldLiveDatas.value);
+                    datas.diseaseDatas.evolutionDatas = worldLocationEvolutionDatas.value[newValue.continent];
+                    console.log(datas);
                 }
 
-                //Fill array with to indicate which datas retrieve for each dashboard component
-
-                    let locInfosKeys = [];
-                    let vaccCampKeys = [];
-                    let relDatasKeys = [];
-                    let currSituationKeys = [];
-
-                    if (newValue.departement !== "") {
-
-                        locInfosKeys.push("location", "sq_km_area", "capital_city", "population", "life_expectancy", "lat", "long", "code", "nom", "date", "source", "sourceType");
-                        relDatasKeys.push("population", "sq_km_area", "hospitalizations");
-                        currSituationKeys.push("hospitalizations", "intensive_care", "deaths", "recovered");
-
-                    } else {
-
-                        locInfosKeys.push("country", "demonym", "gini", "population", "sq_km_area", "life_expectancy", "continent", "abbreviation", "location", "capital_city", "lat", "long", "updated");
-                        vaccCampKeys.push("population", "administered", "people_vaccinated", "people_partially_vaccinated");
-                        relDatasKeys.push("population", "sq_km_area", "confirmed");
-                        currSituationKeys.push("confirmed", "deaths", "recovered", "people_vaccinated");
-
-                    }
-
-                    //Distribute datas for each dashboard components
-                    console.log(locationDatas);
-                    for (const [key, value] of Object.entries(locationDatas)) {
-
-                        let currentKey = "";
-                        switch (key) {
-                            case "confirmed":
-                                currentKey = "Cas confirmés"
-                                break;
-                        
-                            case "deaths":
-                                currentKey = "Décès"
-                                break;
-                            
-                            case "recovered":
-                                currentKey = "Guéris"
-                                break;
-                            
-                            case "administered":
-                                currentKey = "Doses administrées"
-                                break;
-                            
-                            case "people_vaccinated":
-                                currentKey = "Personnes vaccinées"
-                                break;
-                            
-                            case "people_partially_vaccinated":
-                                currentKey = "Personnes partiellement vaccinées"
-                                break;
-
-                            case "population":
-                                currentKey = "Population non vaccinée"
-                                break;
-
-                            case "hospitalizations":
-                                currentKey = "Hospitalisations";
-                                break;
-
-                            case "intensive_care":
-                                currentKey = "Réanimations";
-                                break;
-                        
-                            default:
-                                currentKey = "";
-                                break;
-                        }
-
-                        if (locInfosKeys.includes(key)) {
-                            datas.locationInfos[key] = value;
-                        }
-                        if (currSituationKeys.includes(key)) {
-                            datas.diseaseDatas.currentSituation[key] = {
-                                dataName: currentKey,
-                                dataNumber: value
-                            };
-                        }
-                        if (vaccCampKeys.includes(key)) {
-                            datas.diseaseDatas.vaccinationDatas[key] = {
-                                dataName: currentKey,
-                                dataNumber: value
-                            };
-                        }
-                        if (relDatasKeys.includes(key)) {
-                            datas.diseaseDatas.relativeDatas[key] = value;
-                        }
-
-                    }
-
-                console.log(datas.diseaseDatas);
-                areDatascomputed.value = true;
+                areDatasComputed.value = true;
 
             }
 
@@ -184,13 +109,16 @@ export default {
         
         return {
             datas,
-            areDatascomputed,
+            areDatasComputed,
             faLongArrowAltUp
         }
     },
     components: {
         LocationAsidePanel,
-        CountryDiseaseDatasPanel
+        CountryDiseaseDatasPanel,
+        DepartementDiseaseDatasPanel,
+        ContinentDiseaseDatasPanel,
+        WorldDiseaseDatasPanel
     }
 }
 </script>
