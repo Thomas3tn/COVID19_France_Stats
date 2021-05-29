@@ -86,6 +86,18 @@ export default {
     }
 }
 
+@keyframes selectedLocation {
+    0% {
+        background-color: white;
+    }
+    50% {
+        background-color: red;
+    }
+    100% {
+        background-color: white;
+    }
+}
+
 .searchMap {
     position: relative;
     &__headerContainer {
@@ -105,12 +117,15 @@ export default {
         margin: 0;
     }
     &__worldMapBtn {
+        border-radius: 0 5px 5px 0;
+        padding: 2rem 0.5rem;
+        background-color: #93B1A7;
+        color: white;
         animation: buttonAppearance 500ms ease-out both;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
         font-size: 2rem;
-        background-color: rgba(0,0,0,0);
         border: none;
         &:hover {
             cursor: pointer;
@@ -122,6 +137,10 @@ export default {
             margin-left: 0.5rem;
         }
     }
+}
+
+.selectedLocation {
+    fill: blue;
 }
 
 .searchMap path {

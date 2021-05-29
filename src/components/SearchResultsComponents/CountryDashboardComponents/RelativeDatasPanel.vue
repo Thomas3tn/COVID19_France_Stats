@@ -29,6 +29,8 @@ export default {
     },
     setup(props) {
 
+        console.log(props.relativeDatas);
+
         const datasCalculator = new DatasCalculator();
         const defaultValue = "N/A";
 

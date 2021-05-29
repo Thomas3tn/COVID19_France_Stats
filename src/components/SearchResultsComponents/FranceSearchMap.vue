@@ -500,7 +500,7 @@ export default {
 
             //Calculer hopitalisations pour 100.000 habitant pour current departmennt
             let currDepStatDatasKey = mapPaths[i].id.split("-")[0] + mapPaths[i].id.split("-")[1];
-            let hospPerThous = (locationDatas[mapPaths[i].id].hospitalises / staticDatas[currDepStatDatasKey]["population"]) * 100000;
+            let hospPerThous = (locationDatas[mapPaths[i].id].hospitalizations / staticDatas[currDepStatDatasKey]["population"]) * 100000;
 
             for (const keyValue of Object.entries(mapKeys)) {
 

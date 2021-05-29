@@ -1478,7 +1478,6 @@ export default {
 
             if (newValue !== oldValue) {
                 console.log(newValue);
-                //Will highlight the selected country
             }
 
         });

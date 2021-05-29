@@ -1,6 +1,6 @@
 <template>
     <div class="covidInfoCard" tabindex="0">
-        <div class="covidInfoCard__slide1" :id="title">
+        <div class="covidInfoCard__headerSlide" :id="title">
             <div class="covidInfoCard__headerBanner">
                 <div class="covidCardInfo__headerContainer">
                     <h3 class="covidInfoCard__header">{{ cardMainTitle }}</h3>
@@ -9,8 +9,7 @@
                 
             </div>
         </div>
-        <div class="covidInfoCard__slide2"></div>
-        <div class="covidInfoCard__slide3">
+        <div class="covidInfoCard__contentSlide">
             <ul>
                 <li v-for="item in content" :key="item">{{ item }}</li>
             </ul>
@@ -42,7 +41,7 @@ export default {
 
         onMounted(() => {
 
-            let cardBackgroundClass = " covidInfoCard__slide1--";
+            let cardBackgroundClass = " covidInfoCard__headerSlide--";
 
             switch (props.title) {
                 case "Transmission":
@@ -85,21 +84,25 @@ export default {
 </script>
 
 <style lang="scss">
-@keyframes topSlide {
+@keyframes contentAppearance {
     from {
-        transform: translateY(100%);
+        background-color: rgba(0,0,0,0);
+        opacity: 0;
     }
     to {
-        transform: translateY(0%);
+        background-color: rgba(0,0,0,0.4);
+        opacity: 1;
     }
 }
 
-@keyframes bottomSlide {
+@keyframes contentDisappearance {
     from {
-        transform: translateY(0%);
+        background-color: rgba(0,0,0,0.4);
+        opacity: 1;
     }
     to {
-        transform: translateY(100%);
+        background-color: rgba(0,0,0,0);
+        opacity: 0;
     }
 }
 
@@ -123,35 +126,24 @@ export default {
         .covidInfoCard__headerBanner {
             opacity: 0;
         }
-        .covidInfoCard__slide3 {
-            background-color: rgba(0,0,0,0.4);
-        }
         ~ .covidInfoCard {
             position: relative;
             left: 12%;
             transition: 1000ms all ease-in-out;
             
         }
-        .covidInfoCard__slide2 {
-            animation: topSlide 300ms ease-in both;
-            animation-delay: 350ms;
-        }
-        .covidInfoCard__slide3 {
-            animation: topSlide 300ms ease-in-out both;
+        .covidInfoCard__contentSlide {
+            animation: contentAppearance 300ms ease-in-out both;
             animation-delay: 480ms;
         }
     }
     &:not(:hover) {
-        .covidInfoCard__slide2 {
-            animation: bottomSlide 300ms ease-in both;
-            animation-delay: 330ms;
-        }
-        .covidInfoCard__slide3 {
-            animation: bottomSlide 300ms ease-in both;
+        .covidInfoCard__contentSlide {
+            animation: contentDisappearance 300ms ease-in both;
             animation-delay: 150ms;
         }
     }
-    &__slide1 {
+    &__headerSlide {
         transform: translateX(0%);
         transition: all 300ms ease-in-out;
         width: 100%;
@@ -183,18 +175,9 @@ export default {
             background-position: 105% 0%;
         }
     }
-    &__slide2 {
+    &__contentSlide {
         position: absolute;
         height: 100%;
-        width: 100%;
-        transform: translateY(100%);
-        background-color: rgba(0,0,0,0.0);
-    }
-    &__slide3 {
-        position: absolute;
-        background-color: rgba(0,0,0,0.0);
-        height: 100%;
-        transform: translateY(100%);
         width: 100%;
         overflow: auto;
         transition: background-color 1600ms 700ms;

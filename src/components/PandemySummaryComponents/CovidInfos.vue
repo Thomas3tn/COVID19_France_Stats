@@ -85,6 +85,7 @@ export default {
     background-color: #93B1A7;
     color: white;
     padding: 2.5rem;
+    overflow: hidden;
     &__textContainer {
         display: flex;
         justify-content: space-between;
@@ -107,7 +108,8 @@ export default {
         padding: 2rem 0;
         display: flex;
         justify-content: center;
-        padding-left: 30%;
+        position: relative;
+        left: 60px;
     }
 }
 </style>

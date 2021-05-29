@@ -2,15 +2,16 @@
     <div class="datasPanel weeklyDailyDatasPanel">
         <div class="datasPanel__headerContainer weeklyDailyDatasPanel__headerContainer">
             <div class="weeklyDailyDatasPanel__btnsPart">
-                <button @click="displayedDatatype = 'dailyDatas'" title="Tendance quotidienne" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--left"><h3>Tendance quotidienne</h3></button>
+                <button @click="displayedDatatype = 'dailyDatas'" id="dailyDatasEvoBtn" title="Tendance quotidienne" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--left"><h3>Tendance quotidienne</h3></button>
                 <p>/</p>
-                <button @click="displayedDatatype = 'weeklyDatas'" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3>Tendance hebdomadaire</h3></button>
+                <button @click="displayedDatatype = 'weeklyDatas'" id="weeklyDatasEvoBtn" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3>Tendance hebdomadaire</h3></button>
                 <template v-if="datas.customPeriodDatas.confirmed !== null">
                     <p>/</p>
                     <button @click="displayedDatatype = 'customPeriodDatas'" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent">{{ customPeriodBtnContent }}</button>
                 </template>
             </div>
             <form @submit.prevent="customPeriodSubmission" class="weeklyDailyDatasPanel__customPeriodForm">
+                <i class="far fa-calendar-alt"></i>
                 <div class="weeklyDailyDatasPanel__dateInputContainer">
                     <i class="far fa-calendar-alt"></i>
                     <div class="weeklyDailyDatasPanel__inputPart">
@@ -29,19 +30,25 @@
             </form>
         </div>
         <div class="datasPanel__contentContainer weeklyDailyDatasPanel__contentContainer">
-            <stat-item v-for="item in displayedDatas" :key="item.dataName" :statNumber="item.dataNumber" :statName="item.dataName"></stat-item>
+            <template v-for="item in displayedDatas" :key="item.dataName">
+                <stat-item v-if="item.dataNumber !== null" :statNumber="item.dataNumber" :statName="item.dataName"></stat-item>
+            </template>
         </div>
     </div>
 </template>
 
 <script>
 import StatItem from "./statItem.vue";
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
 
 import DatasCalculator from "../../../assets/JSClasses/DatasCalculator.js";
 
 export default {
     props: {
+        locationType: {
+            type: String,
+            required: true
+        },
         locationEvolutionDatas: {
             type: Object,
             required: true
@@ -49,7 +56,7 @@ export default {
     },
     setup(props) {
 
-        console.log(props.locationEvolutionDatas);
+        console.log(props.locationEvolutionDatas, props.locationType);
 
         let datasCalculator = new DatasCalculator();
 
@@ -66,19 +73,25 @@ export default {
         //Store all period types datas
         let datas = reactive({
             dailyDatas: {
-                confirmed: 0,
-                deaths: 0,
-                recovered: 0,
+                confirmed: null,
+                deaths: null,
+                recovered: null,
+                hospitalizations: null,
+                intensiveCare: null
             },
             weeklyDatas: {
-                confirmed: 0,
-                deaths: 0,
-                recovered: 0,
+                confirmed: null,
+                deaths: null,
+                recovered: null,
+                hospitalizations: null,
+                intensiveCare: null
             },
             customPeriodDatas: {
                 confirmed: null,
                 deaths: null,
-                recovered: null
+                recovered: null,
+                hospitalizations: null,
+                intensiveCare: null
             }
         });
 
@@ -98,6 +111,14 @@ export default {
             recovered: {
                 dataName: "Guéris",
                 dataNumber: datas.dailyDatas.recovered
+            },
+            hospitalizations: {
+                dataName: "Hospitalisations",
+                dataNumber: datas.dailyDatas.hospitalizations
+            },
+            intensiveCare: {
+                dataName: "Réanimations",
+                dataNumber: datas.dailyDatas.intensiveCare
             }
         });
 
@@ -121,27 +142,54 @@ export default {
 
         function getPeriodEvolutionDatas(action = false) {
 
-            const keysToIgnore = ["creation_date"];
+            if (props.locationType === "country" || props.locationType === "global") {
 
-            for (const [key, value] of Object.entries(props.locationEvolutionDatas)) {
+                const keysToIgnore = ["creation_date"];
 
-                if (keysToIgnore.includes(key) === false) {
+                for (const [key, value] of Object.entries(props.locationEvolutionDatas)) {
 
-                    if (action === false || action === "weeklyDailyEvolution") {
+                    if (keysToIgnore.includes(key) === false) {
 
-                        let results = datasCalculator.datasListFunctionalities.getWeeklyDailyEvolution(value);
-                        datas.dailyDatas[key] = results.dailyEvolution;
-                        datas.weeklyDatas[key] = results.weeklyEvolution;
+                        if (action === false || action === "weeklyDailyEvolution") {
 
-                    } else if (action === "customPeriodEvolution") {
+                            let results = datasCalculator.datasListFunctionalities.getWeeklyDailyEvolution(value);
+                            datas.dailyDatas[key] = results.dailyEvolution;
+                            datas.weeklyDatas[key] = results.weeklyEvolution;
 
-                        let result = datasCalculator.datasListFunctionalities.getCustomPeriodEvolution(value, customPeriodDates);
-                        datas.customPeriodDatas[key] = result;
+                        } else if (action === "customPeriodEvolution") {
 
+                            let result = datasCalculator.datasListFunctionalities.getCustomPeriodEvolution(value, customPeriodDates);
+                            datas.customPeriodDatas[key] = result;
+
+                        }
+
+                    }
+                
+                }
+
+            } else if (props.locationType === "departement") {
+
+                if (action === false || action === "weeklyDailyEvolution") {
+
+                    let results = datasCalculator.datasListFunctionalities.getDepartementWeeklyDailyEvolution(props.locationEvolutionDatas.datas);
+                    console.log(results);
+                    for (const [datasKey, datasValue] of Object.entries(results)) {
+                        console.log(datasKey)
+                        for (const [key, value] of Object.entries(datasValue)) {
+                            datas[datasKey][key] = value;
+                        }
+
+                    }
+                
+                } else if (action === "customPeriodEvolution") {
+
+                    let results = datasCalculator.datasListFunctionalities.getDepartementCustomPeriodEvolution(props.locationEvolutionDatas.datas, customPeriodDates);
+                    for (const [key, value] of Object.entries(results)) {
+                        datas.customPeriodDatas[key] = value;
                     }
 
                 }
-            
+
             }
 
         }
@@ -161,6 +209,10 @@ export default {
 
         getPeriodEvolutionDatas();
 
+        onMounted(() => {
+            document.getElementById(displayedDatatype.value + "EvoBtn").className = " selectedBtn";
+        });
+
         watch(displayedDatatype, (newValue, oldValue) => {
 
             if (newValue !== oldValue) {
@@ -168,6 +220,40 @@ export default {
                 displayedDatas.confirmed.dataNumber = datas[newValue]["confirmed"];
                 displayedDatas.deaths.dataNumber = datas[newValue]["deaths"];
                 displayedDatas.recovered.dataNumber = datas[newValue]["recovered"];
+
+                /*if (typeof document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button") !== "undefined") {
+
+                    let btns = document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button");
+                    console.log(btns.length);
+
+                    for (let i = 0; i < btns.length; i++) {
+
+                        if (btns[i].className !== "") {
+
+                            let currentElementClasses = btns[i].split(" ");
+
+                            if (currentElementClasses.includes("selectedBtn")) {
+
+                                for (let c = 0; c < currentElementClasses.length; c++) {
+
+                                    if (currentElementClasses[c] === "selectedBtn") {
+                                        currentElementClasses.splice(c, 1);
+                                        break;
+                                    }
+
+                                }
+
+                                btns[i].className = currentElementClasses.join(" ");
+
+                            }
+
+                        }
+
+                    }
+
+                    document.getElementById(displayedDatatype.value + "EvoBtn").className === "" ? document.getElementById(displayedDatatype.value + "EvoBtn").className = "selectedBtn" : document.getElementById(displayedDatatype.value + "EvoBtn").className += " selectedBtn";
+
+                }*/
 
             }
 
@@ -196,6 +282,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: relative;
     }
     &__btn {
         cursor: pointer;
@@ -220,6 +307,15 @@ export default {
     }
     &__customPeriodForm {
         display: flex;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        transform: translateX(0%);
+        transition: all 300ms;
+        &:hover {
+            transform: translateX(-95%);
+        }
     }
     &__dateInputContainer {
         display: flex;

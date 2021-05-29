@@ -25,8 +25,7 @@ export default {
     },
     setup(props) {
 
-        console.log(props.vaccinationDatas.population.dataNumber);
-        console.log(props);
+        console.log(props.vaccinationDatas);
 
         let chartDatas = reactive({
             labels: [props.vaccinationDatas.population.dataName, props.vaccinationDatas.people_partially_vaccinated.dataName, props.vaccinationDatas.people_vaccinated.dataName],

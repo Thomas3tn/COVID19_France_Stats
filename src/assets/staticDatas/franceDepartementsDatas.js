@@ -6,7 +6,8 @@ export default {
         population: 647634,
         life_expectancy: 83.45,
         lat: 46.0655134,
-        long: 5.2847803
+        long: 5.2847803,
+        demonym: "Aindinois(es)"
     },
     DEP02: {
         location: "Hauts-de-France",
@@ -15,7 +16,8 @@ export default {
         population: 533316,
         life_expectancy: 80.15,
         lat: 49.4532854,
-        long: 3.606899
+        long: 3.606899,
+        demonym: "Axonais(es)"
     },
     DEP03: {
         population: 337171,
@@ -24,7 +26,8 @@ export default {
         capital_city: "Moulins",
         life_expectancy: 81.2,
         lat: 46.3674641,
-        long: 3.1638828
+        long: 3.1638828,
+        demonym: "Bourbonnais(es)"
     },
     DEP04: {
         population: 164068,
@@ -33,7 +36,8 @@ export default {
         capital_city: "Digne-les-Bains",
         life_expectancy: 82.15,
         lat: 44.1640832,
-        long: 6.1878515
+        long: 6.1878515,
+        demonym: "Bas-Alpins/Alpins de Haute-Provence"
     },
     DEP05: {
         population: 140698,
@@ -42,7 +46,8 @@ export default {
         capital_city: "Gap",
         life_expectancy: 83.35,
         lat: 44.6564666,
-        long: 6.3520246
+        long: 6.3520246,
+        demonym: "Haut-Alpins"
     },
     DEP06: {
         population: 1086219,
@@ -51,7 +56,8 @@ export default {
         capital_city: "Nice",
         life_expectancy: 83.15,
         lat: 43.9210587,
-        long: 7.1790785
+        long: 7.1790785,
+        demonym: ""
     },
     DEP07: {
         population: 326606,
@@ -60,7 +66,8 @@ export default {
         capital_city: "Privas",
         life_expectancy: 82.6,
         lat: 44.815194,
-        long: 4.3986525
+        long: 4.3986525,
+        demonym: ""
     },
     DEP08: {
         population: 271845,
@@ -69,7 +76,8 @@ export default {
         capital_city: "Charleville-Mézières",
         life_expectancy: 80.75,
         lat: 49.6980117,
-        long: 4.6716005
+        long: 4.6716005,
+        demonym: ""
     },
     DEP09: {
         population: 153066,
@@ -78,7 +86,8 @@ export default {
         capital_city: "Foix",
         life_expectancy: 81.85,
         lat: 42.9455368,
-        long: 1.4065544
+        long: 1.4065544,
+        demonym: ""
     },
     DEP10: {
         population: 310020,
@@ -87,7 +96,8 @@ export default {
         capital_city: "Troyes",
         life_expectancy: 81.1,
         lat: 48.3201921,
-        long: 4.1905397
+        long: 4.1905397,
+        demonym: ""
     },
     DEP11: {
         population: 372806,
@@ -96,7 +106,8 @@ export default {
         location: "Occitanie",
         life_expectancy: 82.25,
         lat: 43.0542733,
-        long: 2.5124715
+        long: 2.5124715,
+        demonym: ""
     },
     DEP12: {
         population: 279274,
@@ -105,7 +116,8 @@ export default {
         location: "Occitanie",
         life_expectancy: 83.1,
         lat: 44.3158574,
-        long: 2.5065697
+        long: 2.5065697,
+        demonym: ""
     },
     DEP13: {
         population: 2034357,
@@ -114,7 +126,8 @@ export default {
         location: "Provence-Alpes-Côte d'Azur",
         life_expectancy: 82.85,
         lat: 43.5424182,
-        long: 5.0343236
+        long: 5.0343236,
+        demonym: ""
     },
     DEP14: {
         population: 694056,
@@ -123,7 +136,8 @@ export default {
         location: "Normandie",
         life_expectancy: 81.75,
         lat: 49.0907648,
-        long: -0.2413951
+        long: -0.2413951,
+        demonym: ""
     },
     DEP15: {
         population: 144765,
@@ -132,7 +146,8 @@ export default {
         location: "Auvergne-Rhône-Alpes",
         life_expectancy: 81.35,
         lat: 45.0497701,
-        long: 2.6997176
+        long: 2.6997176,
+        demonym: ""
     },
     DEP16: {
         population: 351778,
@@ -141,7 +156,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 81.95,
         lat: 45.6667902,
-        long: 0.097305
+        long: 0.097305,
+        demonym: ""
     },
     DEP17: {
         population: 646932,
@@ -150,7 +166,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 82.2,
         lat: 45.7302267,
-        long: -0.7212876
+        long: -0.7212876,
+        demonym: ""
     },
     DEP18: {
         population: 303408,
@@ -159,7 +176,8 @@ export default {
         location: "Centre-Val de Loire",
         life_expectancy: 80.65,
         lat: 47.0248824,
-        long: 2.5753334
+        long: 2.5753334,
+        demonym: ""
     },
     DEP19: {
         population: 240583,
@@ -168,7 +186,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 81.8,
         lat: 45.3429047,
-        long: 1.8176424
+        long: 1.8176424,
+        demonym: ""
     },
     DEP2A: {
         population: 157853,
@@ -177,7 +196,8 @@ export default {
         location: "Corse",
         life_expectancy: 83.6,
         lat: 41.8734082,
-        long: 9.0087052
+        long: 9.0087052,
+        demonym: ""
     },
     DEP2B: {
         population: 180701,
@@ -186,7 +206,8 @@ export default {
         location: "Corse",
         life_expectancy: 83.3,
         lat: 42.4219698,
-        long: 9.1009065
+        long: 9.1009065,
+        demonym: ""
     },
     DEP21: {
         population: 533220,
@@ -195,7 +216,8 @@ export default {
         location: "Bourgogne-Franche-Comté",
         life_expectancy: 82.9,
         lat: 47.4655034,
-        long: 4.7481223
+        long: 4.7481223,
+        demonym: ""
     },
     DEP22: {
         population: 599584,
@@ -204,7 +226,8 @@ export default {
         location: "Bretagne",
         life_expectancy: 81.3,
         lat: 48.4584222,
-        long: -2.7505868
+        long: -2.7505868,
+        demonym: ""
     },
     DEP23: {
         population: 117503,
@@ -213,7 +236,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 81.2,
         lat: 46.0593485,
-        long: 2.048901
+        long: 2.048901,
+        demonym: ""
     },
     DEP24: {
         population: 413418,
@@ -222,7 +246,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 82.2,
         lat: 45.1429198,
-        long: 0.6321258
+        long: 0.6321258,
+        demonym: ""
     },
     DEP25: {
         population: 541454,
@@ -231,7 +256,8 @@ export default {
         location: "Bourgogne-Franche-Comté",
         life_expectancy: 82.15,
         lat: 47.0669915,
-        long: 6.2356228
+        long: 6.2356228,
+        demonym: ""
     },
     DEP26: {
         population: 514732,
@@ -240,7 +266,8 @@ export default {
         location: "Auvergne-Rhône-Alpes",
         life_expectancy: 82.6,
         lat: 44.7296458,
-        long: 5.2045596
+        long: 5.2045596,
+        demonym: ""
     },
     DEP27: {
         population: 599962,
@@ -249,7 +276,8 @@ export default {
         location: "Normandie",
         life_expectancy: 81.45,
         lat: 49.0756358,
-        long: 0.9652026
+        long: 0.9652026,
+        demonym: ""
     },
     DEP28: {
         population: 431997,
@@ -258,7 +286,8 @@ export default {
         location: "Centre-Val de Loire",
         life_expectancy: 82.15,
         lat: 48.4474102,
-        long: 1.399882
+        long: 1.399882,
+        demonym: ""
     },
     DEP29: {
         population: 911735,
@@ -267,7 +296,8 @@ export default {
         location: "Bretagne",
         life_expectancy: 81.5,
         lat: 48.2451152,
-        long: -4.0440902
+        long: -4.0440902,
+        demonym: ""
     },
     DEP30: {
         population: 745458,
@@ -276,7 +306,8 @@ export default {
         location: "Occitanie",
         life_expectancy: 82.45,
         lat: 43.95995,
-        long: 4.297637
+        long: 4.297637,
+        demonym: ""
     },
     DEP31: {
         population: 1380672,
@@ -285,7 +316,8 @@ export default {
         location: "Occitanie",
         life_expectancy: 83.75,
         lat: 43.3054546,
-        long: 0.9716792
+        long: 0.9716792,
+        demonym: ""
     },
     DEP32: {
         population: 191283,
@@ -294,7 +326,8 @@ export default {
         location: "Occitanie",
         life_expectancy: 82.5,
         lat: 43.6955276,
-        long: 0.4101019
+        long: 0.4101019,
+        demonym: ""
     },
     DEP33: {
         population: 1601845,
@@ -303,7 +336,8 @@ export default {
         sq_km_area: 9975,
         life_expectancy: 83.1,
         lat: 44.883746,
-        long: -0.6051264
+        long: -0.6051264,
+        demonym: ""
     },
     DEP34: {
         population: 1159220,
@@ -312,7 +346,8 @@ export default {
         sq_km_area: 6224,
         life_expectancy: 82.8,
         lat: 43.591422,
-        long: 3.3553309
+        long: 3.3553309,
+        demonym: ""
     },
     DEP35: {
         population: 1069228,
@@ -320,7 +355,8 @@ export default {
         sq_km_area: 6775,
         life_expectancy: 83.15,
         lat: 48.1727681,
-        long: -1.6498092
+        long: -1.6498092,
+        demonym: ""
     },
     DEP36: {
         population: 220595,
@@ -329,7 +365,8 @@ export default {
         location: "Centre-Val de Loire",
         life_expectancy: 81.3,
         lat: 46.8121056,
-        long: 1.5382052
+        long: 1.5382052,
+        demonym: ""
     },
     DEP37: {
         population: 607760,
@@ -338,7 +375,8 @@ export default {
         location: "Centre-Val de Loire",
         life_expectancy: 83.1,
         lat: 47.2232046,
-        long: 0.6866703
+        long: 0.6866703,
+        demonym: ""
     },
     DEP38: {
         population: 1263563,
@@ -347,7 +385,8 @@ export default {
         location: "Auvergne-Rhône-Alpes",
         life_expectancy: 83.55,
         lat: 45.2897932,
-        long: 5.6343825
+        long: 5.6343825,
+        demonym: ""
     },
     DEP39: {
         population: 259746,
@@ -356,7 +395,8 @@ export default {
         location: "Bourgogne-Franche-Comté",
         life_expectancy: 82.55,
         lat: 46.7833625,
-        long: 5.7832857
+        long: 5.7832857,
+        demonym: ""
     },
     DEP40: {
         population: 410355,
@@ -365,7 +405,8 @@ export default {
         location: "Nouvelle-Aquitaine",
         life_expectancy: 82.65,
         lat: 44.0099694,
-        long: -0.6433872
+        long: -0.6433872,
+        demonym: ""
     },
     DEP41: {
         population: 330248,
@@ -374,7 +415,8 @@ export default {
         location: "Centre-Val de Loire",
         life_expectancy: 82.15,
         lat: 47.6597752,
-        long: 1.2971835
+        long: 1.2971835,
+        demonym: ""
     },
     DEP42: {
         population: 763441,
@@ -383,7 +425,8 @@ export default {
         sq_km_area: 4781,
         life_expectancy: 82.9,
         lat: 45.7538536,
-        long: 4.0454737
+        long: 4.0454737,
+        demonym: ""
     },
     DEP43: {
         population: 227552,
@@ -392,7 +435,8 @@ export default {
         location: "Auvergne-Rhône-Alpes",
         life_expectancy: 82.4,
         lat: 45.0857249,
-        long: 3.8338261
+        long: 3.8338261,
+        demonym: ""
     },
     DEP44: {
         population: 1412502,
@@ -401,7 +445,8 @@ export default {
         location: "Pays de la Loire",
         life_expectancy: 82.65,
         lat: 47.3481614,
-        long: -1.8727461
+        long: -1.8727461,
+        demonym: ""
     },
     DEP45: {
         population: 678845,
@@ -410,7 +455,8 @@ export default {
         sq_km_area: 6775,
         life_expectancy: 82.65,
         lat: 47.9138724,
-        long: 2.3075036
+        long: 2.3075036,
+        demonym: ""
     },
     DEP46: {
         population: 173929,
@@ -419,7 +465,8 @@ export default {
         sq_km_area: 5217,
         life_expectancy: 82.35,
         lat: 44.6249918,
-        long: 1.6657742
+        long: 1.6657742,
+        demonym: ""
     },
     DEP47: {
         population: 331970,
@@ -428,7 +475,8 @@ export default {
         sq_km_area: 5361,
         life_expectancy: 82.25,
         lat: 44.3691703,
-        long: 0.4539158
+        long: 0.4539158,
+        demonym: ""
     },
     DEP48: {
         population: 76520,
@@ -437,7 +485,8 @@ export default {
         sq_km_area: 5167,
         life_expectancy: 81.95,
         lat: 44.5425706,
-        long: 3.5211146
+        long: 3.5211146,
+        demonym: ""
     },
     DEP49: {
         population: 814883,
@@ -446,7 +495,8 @@ export default {
         sq_km_area: 7106,
         life_expectancy: 83.35,
         lat: 47.3886305,
-        long: -0.3909097
+        long: -0.3909097,
+        demonym: ""
     },
     DEP50: {
         population: 495983,
@@ -455,7 +505,8 @@ export default {
         sq_km_area: 5938,
         life_expectancy: 82.1,
         lat: 49.0918952,
-        long: -1.2454371
+        long: -1.2454371,
+        demonym: ""
     },
     DEP51: {
         population: 567462,
@@ -464,7 +515,8 @@ export default {
         sq_km_area: 8169,
         life_expectancy: 81.8,
         lat: 48.961264,
-        long: 4.3122436
+        long: 4.3122436,
+        demonym: ""
     },
     DEP52: {
         population: 174069,
@@ -473,7 +525,8 @@ export default {
         sq_km_area: 6211,
         life_expectancy: 80.8,
         lat: 48.1329414,
-        long: 5.2529108
+        long: 5.2529108,
+        demonym: ""
     },
     DEP53: {
         population: 307084,
@@ -482,7 +535,8 @@ export default {
         sq_km_area: 5175,
         life_expectancy: 83,
         lat: 48.1507819,
-        long: -0.6491274
+        long: -0.6491274,
+        demonym: ""
     },
     DEP54: {
         population: 733469,
@@ -491,7 +545,8 @@ export default {
         sq_km_area: 5246,
         life_expectancy: 82.2,
         lat: 48.9559682,
-        long: 5.9870383
+        long: 5.9870383,
+        demonym: ""
     },
     DEP55: {
         population: 185355,
@@ -500,7 +555,8 @@ export default {
         sq_km_area: 6211,
         life_expectancy: 81.05,
         lat: 49.0129685,
-        long: 5.4286691
+        long: 5.4286691,
+        demonym: ""
     },
     DEP56: {
         population: 754867,
@@ -509,7 +565,8 @@ export default {
         sq_km_area: 6823,
         life_expectancy: 81.65,
         lat: 47.8259812,
-        long: -2.7633493
+        long: -2.7633493,
+        demonym: ""
     },
     DEP57: {
         population: 1043524,
@@ -518,7 +575,8 @@ export default {
         sq_km_area: 6216,
         life_expectancy: 81.4,
         lat: 49.0207259,
-        long: 6.5380352
+        long: 6.5380352,
+        demonym: ""
     },
     DEP58: {
         population: 205828,
@@ -527,7 +585,8 @@ export default {
         sq_km_area: 6817,
         life_expectancy: 80.5,
         lat: 47.119697,
-        long: 3.5448898
+        long: 3.5448898,
+        demonym: ""
     },
     DEP59: {
         population: 2606234,
@@ -536,7 +595,8 @@ export default {
         sq_km_area: 5743,
         life_expectancy: 80.7,
         lat: 50.5289671,
-        long: 3.0883524
+        long: 3.0883524,
+        demonym: ""
     },
     DEP60: {
         population: 827153,
@@ -545,7 +605,8 @@ export default {
         sq_km_area: 5860,
         life_expectancy: 81.65,
         lat: 49.4120546,
-        long: 2.4064878
+        long: 2.4064878,
+        demonym: ""
     },
     DEP61: {
         population: 281593,
@@ -554,7 +615,8 @@ export default {
         sq_km_area: 6103,
         life_expectancy: 81.5,
         lat: 48.5760533,
-        long: 0.0446617
+        long: 0.0446617,
+        demonym: ""
     },
     DEP62: {
         population: 1466743,
@@ -563,7 +625,8 @@ export default {
         sq_km_area: 6671,
         life_expectancy: 80.2,
         lat: 50.5144061,
-        long: 2.2580078
+        long: 2.2580078,
+        demonym: ""
     },
     DEP63: {
         population: 659048,
@@ -572,7 +635,8 @@ export default {
         sq_km_area: 7970,
         life_expectancy: 82.4,
         lat: 45.7715343,
-        long: 3.0839934
+        long: 3.0839934,
+        demonym: ""
     },
     DEP64: {
         population: 679810,
@@ -581,7 +645,8 @@ export default {
         sq_km_area: 7645,
         life_expectancy: 83.35,
         lat: 43.1871865,
-        long: -0.7282474
+        long: -0.7282474,
+        demonym: ""
     },
     DEP65: {
         population: 229191,
@@ -590,7 +655,8 @@ export default {
         sq_km_area: 4464,
         life_expectancy: 82.35,
         lat: 43.1437925,
-        long: 0.1586661
+        long: 0.1586661,
+        demonym: ""
     },
     DEP66: {
         population: 476357,
@@ -599,7 +665,8 @@ export default {
         sq_km_area: 4116,
         life_expectancy: 81.8,
         lat: 42.625894,
-        long: 2.506509
+        long: 2.506509,
+        demonym: ""
     },
     DEP67: {
         population: 1133552,
@@ -608,7 +675,8 @@ export default {
         sq_km_area: 4755,
         life_expectancy: 82.5,
         lat: 48.5991783,
-        long: 7.5338186
+        long: 7.5338186,
+        demonym: ""
     },
     DEP68: {
         population: 764981,
@@ -617,7 +685,8 @@ export default {
         sq_km_area: 3525,
         life_expectancy: 82.45,
         lat: 47.8654746,
-        long: 7.2315433
+        long: 7.2315433,
+        demonym: ""
     },
     DEP69: {
         population: 1859524,
@@ -626,7 +695,8 @@ export default {
         sq_km_area: 3249,
         life_expectancy: 83.95,
         lat: 45.8802348,
-        long: 4.5645336
+        long: 4.5645336,
+        demonym: ""
     },
     DEP70: {
         population: 236018,
@@ -635,7 +705,8 @@ export default {
         sq_km_area: 5360,
         life_expectancy: 81.55,
         lat: 47.6384233,
-        long: 6.0951141
+        long: 6.0951141,
+        demonym: ""
     },
     DEP71: {
         population: 552185,
@@ -644,7 +715,8 @@ export default {
         sq_km_area: 8575,
         life_expectancy: 82.05,
         lat: 46.6557086,
-        long: 4.5585548
+        long: 4.5585548,
+        demonym: ""
     },
     DEP72: {
         population: 565963,
@@ -653,7 +725,8 @@ export default {
         sq_km_area: 6206,
         life_expectancy: 82.3,
         lat: 48.0269287,
-        long: 0.2538217
+        long: 0.2538217,
+        demonym: ""
     },
     DEP73: {
         population: 433724,
@@ -662,7 +735,8 @@ export default {
         sq_km_area: 6028,
         life_expectancy: 83.5,
         lat: 45.4948952,
-        long: 6.3846604
+        long: 6.3846604,
+        demonym: ""
     },
     DEP74: {
         population: 816699,
@@ -671,7 +745,8 @@ export default {
         sq_km_area: 4388,
         life_expectancy: 83.35,
         lat: 46.0688208,
-        long: 6.344537
+        long: 6.344537,
+        demonym: ""
     },
     DEP75: {
         population: 2175601,
@@ -680,7 +755,8 @@ export default {
         sq_km_area: 105,
         life_expectancy: 84.45,
         lat: 48.8566969,
-        long: 2.3514616
+        long: 2.3514616,
+        demonym: ""
     },
     DEP76: {
         population: 1255883,
@@ -689,7 +765,8 @@ export default {
         sq_km_area: 6278,
         life_expectancy: 81.35,
         lat: 49.6632374,
-        long: 0.9401134
+        long: 0.9401134,
+        demonym: ""
     },
     DEP77: {
         population: 1412516,
@@ -698,7 +775,8 @@ export default {
         sq_km_area: 5915,
         life_expectancy: 82.95,
         lat: 48.6190207,
-        long: 3.0418158
+        long: 3.0418158,
+        demonym: ""
     },
     DEP78: {
         population: 1441398,
@@ -707,7 +785,8 @@ export default {
         sq_km_area: 2284,
         life_expectancy: 84.25,
         lat: 48.7620373,
-        long: 1.8871376
+        long: 1.8871376,
+        demonym: ""
     },
     DEP79: {
         population: 374799,
@@ -716,7 +795,8 @@ export default {
         sq_km_area: 5999,
         life_expectancy: 82.75,
         lat: 46.53914,
-        long: -0.2994785
+        long: -0.2994785,
+        demonym: ""
     },
     DEP80: {
         population: 570662,
@@ -725,7 +805,8 @@ export default {
         sq_km_area: 6170,
         life_expectancy: 80.5,
         lat: 49.9689714,
-        long: 2.373859
+        long: 2.373859,
+        demonym: ""
     },
     DEP81: {
         population: 388596,
@@ -734,7 +815,8 @@ export default {
         sq_km_area: 5758,
         life_expectancy: 82.8,
         lat: 43.7921741,
-        long: 2.1339648
+        long: 2.1339648,
+        demonym: ""
     },
     DEP82: {
         population: 259124,
@@ -743,7 +825,8 @@ export default {
         sq_km_area: 3717,
         life_expectancy: 82.65,
         lat: 44.080656,
-        long: 1.2050633
+        long: 1.2050633,
+        demonym: ""
     },
     DEP83: {
         population: 1067697,
@@ -752,7 +835,8 @@ export default {
         sq_km_area: 5973,
         life_expectancy: 82.6,
         lat: 43.4173592,
-        long: 6.266462
+        long: 6.266462,
+        demonym: ""
     },
     DEP84: {
         population: 559793,
@@ -761,7 +845,8 @@ export default {
         sq_km_area: 3520,
         life_expectancy: 82.15,
         lat: 43.9938643,
-        long: 5.1818898
+        long: 5.1818898,
+        demonym: ""
     },
     DEP85: {
         population: 679991,
@@ -770,7 +855,8 @@ export default {
         sq_km_area: 6719,
         life_expectancy: 82.55,
         lat: 46.6757732,
-        long: -1.2914463
+        long: -1.2914463,
+        demonym: ""
     },
     DEP86: {
         population: 437586,
@@ -779,7 +865,8 @@ export default {
         sq_km_area: 6990,
         life_expectancy: 82.7,
         lat: 46.6121165,
-        long: 0.465407
+        long: 0.465407,
+        demonym: ""
     },
     DEP87: {
         population: 373199,
@@ -788,7 +875,8 @@ export default {
         sq_km_area: 5520,
         life_expectancy: 82.25,
         lat: 45.9190192,
-        long: 1.2031768
+        long: 1.2031768,
+        demonym: ""
     },
     DEP88: {
         population: 366112,
@@ -797,7 +885,8 @@ export default {
         sq_km_area: 5874,
         life_expectancy: 81.2,
         lat: 48.163786,
-        long: 6.3820712
+        long: 6.3820712,
+        demonym: ""
     },
     DEP89: {
         population: 337504,
@@ -806,7 +895,8 @@ export default {
         sq_km_area: 7427,
         life_expectancy: 80.7,
         lat: 47.8551257,
-        long: 3.6450439
+        long: 3.6450439,
+        demonym: ""
     },
     DEP90: {
         population: 141852,
@@ -815,7 +905,8 @@ export default {
         sq_km_area: 609,
         life_expectancy: 81.3,
         lat: 47.629231,
-        long: 6.8993012
+        long: 6.8993012,
+        demonym: ""
     },
     DEP91: {
         population: 1296641,
@@ -824,7 +915,8 @@ export default {
         sq_km_area: 1804,
         life_expectancy: 83.85,
         lat: 48.5303402,
-        long: 2.2392918
+        long: 2.2392918,
+        demonym: ""
     },
     DEP92: {
         population: 1619120,
@@ -833,7 +925,8 @@ export default {
         sq_km_area: 176,
         life_expectancy: 84.55,
         lat: 48.8401859,
-        long: 2.1986412
+        long: 2.1986412,
+        demonym: ""
     },
     DEP93: {
         population: 1632677,
@@ -842,7 +935,8 @@ export default {
         sq_km_area: 236,
         life_expectancy: 82.35,
         lat: 48.9098125,
-        long: 2.4528635
+        long: 2.4528635,
+        demonym: ""
     },
     DEP94: {
         population: 1396913,
@@ -851,7 +945,8 @@ export default {
         sq_km_area: 245,
         life_expectancy: 83.8,
         lat: 48.7744893,
-        long: 2.4543321
+        long: 2.4543321,
+        demonym: ""
     },
     DEP95: {
         population: 1238581,
@@ -860,7 +955,8 @@ export default {
         sq_km_area: 1246,
         life_expectancy: "",
         lat: 49.0750704,
-        long: 2.2098114
+        long: 2.2098114,
+        demonym: ""
     },
     DEP971: {
         population: 387629,
@@ -869,7 +965,8 @@ export default {
         sq_km_area: 1628,
         life_expectancy: 82.95,
         lat: 16.2305103,
-        long: -61.687126
+        long: -61.687126,
+        demonym: ""
     },
     DEP972: {
         population: 368783,
@@ -878,7 +975,8 @@ export default {
         sq_km_area: 1128,
         life_expectancy: 80.55,
         lat: 14.6367927,
-        long: -61.0158269
+        long: -61.0158269,
+        demonym: ""
     },
     DEP973: {
         population: 276128,
@@ -887,7 +985,8 @@ export default {
         sq_km_area: 83846,
         life_expectancy: 80.2,
         lat: 4.0039882,
-        long: -52.999998
+        long: -52.999998,
+        demonym: ""
     },
     DEP974: {
         population: 855961,
@@ -896,7 +995,8 @@ export default {
         sq_km_area: 2512,
         life_expectancy: 81.6,
         lat: -21.1307379,
-        long: 55.5364801
+        long: 55.5364801,
+        demonym: ""
     },
     DEP976: {
         population: 256518,
@@ -905,6 +1005,7 @@ export default {
         sq_km_area: 376,
         life_expectancy: "N/A",
         lat: -12.8253862,
-        long: 45.1486261
+        long: 45.1486261,
+        demonym: ""
     }
 }

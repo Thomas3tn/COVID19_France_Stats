@@ -1,7 +1,7 @@
 <template>
     <div class="diseaseDatasPanel">
         <current-situation-panel :currentSituationDatas="diseaseDatas.currentSituation"></current-situation-panel>
-        <detailed-geo-datas-panel v-if="detailedGeoDatasPanelCountries.includes(diseaseDatas.country)" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
+        <detailed-geo-datas-panel v-if="detailedGeoDatasPanelCountries.includes(diseaseDatas.country)" :locationRegionsDatas="diseaseDatas.regionsDatas" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
         <div class="diseaseDatasPanel__vaccRelDatasContainer">
             <vaccination-chart v-if="Object.entries(diseaseDatas.vaccinationDatas).length > 0" :vaccinationDatas="diseaseDatas.vaccinationDatas"></vaccination-chart>
             <relative-datas-panel :relativeDatas="diseaseDatas.relativeDatas"></relative-datas-panel>

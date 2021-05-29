@@ -22,11 +22,15 @@ export default class CountryStatsManager extends UtilitaryFunctions {
         this.authorizedLocations = {
             worldNames: {
                 locationType: "world",
-                acceptedValues: ["Monde"]
+                acceptedValues: ["Global"]
+            },
+            allCountriesNames: {
+                locationType: "allCountries",
+                acceptedValues: ["allCountries"]
             },
             continentsNames: {
                 locationType: "continent",
-                acceptedValues: ["Europe", "Asia", "Africa", "Oceania", "North America", "South America"]
+                acceptedValues: ["Europe", "Asia", "Africa", "Oceania", "North America", "South America", "America"]
             },
             countriesNames: {
                 locationType: "country",
@@ -59,6 +63,7 @@ export default class CountryStatsManager extends UtilitaryFunctions {
         this.requestInfos = {
             locationType: "",
             locationName: "",
+            requestedDatasType: ""
         }
 
     }
@@ -70,9 +75,12 @@ export default class CountryStatsManager extends UtilitaryFunctions {
             this.requestRouter()
                 .then((response) => {
 
+                    console.log(response);
+
                     let formattedDatas = this.datasRetriever.datasRetrieverManager(response);
 
                     if (formattedDatas) {
+                        console.log(formattedDatas);
                         resolve(formattedDatas);
                     } else {
                         reject(formattedDatas);
@@ -90,19 +98,44 @@ export default class CountryStatsManager extends UtilitaryFunctions {
         datasRetrieverManager: (datas) => {
 
             console.log("datasRetrieverManager");
+            console.log(this.requestInfos);
             console.log(datas);
 
             let retrievedDatas = {};
+            let liveRawDatas = {};
+            let periodEvolutionDatas = {};
 
-            let countryLiveRawDatas = this.datasRetriever.datasRetrieverFunctions.locationDatasRetriever(datas.liveRawDatas);
-            let countryPeriodEvolutionDatas = {};
-            countryPeriodEvolutionDatas.countryPeriodEvolutionDatas = {};
-                
-            for (const [key, value] of Object.entries(datas.periodEvolutionDatas)) {
-                countryPeriodEvolutionDatas.countryPeriodEvolutionDatas[key] = this.datasRetriever.datasRetrieverFunctions.locationDatasListRetriever(value);
+            //If user asked for liveRawDatas
+            if (this.requestInfos.requestedDatasType === "allDatas" || this.requestInfos.requestedDatasType === "liveDatas") {
+
+                //If user asked countries list, data object is directly returned
+                if (this.requestInfos.locationType === "allCountries") {
+                    liveRawDatas = datas;
+                } else {
+                    liveRawDatas = this.datasRetriever.datasRetrieverFunctions.locationDatasRetriever(datas.liveRawDatas);
+                }
+
             }
 
-            retrievedDatas = Object.assign(countryLiveRawDatas, countryPeriodEvolutionDatas);
+            //If user asked for perioDatas
+            if (this.requestInfos.requestedDatasType === "allDatas" || this.requestInfos.requestedDatasType === "periodDatas") {
+                    
+                for (const [key, value] of Object.entries(datas.periodEvolutionDatas)) {
+                    periodEvolutionDatas[key] = this.datasRetriever.datasRetrieverFunctions.locationDatasListRetriever(value);
+                }
+
+            }
+            
+            //If both sub objects have been filled
+            if (Object.entries(liveRawDatas).length > 0 && Object.entries(periodEvolutionDatas).length > 0) {
+                retrievedDatas = Object.assign(liveRawDatas, periodEvolutionDatas);
+            } else {
+                if (Object.entries(liveRawDatas).length > 0) {
+                    retrievedDatas = liveRawDatas;
+                } else {
+                    retrievedDatas = periodEvolutionDatas;
+                }
+            }
 
             return retrievedDatas;
 
@@ -133,6 +166,8 @@ export default class CountryStatsManager extends UtilitaryFunctions {
                     returnedDatas.locationDetails.locationCapitalCity = datas.capital_city;
                     returnedDatas.locationDetails.locationLifeExpectancy = datas.life_expectancy;
                     returnedDatas.locationDetails.locationLastUpdate = datas.updated;
+                    returnedDatas.locationDetails.locationLatitude = datas.lat;
+                    returnedDatas.locationDetails.locationLongitude = datas.long;
 
                 } else if (this.requestInfos.locationType === "world") {
 
@@ -253,12 +288,20 @@ export default class CountryStatsManager extends UtilitaryFunctions {
 
             } else {
 
+                console.log(params);
+
                 if (params.locationName === "undefined") {
                     console.error("You have to provide the location name of your search");
                     return;
                 }
+                if (params.requestedDatasType === "undefined") {
+                    console.error("You have to provide the requestedDatasType of your search");
+                    return;
+                }
                 this.requestInfos.locationName = params.locationName;
+                this.requestInfos.requestedDatasType = params.requestedDatasType;
                 this.CSMUtilitaryFunctions.locationFunctionalities.setLocationType(params.locationName);
+                console.log(this.requestInfos);
 
             }
 
@@ -326,29 +369,48 @@ export default class CountryStatsManager extends UtilitaryFunctions {
         return new Promise((resolve, reject) => {
 
             let requestResults = {};
-            requestResults.liveRawDatas = {};
-            requestResults.periodEvolutionDatas = {};
+            console.log(this.requestInfos);
 
-            this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.cases.path})
-                .then((response) => {
+            if (this.requestInfos.requestedDatasType === "allDatas" || this.requestInfos.requestedDatasType === "liveDatas") {
+
+                requestResults.liveRawDatas = {};
+
+                this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.cases.path})
+                .then(response => {
                     requestResults.liveRawDatas = response;
-                    this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "confirmed"}}})
-                    .then((response) => {
+                })
+                .catch(() => {
+                    reject(false);
+                });
+
+            }
+
+            if (this.requestInfos.requestedDatasType === "periodDatas" || this.requestInfos.requestedDatasType === "allDatas") {
+
+                requestResults.periodEvolutionDatas = {};
+
+                this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "confirmed"}}})
+                    .then(response => {
                         requestResults.periodEvolutionDatas.confirmed = response;
                         this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "deaths"}}})
-                        .then((response) => {
+                        .then(response => {
                             requestResults.periodEvolutionDatas.deaths = response;
                             this.requestSender(this.requestURL.baseURL, {path: this.requestURL.paths.history.path, params: {paramsList: this.requestURL.paths.history.parameters, manualValueInput: {status: "recovered"}}})
-                            .then((response) => {
+                            .then(response => {
                                 requestResults.periodEvolutionDatas.recovered = response;
                                 resolve(requestResults);
                             })
                         })
                     })
-                })
-                .catch(() => {
-                    reject(false);
-                });
+                    .catch(() => {
+                        reject(false);
+                    })
+
+            }
+
+            console.log(this.requestInfos);
+
+            resolve(requestResults);
 
         });
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="twitterPanel">
+    <div class="twitterPanel datasPanel">
         <h3><font-awesome-icon :icon="faNewspaper"/> Dernières actualités</h3>
         <div class="twitterPanel__feedContainer">
             <a class="twitter-timeline" :href="url" data-chrome="noscrollbar noheader nofooter noborders">>A Twitter List by TwitterDev</a>
@@ -18,7 +18,7 @@ export default {
     props: {
         country: {
             type: String,
-            required: true
+            required: false
         }
     },
     setup(props) {
@@ -43,7 +43,7 @@ export default {
                 break;
         
             default:
-                url = "https://twitter.com/COVID_19_Latest"
+                url = "https://twitter.com/COVID_19_Latest";
                 break;
         }
 
@@ -63,6 +63,7 @@ export default {
 
 <style lang="scss">
 .twitterPanel {
+    background-color: inherit;
     margin-top: 2rem;
     &__feedContainer {
         overflow: auto;
