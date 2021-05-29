@@ -1,5 +1,8 @@
 import { createStore } from 'vuex';
 
+import DatasCalculator from "../assets/JSClasses/DatasCalculator.js";
+import VuexFunctionalities from "../assets/JSClasses/VuexFunctionalities.js";
+
 export default createStore({
   state: {
     worldLiveDatas: {},
@@ -71,6 +74,9 @@ export default createStore({
         state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]] = Object.assign(state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]], payload.datas[Object.keys(payload.datas)[0]])
         state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]]["creation_date"] = payload.creation_date;
 
+        console.log("Country saved in vuex");
+        console.log(state.worldLocationEvolutionDatas.datas);
+
       }
 
     },
@@ -84,6 +90,7 @@ export default createStore({
     },
     SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE(state) {
       localStorage.setItem("worldLocationEvolutionDatas", JSON.stringify(state.worldLocationEvolutionDatas));
+      console.log("Datas saved to local Storage");
     },
     SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION(state, payload) {
 
@@ -164,19 +171,49 @@ export default createStore({
             .then(response => response.json())
             .then(response => {
 
+              console.log(worldLiveDatas);
+              console.log("vaccines response: ", response);
+
               //Add vaccines datas for each country
-              for (const [key, value] of Object.entries(response)) {
+              for (const [vaccKey, vaccValue] of Object.entries(response)) {
 
-                //Test if the current country exists in the worldLiveDatas object
-                if (typeof worldLiveDatas[key] !== "undefined") {
+                //Test if the both vaccines country and cases country have the same country name
+                if (typeof worldLiveDatas[vaccKey] !== "undefined") {
 
-                  worldLiveDatas[key]["All"]["vaccine_injections_administered"] = value.All.administered;
-                  worldLiveDatas[key]["All"]["people_vaccinated"] = value.All.people_vaccinated;
-                  worldLiveDatas[key]["All"]["people_partially_vaccinated"] = value.All.people_partially_vaccinated;
+                  console.log("worldName and VaccName have the same name");
+                  console.log(worldLiveDatas[vaccKey]["All"]);
+
+                  worldLiveDatas[vaccKey]["All"]["administered"] = vaccValue.All.administered;
+                  worldLiveDatas[vaccKey]["All"]["people_vaccinated"] = vaccValue.All.people_vaccinated;
+                  worldLiveDatas[vaccKey]["All"]["people_partially_vaccinated"] = vaccValue.All.people_partially_vaccinated;
+
+                  console.log(worldLiveDatas[vaccKey]["All"]);
+
+                //If not we use country abbreviations to match both datasets
+                } else {
+
+                  for (const [worldKey, worldValue] of Object.entries(worldLiveDatas)) {
+
+                    if (worldValue.abbreviation === vaccValue.abbreviation) {
+
+                      console.log("worldName and VaccName don't have the same name");
+                      console.log(worldLiveDatas[worldKey]["All"]);
+
+                      worldLiveDatas[worldKey]["All"]["administered"] = vaccValue.All.administered;
+                      worldLiveDatas[worldKey]["All"]["people_vaccinated"] = vaccValue.All.people_vaccinated;
+                      worldLiveDatas[worldKey]["All"]["people_partially_vaccinated"] = vaccValue.All.people_partially_vaccinated;
+
+                      console.log(worldLiveDatas[worldKey]["All"]);
+
+                    }
+
+                  }
 
                 }
 
               }
+
+              console.log(worldLiveDatas);
 
               fetch("https://coronavirusapi-france.now.sh/FranceLiveGlobalData")
               .then(response => response.json())
@@ -190,16 +227,20 @@ export default createStore({
                 worldLiveDatas["France"]["All"]["hospitalizations"] = hospitalizations;
                 worldLiveDatas["France"]["All"]["intensive_care"] = intensiveCare;
 
+                console.log(worldLiveDatas);
+
                 fetch("https://restcountries.eu/rest/v2/all")
                 .then(response => response.json())
                 .then(response => {
 
+                  const restCountriesKeys = ["latlng", "demonym", "gini", "currencies", "languages", "regionalBlocs"];
+
                   for (let i = 0; i < response.length; i++) {
 
-                    if (typeof worldLiveDatas[response[i].name] !== "undefined") {
+                    const currentCountry = response[i];
 
-                      const restCountriesKeys = ["latlng", "demonym", "gini", "currencies", "languages", "regionalBlocs"];
-                      const currentCountry = response[i];
+                    if (typeof worldLiveDatas[currentCountry.name] !== "undefined") {
+
                       for (const [key, value] of Object.entries(currentCountry)) {
 
                         if (restCountriesKeys.includes(key)) {
@@ -219,9 +260,44 @@ export default createStore({
 
                       }
                     
+                    } else {
+
+                      console.log("Missing country datas for: " + currentCountry.name);
+
+                      for (const keyValue of Object.entries(worldLiveDatas)) {
+
+                        if (keyValue[1].All.abbreviation === currentCountry.alpha2Code) {
+                          console.log(keyValue[1].All.abbreviation, currentCountry.alpha2Code);
+                          console.log(keyValue[1].All.country, currentCountry.name);
+
+                          for (const [subKey, subValue] of Object.entries(currentCountry)) {
+
+                            if (restCountriesKeys.includes(subKey)) {
+
+                              if (subKey === "latlng" && (typeof keyValue[1]["All"]["lat"] === "undefined" && typeof keyValue[1]["All"]["long"] === "undefined")) {
+
+                                keyValue[1]["All"]["lat"] = subValue[0];
+                                keyValue[1]["All"]["long"] = subValue[1];
+
+                              } else {
+
+                                keyValue[1]["All"][subKey] = subValue;
+
+                              }
+
+                            }
+
+                          }
+
+                        }
+
+                      }
+
                     }
 
                   }
+
+                  console.log(worldLiveDatas);
 
                   commit("SET_WORLD_LIVE_DATAS", worldLiveDatas);
                   commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
@@ -247,168 +323,59 @@ export default createStore({
 
       return new Promise((resolve, reject) => {
 
+        console.log("Vuex worldLocationEvolutionDatas function called");
+
         //If the action is called for the first time
         //Insert all in date datas in the worldLocationEvolutionDatas object
         commit("COPY_LOCAL_STORAGE_WORLD_LOCATION_EVOLUTION_DATAS");
         //Vérifier si intègre copie global request creation date
 
-        let locationType;
-        let urlLocationKeyValue;
-        let urlStatusKeysValues = [];
+        console.log("pass copy local storage");
 
-        typeof params.location === "undefined" || params.location === "" ? locationType = "countriesList" : locationType = "country";
-        locationType === "country" ? urlLocationKeyValue = "country=" + encodeURIComponent(params.location) : urlLocationKeyValue = "";
-        if (typeof params.status !== "undefined") {
+        let requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.setRequestParameters(params);
+        console.log(requestParameters);
+        requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.filterNecessaryRequest(state.worldLocationEvolutionDatas, state.areWorldEvolutionDatasRequestsReceived, requestParameters);
 
-          if (typeof params.status === "string") {
-            urlStatusKeysValues.push("status=" + encodeURIComponent(params.status));
-          } else if (Array.isArray(params.status)) {
-          
-            for (let i = 0; i < params.status.length; i++) {
-              urlStatusKeysValues.push("status=" + encodeURIComponent(params.status[i]));
-            }
-    
-          }
-
-        } else {
-          //If no status have been filled, we assumed a request need to be done for each of them
-          urlStatusKeysValues.push("status=" + encodeURIComponent("confirmed"), "status=" + encodeURIComponent("deaths"), "status=" + encodeURIComponent("recovered"));
-        }
-
-        //Inspect if existing datas that are not outdated are already store in vuex
-        //Check if worldLocationEvolutionDatas object contain some datas
-        if (Object.entries(state.worldLocationEvolutionDatas.datas).length > 0) {
-
-          if (Object.entries(state.worldLocationEvolutionDatas.global_request_creation_date).length > 0) {
-
-            for (let i = 0; i < urlStatusKeysValues.length; i++) {
-
-              let currentStatus = urlStatusKeysValues[i].split("=")[1];
-  
-              //We remove the current status if a global request that is not outdated has already been made
-              if ((typeof state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus]) !== "undefined" && ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.global_request_creation_date[currentStatus])) {
-                
-                urlStatusKeysValues.splice(i, 1);
-                i = i - 1;
-                state.areWorldEvolutionDatasRequestsReceived[currentStatus] = true;
-  
-              }
-  
-            }
-
-          }
-
-          if (locationType === "country") {
-
-            if (typeof state.worldLocationEvolutionDatas.datas[params.location] !== "undefined") {
-
-              if ((Date.now() - 21600000) < state.worldLocationEvolutionDatas.datas[params.location]["creation_date"]) {
-
-                for (let i = 0; i < urlStatusKeysValues.length; i++) {
-                  if (urlStatusKeysValues[i] !== "creation_date") {
-                    urlStatusKeysValues.splice(i, 1);
-                  }
-                }
-  
-              }
-
-            }
-
-          }
-
-        }
-
-        //If all requested datas exist and are not outdated, we stopped the execution immediately
-        if (urlStatusKeysValues.length === 0) {
+        if (requestParameters.urlStatusKeysValues.length === 0) {
+          console.log("No requests need to be made");
           resolve(true);
         }
 
-        //Response object
-        let locationEvolutionDatas = {
-          locationName: params.location,
-          datas: {},
-          creation_date: null
-        };
+        VuexFunctionalities.worldLocationEvolutionDatas.requestsManager(requestParameters)
+        .then(locationEvolutionDatas => {
 
-        let retrievedStatusDatas = {
-          success: 0,
-          failure: 0
-        };
+          console.log("Requests were made");
+          console.log(locationEvolutionDatas);
 
-          for (let statusIndex = 0; statusIndex < urlStatusKeysValues.length; statusIndex++) {
+          if (locationEvolutionDatas.isRequestSuccessful === true) {
 
-            (function() {
+            commit("SET_WORLD_LOCATION_EVOLUTION_DATAS", locationEvolutionDatas);
+            commit("SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
 
-              const currentStatusIndex = statusIndex;
+            if (requestParameters.locationType === "countriesList") {
 
-              fetch("https://covid-api.mmediagroup.fr/v1/history?" + urlStatusKeysValues[currentStatusIndex] + "&" + urlLocationKeyValue)
-              .then(response => response.json())
-              .then(response => {
+              let statusToConfirmed = [];
+              for (let i = 0; i < requestParameters.urlStatusKeysValues.length; i++) {
+                statusToConfirmed.push(requestParameters.urlStatusKeysValues[i].split("=")[1]);
+              }
 
-                if (locationType === "countriesList") {
+              commit("SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION", {status: statusToConfirmed});
 
-                  for (const [key, value] of Object.entries(response)) {
-                    if (typeof locationEvolutionDatas.datas[key] === "undefined") {
-                      locationEvolutionDatas.datas[key] = {};
-                    }
-                    //If we retrieve list of countries, a create an object that will store creation timestamp for each status request
-                    if (typeof locationEvolutionDatas.creation_date !== "undefined" && locationType === "countriesList") {
-                      locationEvolutionDatas.creation_date = {};
-                    }
-                    locationEvolutionDatas.creation_date[urlStatusKeysValues[currentStatusIndex].split("=")[1]] = Date.now();
-                    locationEvolutionDatas.datas[key][urlStatusKeysValues[currentStatusIndex].split("=")[1]] = value.All.dates;
-                  }
-  
-                } else {
-  
-                  if (typeof locationEvolutionDatas.datas[params.location] === "undefined") {
-                    locationEvolutionDatas.datas[params.location] = {};
-                  }
-                  if (typeof locationEvolutionDatas.creation_date !== "undefined") {
-                    locationEvolutionDatas.creation_date = Date.now();
-                  }
-                  locationEvolutionDatas.datas[params.location][urlStatusKeysValues[currentStatusIndex].split("=")[1]] = response.All.dates;
-  
-                }
+            }
 
-                retrievedStatusDatas.success = retrievedStatusDatas.success + 1;
+            resolve(true);
 
-              })
-              .catch(() => {
-                console.error("Unable to retrieve evolution datas");
-                retrievedStatusDatas.failure = retrievedStatusDatas.failure + 1;
-              })
-              .finally(() => {
+          } else if (locationEvolutionDatas.isRequestSuccessful === false) {
 
-                if (retrievedStatusDatas.success === urlStatusKeysValues.length) {
-
-                  locationEvolutionDatas.locationType = locationType;
-                  commit("SET_WORLD_LOCATION_EVOLUTION_DATAS", locationEvolutionDatas);
-                  commit("SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
-                  resolve(true);
-
-                  if (locationType === "countriesList") {
-
-                    let statusToConfirmed = [];
-                    for (let i = 0; i < urlStatusKeysValues.length; i++) {
-                      statusToConfirmed.push(urlStatusKeysValues.split("=")[1]);
-                    }
-
-                    commit("SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION", {status: statusToConfirmed});
-                  }
-      
-                } else if (retrievedStatusDatas.failure === urlStatusKeysValues.length) {
-      
-                  console.error("Unable to retrieve evolution datas");
-                  reject(false);
-      
-                }
-
-              });
-
-            })();
+            console.error("Unable to retrieve evolution datas");
+            reject(false);
 
           }
+
+        })
+        .catch((error) => {
+          console.error(error);
+        })
 
       });
 
@@ -447,11 +414,18 @@ export default createStore({
 
               let departementsLiveDatas = {};
               let datasArray = response.allLiveFranceData;
+              let datasCalculator = new DatasCalculator();
               for (let i = 0; i < datasArray.length; i++) {
 
                 //We only want datas related to France departements (not France) that are created by Santé publique France Data
                 if (datasArray[i].sourceType !== "opencovid19-fr" || datasArray[i].code !== "FRA") {
-                  departementsLiveDatas[datasArray[i].code] = datasArray[i];
+
+                  departementsLiveDatas[datasArray[i].code] = {};
+
+                  for (const [key, value] of Object.entries(datasArray[i])) {
+                    departementsLiveDatas[datasArray[i].code][datasCalculator.translationFunctionalities.getTranslatedKeyFromFra(key)] = value;
+                  }
+
                 }
 
               }
@@ -471,7 +445,7 @@ export default createStore({
       });
 
     },
-    setFranceDepartementsEvolutionDatas({ commit }, departementName) {
+    setFranceDepartementsEvolutionDatas({ commit, state }, departementCodeName) {
 
       return new Promise((resolve, reject) => {
 
@@ -481,17 +455,14 @@ export default createStore({
 
         try {
 
-          if (localStorage.getItem("franceDepartementsEvolutionDatas") !== null) {
+          if (Object.entries(state.franceDepartementsEvolutionDatas).length > 0) {
 
-            const franceDepartementsEvolutionDatas = JSON.parse(localStorage.getItem("franceDepartementsEvolutionDatas"));
+            if (typeof state.franceDepartementsEvolutionDatas[departementCodeName.code] !== "undefined") {
 
-            if (franceDepartementsEvolutionDatas[departementName] !== "undefined") {
-
-              const datasCreationDate = franceDepartementsEvolutionDatas[departementName]["creation_date"];
+              const datasCreationDate = state.franceDepartementsEvolutionDatas[departementCodeName.code]["creation_date"];
 
               if ((Date.now() - 21600000) < datasCreationDate) {
 
-                commit("SET_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS", { datas: franceDepartementsEvolutionDatas[departementName], departementName: departementName });
                 resolve(true);
 
               }
@@ -506,105 +477,122 @@ export default createStore({
 
         } catch (e) {
   
-          console.log("https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=" + encodeURIComponent(departementName))
-          fetch("https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=" + encodeURIComponent(departementName))
+          console.log("https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=" + encodeURIComponent(departementCodeName.name))
+          fetch("https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=" + encodeURIComponent(departementCodeName.name))
           .then(response => {
             return response.json();
           })
           .then(response => {
   
             response = response.allDataByDepartement;
-            console.log(response);
-            let departementCode = "";
             let departementEvolutionDatas = {};
-            departementEvolutionDatas.cumulativeDatas = [];
-            departementEvolutionDatas.dailyDatas = [];
+            departementEvolutionDatas.creation_date = Date.now();
+            departementEvolutionDatas.datas = [];
 
             for (let i = 0; i < response.length; i++) {
 
-              let cumulativeDatas = {
-                date: response[i].date
-              };
-              let dailyDatas = {
-                date: response[i].date
-              };
-              let storedLoopDatas = {
+              let currentDayDatas = {
+                date: response[i].date,
+                cumulativeDatas: {},
+                dailyDatas: {}
+              }
+
+              //Will be used to fill absence of datas
+              let lastKnownDatas = {
                 hospitalizations: 0,
-                intensive_care: 0,
+                intensiveCare: 0,
                 deaths: 0,
                 recovered: 0
               };
 
-              if (departementCode === "" && typeof response[i].code !== "undefined") {
-                departementCode = response[i].code;
-              }
+              //Will be used to store previous datas to get cumulative datas
+              let cumulativeDatasRecorder = {
+                hospitalizations: 0,
+                intensiveCare: 0,
+                deaths: 0,
+                recovered: 0
+              };
 
-              //Check if it's not the first day
-              //Previous day datas will be used to calculate daily datas by susbstraction
-              if (typeof departementEvolutionDatas.cumulativeDatas[departementEvolutionDatas.cumulativeDatas.length-1] !== "undefined") {
-                storedLoopDatas = departementEvolutionDatas.cumulativeDatas[departementEvolutionDatas.cumulativeDatas.length-1];
-              }
-
-              if ((response[i].sourceType !== "sante-publique-france-data" && response[i + 1].sourceType === "sante-publique-france-data") && (response[i].date === response[i + 1].date)) {
+              //Response array is composed of two datas sources, agences-regionales-sante and sante-publique-france-data
+              //If both are available for the same date, we favour the sante-publique-france-data one
+              if ((response[i].sourceType === "agences-regionales-sante" && response[i + 1].sourceType === "sante-publique-france-data") && (response[i].date === response[i + 1].date)) {
                 i = i + 1;
               }
 
+              //Hospitalizations
+              //In case if hospitalises datas suddenly appear without any nouvellesHospitalisations data (different datas sources issue)
+              if (typeof response[i].hospitalises !== "undefined" && typeof response[i].nouvellesHospitalisations === "undefined" && cumulativeDatasRecorder.hospitalizations === 0) {
+
+                currentDayDatas.dailyDatas.newHospitalizations = response[i].hospitalises;
+                currentDayDatas.cumulativeDatas.hospitalizations = response[i].hospitalises;
+                cumulativeDatasRecorder.hospitalizations = response[i].hospitalises;
+
+              } else {
+
+                typeof response[i].nouvellesHospitalisations !== "undefined" ? currentDayDatas.dailyDatas.newHospitalizations = response[i].nouvellesHospitalisations : currentDayDatas.dailyDatas.newHospitalizations = 0;
+                typeof response[i].nouvellesHospitalisations !== "undefined" ? currentDayDatas.cumulativeDatas.hospitalizations = response[i].nouvellesHospitalisations + cumulativeDatasRecorder.hospitalizations : currentDayDatas.cumulativeDatas.hospitalizations = 0 + cumulativeDatasRecorder.hospitalizations;
+                cumulativeDatasRecorder.hospitalizations = response[i].nouvellesHospitalisations;
+
+              }
+              typeof response[i].hospitalises !== "undefined" ? currentDayDatas.dailyDatas.hospitalizations = response[i].hospitalises : currentDayDatas.dailyDatas.hospitalizations = lastKnownDatas.hospitalizations;
               if (typeof response[i].hospitalises !== "undefined") {
-
-                typeof response[i].nouvellesHospitalisations === "undefined" ? dailyDatas.hospitalizations = response[i].hospitalises : dailyDatas.hospitalizations = response[i].hospitalises + response[i].nouvellesHospitalisations;
-                storedLoopDatas.hospitalizations += dailyDatas.hospitalizations;
-                cumulativeDatas.hospitalizations = dailyDatas.hospitalizations + storedLoopDatas.hospitalizations;
-
-              } else {
-                cumulativeDatas.hospitalizations = 0;
-                dailyDatas.hospitalizations = 0;
+                lastKnownDatas.hospitalizations = response[i].hospitalises;
               }
 
+
+              //Intensive Care
+              //In case if reanimations datas suddenly appear without any nouvellesReanimaitons data (different datas sources issue)
+              if (typeof response[i].reanimation !== "undefined" && typeof response[i].nouvellesReanimations === "undefined" && cumulativeDatasRecorder.intensive_care === 0) {
+
+                currentDayDatas.dailyDatas.newIntensiveCare = response[i].reanimation;
+                currentDayDatas.cumulativeDatas.intensiveCare = response[i].reanimation;
+                cumulativeDatasRecorder.intensiveCare = response[i].reanimation;
+
+              } else {
+
+                typeof response[i].nouvellesReanimations !== "undefined" ? currentDayDatas.dailyDatas.newIntensiveCare = response[i].nouvellesReanimations : currentDayDatas.dailyDatas.newIntensiveCare = 0;
+                typeof response[i].nouvellesHospitalisations !== "undefined" ? currentDayDatas.cumulativeDatas.intensiveCare = response[i].nouvellesReanimations + cumulativeDatasRecorder.intensiveCare : currentDayDatas.cumulativeDatas.intensiveCare = 0 + cumulativeDatasRecorder.intensiveCare;
+                cumulativeDatasRecorder.intensiveCare = response[i].nouvellesReanimations;
+
+              }
+              typeof response[i].reanimation !== "undefined" ? currentDayDatas.dailyDatas.intensiveCare = response[i].reanimation : currentDayDatas.dailyDatas.intensiveCare = lastKnownDatas.intensiveCare;
               if (typeof response[i].reanimation !== "undefined") {
-
-                typeof response[i].nouvellesReanimations === "undefined" ? dailyDatas.intensive_care = response[i].reanimation : dailyDatas.intensive_care = response[i].reanimation + response[i].nouvellesReanimations;
-                storedLoopDatas.intensive_care += dailyDatas.intensive_care;
-                cumulativeDatas.intensive_care = dailyDatas.intensive_care - storedLoopDatas.intensive_care;
-
-              } else {
-                cumulativeDatas.intensive_care = 0;
-                dailyDatas.intensive_care = 0;
+                lastKnownDatas.intensiveCare = response[i].reanimation;
               }
 
-              if (typeof response[i].deces !== "undefined") {
 
-                cumulativeDatas.deaths = response[i].deces;
-                dailyDatas.deaths = response[i].deces - storedLoopDatas.deaths;
-                storedLoopDatas.deaths = response[i].deces;
+              //Deaths
+              typeof response[i].deces !== "undefined" ? currentDayDatas.dailyDatas.deaths = response[i].deces - lastKnownDatas.deaths : currentDayDatas.dailyDatas.deaths = lastKnownDatas.deaths;
+              typeof response[i].deces !== "undefined" ? currentDayDatas.cumulativeDatas.deaths = response[i].deces : currentDayDatas.cumulativeDatas.deaths = lastKnownDatas.deaths + 0;
+              typeof response[i].deces !== "undefined" ? cumulativeDatasRecorder.deaths = response[i].deces : cumulativeDatasRecorder.deaths += 0;
+              typeof response[i].deces !== "undefined" ? lastKnownDatas.deaths = response[i].deces : lastKnownDatas.deaths += 0;
 
-              } else {
-                cumulativeDatas.deaths = 0;
-                dailyDatas.deaths = 0;
+              //Recovered
+              typeof response[i].gueris !== "undefined" ? currentDayDatas.dailyDatas.recovered = response[i].gueris - lastKnownDatas.recovered : currentDayDatas.dailyDatas.recovered = lastKnownDatas.recovered;
+              typeof response[i].gueris !== "undefined" ? currentDayDatas.cumulativeDatas.recovered = response[i].gueris : currentDayDatas.cumulativeDatas.recovered = lastKnownDatas.recovered + 0;
+              typeof response[i].gueris !== "undefined" ? cumulativeDatasRecorder.recovered = response[i].gueris : cumulativeDatasRecorder.recovered += 0;
+              typeof response[i].gueris !== "undefined" ? lastKnownDatas.recovered = response[i].gueris : lastKnownDatas.recovered = lastKnownDatas.recovered + 0;
+
+
+              //Check if next datas object cover the same date but from the wrong sourceType. If yes we skip it.
+              if (i !== response.length - 1) {
+                if ((response[i].date === response[i+1].date) && (response[i].sourceType === "sante-publique-france-data" && response[i].sourceType === "agences-regionales-sante")) {
+                  i += 1;
+                }
               }
-
-              if (typeof response[i].gueris !== "undefined") {
-
-                cumulativeDatas.recovered = response[i].gueris;
-                dailyDatas.recovered = response[i].gueris - storedLoopDatas.recovered;
-                storedLoopDatas.recovered = response[i].gueris;
-
-              }
-
-              console.log(cumulativeDatas);
-              console.log(dailyDatas);
-              departementEvolutionDatas.cumulativeDatas.push(cumulativeDatas);
-              departementEvolutionDatas.dailyDatas.push(dailyDatas);
+              
+              departementEvolutionDatas.datas.push(currentDayDatas);
 
             }
 
-            departementEvolutionDatas.creation_date = Date.now();
-            commit("SET_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS", { datas: departementEvolutionDatas, departementName: departementCode });
+            commit("SET_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS", { datas: departementEvolutionDatas, departementName: departementCodeName.code });
             commit("SAVE_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
             resolve(true);
 
           })
-          .catch(() => {
+          .catch((error) => {
             console.error("An error has occured while retrieving departement evolution datas.");
+            console.log(error);
             reject(false);
           });
   
