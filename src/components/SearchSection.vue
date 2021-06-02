@@ -20,7 +20,7 @@ import { reactive, ref, computed } from "vue";
 import SearchForm from "./SearchSection/SearchForm.vue";
 import countryDashboard from "./SearchSection/Dashboard.vue";
 import WorldFranceSearchMaps from "./SearchSection/WorldFranceSearchMaps.vue";
-import AppLoader from "./AppLoader.vue";
+import AppLoader from "./SearchSection/DashboardSkeletonAnimation.vue";
 
 export default {
     setup() {

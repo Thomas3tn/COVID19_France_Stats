@@ -124,7 +124,17 @@ export default {
 </script>
 
 <style lang="scss">
+@keyframes dashboardAppearance {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .dashboard {
+    animation: dashboardAppearance 400ms ease-in;
     width: 90%;
     margin: 0 auto;
     &__datasContainer {
