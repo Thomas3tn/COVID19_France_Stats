@@ -8,7 +8,7 @@
    <p class="searchMap__subHeader">État du nombre d'hospitalisations par milliers d'habitants</p>
 </div>
 <svg
-   viewBox="-290 0 1250 545"
+   viewBox="-340 0 1350 550"
    id="franceSearchMapSvg"
    version="1.0">
    <a id="DEP-2B" @click="transmitDatas" xlink:title="2B - Haute-Corse">

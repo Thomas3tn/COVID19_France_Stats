@@ -1,11 +1,9 @@
 <template>
     <div class="regionsListPanel">
-        <h4 class="regionsListPanel__header">Classement par {{ headerStatus }}</h4>
         <div class="regionsListPanel__chartMainContainer">
             <div class="regionsListPanel__chartSubContainer">
                 <chart :chartId="'regionsDatasChart'" :chartData="chartData" :chartOptions="chartOptions" :chartType="'bar'"></chart>
             </div>
-            
         </div>
     </div>
 </template>
@@ -29,7 +27,6 @@ export default {
     },
     setup(props) {
 
-        console.log(props.regionsDatas);
         let datasCalculator = new DatasCalculator();
         const chartStatusKey = inject("chartStatusKey", {});
 
@@ -49,8 +46,10 @@ export default {
         const chartOptions = {
             maintainAspectRatio: false,
             indexAxis: 'y',
-            legend: {
-                display: false
+            plugins: {
+                legend: {
+                    display: false
+                }
             },
             title: {
                 display: true,
@@ -122,7 +121,7 @@ export default {
 
                     chartData.labels.push(datas[newValue][i].locationName);
                     chartData.datasets[0].data.push(datas[newValue][i].locationData);
-                    chartData.datasets[0].backgroundColor.push(chartStatusKey[newValue]);
+                    chartData.datasets[0].backgroundColor.push(chartStatusKey.statusColor[newValue]);
 
                 }
 
@@ -130,7 +129,7 @@ export default {
 
             }
 
-        });
+        }, {immediate: true});
 
         return {
             headerStatus,
@@ -147,10 +146,12 @@ export default {
 
 <style lang="scss">
 .regionsListPanel {
+    display: block;
+    background-color: white;
+    &--hidden {
+        display: none;
+    }
     &__chartMainContainer {
-        overflow-x: hidden;
-        overflow-y: scroll;
-        height: 400px;
         &::-webkit-scrollbar {
             width: 5px;
         }

@@ -1,37 +1,39 @@
 <template>
-    <div class="externalLinksContainer">
-        <div class="externalLink externalLink--one">
-            <div class="externalLink__headerContainer">
-                <h3 class="externalLink__header">Restez informé !</h3>
+    <div class="externalLinks">
+        <div class="externalLinksContainer">
+            <div class="externalLink externalLink--one">
+                <div class="externalLink__headerContainer">
+                    <h2 class="externalLink__header externalLink__header--mainHeader">Restez informé !</h2>
+                </div>
+                <img class="externalLink__img externalLink__img--one" src="../../assets/img/externalLinksMosaic/linksHeaderBg2.jpg"/>
             </div>
-            <img class="externalLink__img externalLink__img--one" src="../../assets/img/externalLinksMosaic/linksHeaderBg.jpg"/>
+            <a class="externalLink externalLink--two" :href="covidDefinition.url" :title="covidDefinition.title">
+                <div class="externalLink__headerContainer externalLink__headerContainer--two">
+                    <h3 class="externalLink__header">En savoir plus sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
+                </div>
+                <img class="externalLink__img externalLink__img--two" src="../../assets/img/externalLinksMosaic/covidInfosBg2.jpg" :alt="covidDefinition.imgAltText"/>
+            </a>
+            <a class="externalLink externalLink--three" :href="covidGuidelines.url" :title="covidGuidelines.title">
+                <div class="externalLink__headerContainer externalLink__headerContainer--three">
+                    <h3 class="externalLink__header">Conseils de l'OMS</h3>
+                    <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
+                </div>
+                <img class="externalLink__img externalLink__img--three" src="../../assets/img/externalLinksMosaic/omsTipsBg2.jpg" :alt="covidGuidelines.imgAltText"/>
+            </a>
+            <a class="externalLink externalLink--four" :href="covidNews.url" :title="covidNews.title">
+                <div class="externalLink__headerContainer externalLink__headerContainer--four">
+                    <h3 class="externalLink__header">Dernières actualités</h3>
+                    <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
+                </div>
+                <img class="externalLink__img externalLink__img--four" src="../../assets/img/externalLinksMosaic/newsBg2.jpg" :alt="covidNews.imgAltText"/>
+            </a>
+            <a class="externalLink externalLink--five" :href="covidMyths.url" :title="covidMyths.title">
+                <div class="externalLink__headerContainer externalLink__headerContainer--five">
+                    <h3 class="externalLink__header">Idées reçues sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
+                </div>
+                <img id="img" class="externalLink__img externalLink__img--five" src="../../assets/img/externalLinksMosaic/fakeNewsBg2.jpg" :alt="covidMyths.imgAltText"/>
+            </a>
         </div>
-        <a class="externalLink externalLink--two" :href="covidDefinition.url" :title="covidDefinition.title">
-            <div class="externalLink__headerContainer externalLink__headerContainer--two">
-                <h3 class="externalLink__header">En savoir plus sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
-            </div>
-            <img class="externalLink__img externalLink__img--two" src="../../assets/img/externalLinksMosaic/covidInfosBg.jpg"/>
-        </a>
-        <a class="externalLink externalLink--three" :href="covidGuidelines.url" :title="covidGuidelines.title">
-            <div class="externalLink__headerContainer externalLink__headerContainer--three">
-                <h3 class="externalLink__header">Conseils de l'OMS</h3>
-                <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
-            </div>
-            <img class="externalLink__img externalLink__img--three" src="../../assets/img/externalLinksMosaic/omsTipsBg.jpg"/>
-        </a>
-        <a class="externalLink externalLink--four" :href="covidNews.url" :title="covidNews.title">
-            <div class="externalLink__headerContainer externalLink__headerContainer--four">
-                <h3 class="externalLink__header">Dernières actualités</h3>
-                <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
-            </div>
-            <img class="externalLink__img externalLink__img--four" src="../../assets/img/externalLinksMosaic/newsBg.jpg"/>
-        </a>
-        <a class="externalLink externalLink--five" :href="covidMyths.url" :title="covidMyths.title">
-            <div class="externalLink__headerContainer externalLink__headerContainer--five">
-                <h3 class="externalLink__header">Idées reçues sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
-            </div>
-            <img id="img" class="externalLink__img externalLink__img--five" src="../../assets/img/externalLinksMosaic/fakeNewsBg.jpg"/>
-        </a>
     </div>
 </template>
 
@@ -42,19 +44,23 @@ export default {
         //External Links
         const covidDefinition = {
             url: "https://www.pasteur.fr/fr/centre-medical/fiches-maladies/maladie-covid-19-nouveau-coronavirus",
-            title: "En savoir plus sur le COVID-19 (Institut Pasteur)"
+            title: "En savoir plus sur le COVID-19 (Institut Pasteur)",
+            imgAltText: "Image d'un virus modélisé"
         };
         const covidMyths = {
             url: "https://www.who.int/fr/emergencies/diseases/novel-coronavirus-2019/advice-for-public/myth-busters",
-            title: "Conseils de l'OMS (OMS)"
+            title: "Idées reçues sur le COVID-19 (OMS)",
+            imgAltText: "Image d'un homme desinfectant des pages de journaux intitulées 'Fake News'"
         };
         const covidGuidelines = {
             url: "https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public",
-            title: "Dernières actualités (FranceTvInfos)"
+            title: "Conseils de l'OMS (OMS)",
+            imgAltText: "Tableau détourné la Joconde portant un masque sur le visage ainsi que du gel hydroalcoolique dans les bras"
         };
         const covidNews = {
             url: "https://www.francetvinfo.fr/sante/maladie/coronavirus/",
-            title: "Idées reçues sur le COVID-19 (OMS)"
+            title: "Dernières actualités (FranceTvInfos)",
+            imgAltText: "Image regroupant plusieurs pages de journaux superposées"
         };
 
         return {
@@ -69,10 +75,17 @@ export default {
 </script>
 
 <style lang="scss">
+.externalLinks {
+    background-color: #e6f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .externalLinksContainer {
     min-height: 640px;
     width: 90%;
-    margin: 4rem auto 0 auto;
+    margin: 4rem auto 4rem auto;
     display: grid;
     grid-template-columns: 1fr;
     gap: 20px;
@@ -92,10 +105,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 3px;
     @media (min-width: 1024px) {
         &--one {
-        grid-column: 1/3;
-        grid-row: 1;
+            grid-column: 1/3;
+            grid-row: 1;
         }
         &--two {
             grid-column: 3 / 5;
@@ -110,7 +124,8 @@ export default {
             justify-content: left;
         }
     }
-    &:hover {
+    //Does not apply hover effect on the header div
+    &:hover:not(div) {
         cursor: pointer;
         img {
             transform: scale(1.1);
@@ -148,14 +163,19 @@ export default {
     }
     &__header {
         margin: 0;
+        &--mainHeader {
+            font-size: 2.5rem;
+        }
     }
     &__verticalArrow {
+        transform-origin: top;
         transform: translateY(0%);
         transition: all 300ms;
     }
     &__horizontalArrow {
         transform: translateX(0%);
         transition: all 300ms;
+        transform-origin: left;
     }
     &__img {
         max-width: 100%;

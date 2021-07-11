@@ -47,7 +47,6 @@ export default {
         }
 
         onMounted(() => {
-            
             currentChart = chartConstructor(props.chartType, props.chartData, props.chartOptions);
         });
 
@@ -66,48 +65,7 @@ export default {
             currentChart
         }
 
-    },
-    /*data() {
-        return {
-            currentChartId: this.chartId,
-            currentChart: null
-        }
-    },
-    watch: {
-        chartData: {
-            handler(newValue, oldValue) {
-
-                console.log("Chart data has changed");
-                console.log(oldValue, newValue);
-
-                if (newValue !== oldValue) {
-                    console.log("Watcher executed");
-                    console.log(this.currentChart.config);
-                    this.currentChart.data.labels = newValue.labels;
-                    this.currentChart.datasets = newValue.datasets;
-                    //this.currentChart.update();
-                }
-                
-            },
-            deep: true
-        }
-    },
-    methods: {
-        chartConstructor(chartType, chartData, chartOptions) {
-            const chartElement = document.getElementById(this.currentChartId);
-            const chart = new Chart(chartElement, {
-                type: chartType,
-                data: chartData,
-                options: chartOptions
-            });
-            console.log(chart);
-            this.currentChart = chart;
-        },
-    },
-    mounted() {
-        let {chartType, chartData, chartOptions} = this;
-        this.chartConstructor(chartType, chartData, chartOptions);
-    }*/
+    }
 }
 </script>
 

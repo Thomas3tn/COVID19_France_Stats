@@ -3,9 +3,8 @@
         <div class="locationDetails__locationName">
             <img  v-if="locationLogo !== ''" :src="locationLogo" :title="locationInfos.country || locationInfos.nom">
 
-
             <h2 v-if="locationType === 'continent'">{{ locationInfos.abbreviation }} {{ locationInfos.continent }}</h2>
-            <h2 v-if="locationType === 'country'">({{ locationInfos.abbreviation }}) {{ locationInfos.country }}</h2>
+            <h2 v-if="locationType === 'country'">({{ locationInfos.abbreviation }}) {{ locationInfos.fr_name }}</h2>
             <h2 v-else-if="locationType === 'departement'">({{ locationInfos.code }}) {{ locationInfos.nom }}</h2>
 
         </div>
@@ -20,14 +19,14 @@
             </GoogleMap>
         </div>
         <div>
-            <h4 class="locationDetails__overviewHeader"><i class="far fa-compass"></i> Aperçu</h4>
+            <h3 class="locationDetails__overviewHeader"><i class="far fa-compass"></i> Aperçu</h3>
             <ul class="locationDetails__list">
                 
                 <!-- country/departement location -->
                 <li v-if="locationType === 'country'">Localisation: {{ locationInfos.continent }} ({{ locationInfos.location }})</li>
                 <li v-else-if="locationType === 'departement'">Localisation: {{ locationInfos.location }}</li>
                 
-                <li>Superficie: {{ locationInfos.sq_km_area }} km²</li>
+                <li>Superficie: {{ formattedSurfaceArea }} km²</li>
 
                 <!-- Location capital city -->
                 <li v-if="locationType === 'country'">Capitale: {{ locationInfos.capital_city }}</li>
@@ -39,12 +38,12 @@
 
             </ul>
             <ul class="locationDetails__list">
-                <li>Population: {{ locationInfos.population }} pers.</li>
+                <li>Population: {{ formattedPopulation }} habs</li>
                 <li>Espérance de vie: {{ locationInfos.life_expectancy }} ans</li>
                 <li v-if="locationType === 'country' || locationType === 'continent'">Indice <abbr title="L'indice de GINI mesure l'inégalité des revenus d'un pays, allant de 0 (égalité parfaite) à 100 (inégalité parfaite).">GINI</abbr>: {{ locationInfos.gini}}</li>
             </ul>
             <ul>
-                <li v-if="locationType === 'country' && locationInfos.updated !== ''">Dernière mise à jour: {{ locationInfos.updated }}</li>
+                <li v-if="locationType === 'country' && formattedUpdateDateDatas !== ''">Dernière mise à jour: {{ formattedUpdateDateDatas }}</li>
                 <li v-else-if="locationType === 'departement'">Source: {{ locationInfos.source.nom }}</li>
             </ul>
         </div>       
@@ -60,6 +59,9 @@ import TwitterPanel from "./LocationAsidePanel/TwitterPanel.vue";
 //Vue Elements
 import { computed } from "vue";
 
+//JS Script
+import DatasCalculator from "../../../assets/JSClasses/DatasCalculator.js";
+
 export default {
     props: {
         locationType: {
@@ -73,6 +75,10 @@ export default {
     },
     setup(props) {
 
+        console.log(props.locationInfos);
+
+        const datasCalculator = new DatasCalculator();
+
         let locationLogo = computed(() => {
             
             if (props.locationType === "country") {
@@ -84,6 +90,9 @@ export default {
             }
             
         });
+
+        let formattedSurfaceArea = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.locationInfos.sq_km_area));
+        let formattedPopulation = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.locationInfos.population));
 
         let countriesTotalNumber = computed(() => {
 
@@ -139,11 +148,33 @@ export default {
 
         });
 
+        let formattedUpdateDateDatas = computed(() => {
+
+            if (typeof props.locationInfos.updated !== "undefined") {
+                console.log(props.locationInfos.updated);
+
+                let updateDateDatas = new Date(props.locationInfos.updated);
+
+                if (props.locationType === "departement") {
+                    return datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getDate()) + "/" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getMonth() + 1) + "/" + updateDateDatas.getFullYear();
+                } else {
+                    return datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getDate()) + "/" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getMonth() + 1) + "/" + updateDateDatas.getFullYear() + " à " + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getHours()) + "H" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(updateDateDatas.getMinutes());
+                }
+
+            } else {
+                return "";
+            }
+
+        });
+
         return {
             locationLogo,
             countriesTotalNumber,
             countriesList,
-            mapZoom
+            mapZoom,
+            formattedSurfaceArea,
+            formattedPopulation,
+            formattedUpdateDateDatas
         }
 
     },
@@ -157,18 +188,26 @@ export default {
 
 <style lang="scss">
 .locationDetails {
-    flex: 1;
     background-color: white;
     padding: 1rem;
-    position: sticky;
-    top: 0;
-    margin-right: 2rem;
+    border-radius: 3px;
+    margin-bottom: 1.5rem;
+    @media (min-width: 1024px) {
+        position: sticky;
+        top: 0;
+        flex: 1;
+        margin-bottom: 0;
+        margin-right: 2rem;
+    }
     &__locationName {
         display: flex;
         align-items: center;
-    }
-    &__overviewHeader {
-        font-size: 1.5rem;
+        img {
+            width: 20%;
+        }
+        h2 {
+            margin-left: 5%;
+        }
     }
     &__list {
         border-bottom: 1px solid black;

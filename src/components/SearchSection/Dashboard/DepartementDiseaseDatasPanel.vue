@@ -22,6 +22,9 @@ export default {
             required: true
         }
     },
+    setup(props) {
+        console.log(props.diseaseDatas);
+    },
     components: {
         CurrentSituationPanel,
         WeeklyDailyDatasPanel,

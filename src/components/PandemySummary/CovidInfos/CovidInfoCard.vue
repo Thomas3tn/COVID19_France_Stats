@@ -1,5 +1,5 @@
 <template>
-    <div class="covidInfoCard" tabindex="0">
+    <div class="covidInfoCard" tabindex="0" @focus="onKeyboardFocus" @blur="onKeyboardBlur">
         <div class="covidInfoCard__headerSlide" :id="title">
             <div class="covidInfoCard__headerBanner">
                 <div class="covidCardInfo__headerContainer">
@@ -9,7 +9,7 @@
                 
             </div>
         </div>
-        <div class="covidInfoCard__contentSlide">
+        <div class="covidInfoCard__contentSlide" tabindex="-1">
             <ul>
                 <li v-for="item in content" :key="item">{{ item }}</li>
             </ul>
@@ -73,9 +73,37 @@ export default {
 
         });
 
+        //Add hover effect on keyboard focus
+        function onKeyboardFocus(event) {
+            event.currentTarget.className += " covidInfoCard--keyboardFocus";
+        }
+
+        function onKeyboardBlur(event) {
+
+            if (event.currentTarget.firstElementChild.nextSibling !== document.activeElement) {
+
+                let currentInfoCardClasses = event.currentTarget.className.split(" ");
+
+                for (let i = 0; i < currentInfoCardClasses.length; i++) {
+
+                    if (currentInfoCardClasses[i] === "covidInfoCard--keyboardFocus") {
+                        currentInfoCardClasses.splice(i, 1);
+                        break;
+                    }
+
+                }
+
+                event.currentTarget.className = currentInfoCardClasses.join(" ");
+
+            }
+
+        }
+
         return {
             cardMainTitle,
-            cardSubTitle
+            cardSubTitle,
+            onKeyboardFocus,
+            onKeyboardBlur,
         }
 
     }
@@ -107,10 +135,11 @@ export default {
 }
 
 .covidInfoCard {
+    z-index: 1;
     height: 400px;
     width: 275px;
     border: 5px solid lightgray;
-    border-radius: 15px;
+    border-radius: 9px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -133,14 +162,26 @@ export default {
             
         }
         .covidInfoCard__contentSlide {
+            opacity: 1;
+            background-color: lightgray;
             animation: contentAppearance 300ms ease-in-out both;
             animation-delay: 480ms;
         }
     }
-    &:not(:hover) {
-        .covidInfoCard__contentSlide {
-            animation: contentDisappearance 300ms ease-in both;
-            animation-delay: 150ms;
+    &--keyboardFocus {
+        cursor: pointer;
+        transform: translateY(-8%);
+        .covidInfoCard__headerBanner {
+            opacity: 0;
+        }
+        ~ .covidInfoCard {
+            position: relative;
+            left: 12%;
+            transition: 1000ms all ease-in-out;
+        }
+        > .covidInfoCard__contentSlide {
+            animation: contentAppearance 300ms ease-in-out both;
+            animation-delay: 480ms;
         }
     }
     &__headerSlide {
@@ -181,6 +222,9 @@ export default {
         width: 100%;
         overflow: auto;
         transition: background-color 1600ms 700ms;
+        opacity: 0;
+        background-color: rgba(0,0,0,0);
+        transition: all 300ms;
         &::-webkit-scrollbar {
             width: 5px;
         }

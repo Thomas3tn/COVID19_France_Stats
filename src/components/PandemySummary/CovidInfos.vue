@@ -2,15 +2,21 @@
     <div class="covidInfo">
         <div class="covidInfo__textContainer">
             <div>
-                <h2 class="covidInfo__header">Tout savoir le COVID-19</h2>
-                <p>Depuis l’émergence de la crise sanitaire, les connaissaires sur le virus n’ont cessées d’évoluées au fil des mois créant parfois une confusion parmis la population. Quels sont les riques de transmission ?</p>
+                <h2 class="covidInfo__header">Tout savoir le virus du COVID-19</h2>
+                <p>Depuis l’émergence de la crise sanitaire à la fin de l'année de 2019, les connaissaires sur le virus n’ont cessées d’évoluées au fil des mois. Ainsi suivre l'évolution des avancées scientifiques peut être fastidieux.</p>
             </div>
             <div>
-                <p>Quels réellement les symptômes ? Ou encore que faire an cas de contamination supposée ou avérée au COVID-19 ? Les interrogations restent encore à ce jour très nombreuses, de ce fait nous avons réunis et résumé les toutes dernières informations sur le COVID-19. "Lorem ipsum dolor sit amet, consectetur.</p>
+                <p>En effet quels peuvent être les riques de transmission ? Que faut-il faire pour se protéger efficacement du virus ? Quels sont réellement les symptômes de la maladie ? Ou encore faire en cas de contamination supposée ou avérée au COVID-19 ? Faut-il aller à l'hôpital ou rester chez soi ? Les interrogations restent encore à ce jour très nombreuses dans un monde en constant changement. Par conséquent nous avons réunis et résumé les toutes dernières informations sur le COVID-19.</p>
             </div>
         </div>
         <div class="covidInfo__cardsContainer">
             <covid-info-card v-for="item in cardsContent" :title="item.title" :subTitle="item.subTitle" :content="item.content" :key="item.title"></covid-info-card>
+        </div>
+        <div class="covidInfo__infosAccordionsContainer">
+            <details v-for="item in cardsContent" :key="item.title" class="covidInfo__accordionDetails">
+                <summary class="covidInfo__accordionSummary"><h3>{{ item.title }}</h3></summary>
+                <p v-for="itemContent in item.content" :key="itemContent">{{ itemContent }}</p>
+            </details>
         </div>
     </div>
 </template>
@@ -82,27 +88,38 @@ export default {
 
 <style lang="scss">
 .covidInfo {
-    background-color: #93B1A7;
+    background-color: #457b9d;
     color: white;
-    padding: 2.5rem;
+    padding: 3rem 0rem;
     overflow: hidden;
+    position: relative;
     &__textContainer {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         text-align: justify;
         line-height: 1.5;
-        width: 90%;
+        width: 85%;
         margin: 0 auto;
-        div:first-of-type {
+        @media (min-width: 768px) {
+            flex-direction: row;
+            div:first-of-type {
             margin-right: 2rem;
-        }
-        div {
-            flex: 1;
+            }
+            div {
+                flex: 1;
+                z-index: 1;
+            }
         }
     }
     &__header {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-top: 0;
+        @media (min-width: 768px) {
+            text-align: left;
+        }
     }
     &__cardsContainer {
         padding: 2rem 0;
@@ -110,6 +127,27 @@ export default {
         justify-content: center;
         position: relative;
         left: 60px;
+        display: none;
+        @media (min-width: 1024px) {
+            display: flex;
+        }
+    }
+    &__infosAccordionsContainer {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        left: 8%;
+        width: 85%;
+        @media (min-width: 1024px) {
+            display: none;
+        }
+    }
+    &__accordionDetails {
+        cursor: pointer;
+        margin: 0.5rem 0;
+    }
+    &__accordionSummary > * {
+        display: inline;
     }
 }
 </style>

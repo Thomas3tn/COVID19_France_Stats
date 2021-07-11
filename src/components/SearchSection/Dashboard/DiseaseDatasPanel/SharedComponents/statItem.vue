@@ -2,7 +2,7 @@
     <div class="statContainer">
 		<font-awesome-icon :icon="logo" class="statContainer__logo"/>
         <div class="statContainer__statPart">
-			<p class="statContainer__number" id="confCasesStat">{{ statNumber }}</p>
+			<p class="statContainer__number" id="confCasesStat">{{ number }}</p>
             <p class="statContainer__title">{{ statName }}</p>
         </div>
     </div>
@@ -10,6 +10,8 @@
 
 <script>
 import { faCross, faHospitalUser, faMale, faMapMarkedAlt, faProcedures, faSyringe, faUsers, faWalking } from "@fortawesome/free-solid-svg-icons";
+import DatasCalculator from "../../../../../assets/JSClasses/DatasCalculator.js";
+import { computed } from "vue";
 
 export default {
 	props: {
@@ -25,47 +27,52 @@ export default {
     },
 	setup(props) {
 
-			let logo;
-			switch (props.statName) {
-				case "Cas confirmés":
-					logo = faMale;
-					break;
+		const datasCalculator = new DatasCalculator();
 
-				case "Guéris":
-					logo = faWalking;
-					break;
+		let logo;
+		switch (props.statName) {
+			case "Cas confirmés":
+				logo = faMale;
+				break;
 
-				case "Décès":
-					logo = faCross;
-					break;
+			case "Guéris":
+				logo = faWalking;
+				break;
 
-				case "Personnes vaccinées":
-					logo = faSyringe;
-					break;
+			case "Décès":
+				logo = faCross;
+				break;
 
-				case "Hospitalisations":
-					logo = faHospitalUser;
-					break;
+			case "Personnes vaccinées":
+				logo = faSyringe;
+				break;
 
-				case "Réanimations":
-					logo = faProcedures;
-					break;
+			case "Hospitalisations":
+				logo = faHospitalUser;
+				break;
 
-				case "Infections/milliers d'habs":
-					logo = faUsers;
-					break;
+			case "Réanimations":
+				logo = faProcedures;
+				break;
 
-				case "Infections/km²":
-					logo = faMapMarkedAlt;
-					break;
+			case "Infections/milliers d'habs":
+				logo = faUsers;
+				break;
 
-				default:
-					logo = faMale;
-					break;
-			}
+			case "Infections/km²":
+				logo = faMapMarkedAlt;
+				break;
+
+			default:
+				logo = faMale;
+				break;
+		}
+
+		let number = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.statNumber));
 
 		return {
-			logo
+			logo,
+			number
 		}
 
 	}

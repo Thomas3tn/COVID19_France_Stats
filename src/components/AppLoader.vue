@@ -41,6 +41,7 @@ export default {
 }
 
 .appLoader__container {
+    background-color: #fbfcfd;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -54,7 +55,7 @@ export default {
         height: auto;
         animation: appLoader 3000ms ease-in-out;
         animation-iteration-count: infinite;
-        background-color: #E0E0E0;
+        background-color: #d9e4e4;
         padding: 0.5rem;
         border-radius: 10px;
     }

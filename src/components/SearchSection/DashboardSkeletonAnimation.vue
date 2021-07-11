@@ -1,95 +1,93 @@
 <template>
-    <div>
-        <div class="dashboardSkeleton">
-            <div class="dashboardSkeletonPanel asidePanel">
-                <div class="asidePanel__locationHeader">
-                    <div class="asidePanel__flag"><!--Flag--></div>
-                    <div class="asidePanel__locationName"><!--Location Name--></div>
-                </div>
-                <div class="asidePanel__locationMap"><!--Map--></div>
-                <div class="asidePanel__overviewHeader">
-                    <div class="asidePanel__subHeaderLogo"></div>
-                    <div class="asidePanel__subHeader"></div>
-                </div>
-                <ul class="asidePanel__list">
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                </ul>
-                <ul class="asidePanel__list">
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                    <li class="asidePanel__listItem"></li>
-                </ul>
-                <ul class="asidePanel__list">
-                    <li class="asidePanel__listItem"></li>
-                </ul>
+    <div class="dashboardSkeleton">
+        <div class="dashboardSkeletonPanel asidePanel">
+            <div class="asidePanel__locationHeader">
+                <div class="asidePanel__flag"><!--Flag--></div>
+                <div class="asidePanel__locationName"><!--Location Name--></div>
             </div>
-            <div class="dashboardSkeleton__diseaseDatasPanel">
-                <div class="dashboardSkeletonPanel dashboardSkeletonPanel--currentSituationPanel">
+            <div class="asidePanel__locationMap"><!--Map--></div>
+            <div class="asidePanel__overviewHeader">
+                <div class="asidePanel__subHeaderLogo"></div>
+                <div class="asidePanel__subHeader"></div>
+            </div>
+            <ul class="asidePanel__list">
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+            </ul>
+            <ul class="asidePanel__list">
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+                <li class="asidePanel__listItem"></li>
+            </ul>
+            <ul class="asidePanel__list">
+                <li class="asidePanel__listItem"></li>
+            </ul>
+        </div>
+        <div class="dashboardSkeleton__diseaseDatasPanel">
+            <div class="dashboardSkeletonPanel dashboardSkeletonPanel--currentSituationPanel">
+                <div class="dashboardSkeletonPanel__headerContainer">
+                    <div class="dashboardSkeletonPanel__header"></div>
+                </div>
+                <div class="dashboardSkeletonPanel__contentContainer">
+                    <stat-item-placeholder></stat-item-placeholder>
+                    <stat-item-placeholder></stat-item-placeholder>
+                    <stat-item-placeholder></stat-item-placeholder>
+                </div>
+            </div>
+            <div class="dashboardSkeleton__vaccRelDatasPanels">
+                <div class="dashboardSkeletonPanel dashboardSkeletonPanel--vaccinationDatasPanel">
                     <div class="dashboardSkeletonPanel__headerContainer">
                         <div class="dashboardSkeletonPanel__header"></div>
                     </div>
                     <div class="dashboardSkeletonPanel__contentContainer">
-                        <stat-item-placeholder></stat-item-placeholder>
-                        <stat-item-placeholder></stat-item-placeholder>
-                        <stat-item-placeholder></stat-item-placeholder>
-                    </div>
-                </div>
-                <div class="dashboardSkeleton__vaccRelDatasPanels">
-                    <div class="dashboardSkeletonPanel dashboardSkeletonPanel--vaccinationDatasPanel">
-                        <div class="dashboardSkeletonPanel__headerContainer">
-                            <div class="dashboardSkeletonPanel__header"></div>
-                        </div>
-                        <div class="dashboardSkeletonPanel__contentContainer">
-                            <div class="dashboardSkeletonPanel__vaccChartOuterCircle">
-                                <div class="dashboardSkeletonPanel__vaccChartInnerCircle"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="dashboardSkeletonPanel dashboardSkeletonPanel--relativeDatasPanel">
-                        <div class="dashboardSkeletonPanel__headerContainer">
-                            <div class="dashboardSkeletonPanel__header"></div>
-                        </div>
-                        <div class="dashboardSkeletonPanel__contentContainer dashboardSkeletonPanel__contentContainer--vertical">
-                            <stat-item-placeholder></stat-item-placeholder>
-                            <stat-item-placeholder></stat-item-placeholder>
+                        <div class="dashboardSkeletonPanel__vaccChartOuterCircle">
+                            <div class="dashboardSkeletonPanel__vaccChartInnerCircle"></div>
                         </div>
                     </div>
                 </div>
-                <div class="dashboardSkeletonPanel dashboardSkeletonPanel--weeklyDailyDatasPanel">
-                    <div class="dashboardSkeletonPanel__headerContainer">
-                        <div class="dashboardSkeletonPanel__header"></div>
-                        <div class="dashboardSkeletonPanel__header"></div>
-                    </div>
-                    <div class="dashboardSkeletonPanel__contentContainer">
-                        <stat-item-placeholder></stat-item-placeholder>
-                        <stat-item-placeholder></stat-item-placeholder>
-                        <stat-item-placeholder></stat-item-placeholder>
-                    </div>
-                </div>
-                <div class="dashboardSkeletonPanel dashboardSkeletonPanel--locationEvolutionDatas">
+                <div class="dashboardSkeletonPanel dashboardSkeletonPanel--relativeDatasPanel">
                     <div class="dashboardSkeletonPanel__headerContainer">
                         <div class="dashboardSkeletonPanel__header"></div>
                     </div>
-                    <div class="dashboardSkeletonPanel__contentContainer">
-                        <div class="dashboardSkeletonPanel__locationEvolutionChart"></div>
-                        <div class="locationEvolutionForm">
-                            <div class="locationEvolutionForm__datatypeSelect"></div>
-                            <div class="locationEvolutionForm__checkboxContainer">
-                                <div class="locationEvolutionForm__checkboxInput"></div>
-                                <div class="locationEvolutionForm__checkboxLabel"></div>
-                            </div>
-                            <div class="locationEvolutionForm__checkboxContainer">
-                                <div class="locationEvolutionForm__checkboxInput"></div>
-                                <div class="locationEvolutionForm__checkboxLabel"></div>
-                            </div>
-                            <div class="locationEvolutionForm__checkboxContainer">
-                                <div class="locationEvolutionForm__checkboxInput"></div>
-                                <div class="locationEvolutionForm__checkboxLabel"></div>
-                            </div>
+                    <div class="dashboardSkeletonPanel__contentContainer dashboardSkeletonPanel__contentContainer--vertical">
+                        <stat-item-placeholder></stat-item-placeholder>
+                        <stat-item-placeholder></stat-item-placeholder>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboardSkeletonPanel dashboardSkeletonPanel--weeklyDailyDatasPanel">
+                <div class="dashboardSkeletonPanel__headerContainer">
+                    <div class="dashboardSkeletonPanel__header"></div>
+                    <div class="dashboardSkeletonPanel__header"></div>
+                </div>
+                <div class="dashboardSkeletonPanel__contentContainer">
+                    <stat-item-placeholder></stat-item-placeholder>
+                    <stat-item-placeholder></stat-item-placeholder>
+                    <stat-item-placeholder></stat-item-placeholder>
+                </div>
+            </div>
+            <div class="dashboardSkeletonPanel dashboardSkeletonPanel--locationEvolutionDatas">
+                <div class="dashboardSkeletonPanel__headerContainer">
+                    <div class="dashboardSkeletonPanel__header"></div>
+                </div>
+                <div class="dashboardSkeletonPanel__contentContainer">
+                    <div class="dashboardSkeletonPanel__locationEvolutionChart"></div>
+                    <div class="locationEvolutionForm">
+                        <div class="locationEvolutionForm__datatypeSelect"></div>
+                        <div class="locationEvolutionForm__checkboxContainer">
+                            <div class="locationEvolutionForm__checkboxInput"></div>
+                            <div class="locationEvolutionForm__checkboxLabel"></div>
+                        </div>
+                        <div class="locationEvolutionForm__checkboxContainer">
+                            <div class="locationEvolutionForm__checkboxInput"></div>
+                            <div class="locationEvolutionForm__checkboxLabel"></div>
+                        </div>
+                        <div class="locationEvolutionForm__checkboxContainer">
+                            <div class="locationEvolutionForm__checkboxInput"></div>
+                            <div class="locationEvolutionForm__checkboxLabel"></div>
                         </div>
                     </div>
                 </div>
@@ -155,19 +153,28 @@ export default {
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
+    @media (min-width: 1024px) {
+        flex-direction: row;
+    }
     &__diseaseDatasPanel {
-        flex: 2;
+        flex: 3;
     }
     &__vaccRelDatasPanels {
         display: flex;
         justify-content: space-between;
         align-items: stretch;
-        > div {
-            flex: 1;
-            &:first-child {
-                margin-right: 2rem;
+        flex-direction: column;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+            > div {
+                flex: 1;
+                &:first-child {
+                    margin-right: 2rem;
+                }
             }
         }
+        
     }
 }
 
@@ -180,19 +187,19 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     &--currentSituationPanel {
-        height: 182px;
+        min-height: 182px;
     }
     &--vaccinationDatasPanel {
-        height: 428px;
+        min-height: 428px;
     }
     &--relativeDatasPanel {
-        height: 428px;
+        min-height: 428px;
     }
     &--weeklyDailyDatasPanel {
-        height: 172px;
+        min-height: 172px;
     }
     &--locationEvolutionDatas {
-        height: 503px;
+        min-height: 503px;
     }
     &__headerContainer {
         border-bottom: 1px solid lightgray;
@@ -216,36 +223,50 @@ export default {
         align-items: center;
         flex: 1;
         height: auto;
+        flex-direction: column;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+        }
         &--vertical {
             justify-content: center;
             flex-direction: column;
         }
     }
     &__vaccChartOuterCircle {
-        width: 15vw;
-        height: 15vw;
+        margin-top: 1.5rem;
+        width: 70vw;
+        height: 70vw;
         border-radius: 50%;
         background-color: lightgray;
         display: flex;
         justify-content: center;
         align-items: center;
         position: relative;
+        @media (min-width: 1024px) {
+            width: 15vw;
+            height: 15vw;
+        }
         &:before {
             @include slidingElementAnimation;
         }
     }
     &__vaccChartInnerCircle {
         background-color: white;
-        width: 7vw;
-        height: 7vw;
+        width: 35vw;
+        height: 35vw;
         border-radius: 50%;
+        @media (min-width: 1024px) {
+            width: 7vw;
+            height: 7vw;
+        }
     }
     &__locationEvolutionChart {
         flex: 2;
         background-color: lightgray;
         width: 100%;
-        height: 80%;
+        min-height: 300px;
         position: relative;
+        margin-top: 2rem;
         &:before {
             @include slidingElementAnimation;
         }
@@ -259,6 +280,11 @@ export default {
     align-items: center;
     flex-direction: column;
     height: 50%;
+    width: 100%;
+    margin-top: 2rem;
+    @media (min-width: 1024px) {
+        margin-top: 0;
+    }
     &__datatypeSelect {
         background-color: lightgray;
         width: 75%;
@@ -299,9 +325,11 @@ export default {
 .asidePanel {
     margin-right: 2rem;
     height: 1255px;
-    position: sticky;
-    top: 0;
     flex: 1;
+    @media (min-width: 1024px) {
+        position: sticky;
+        top: 0;
+    }
     &__locationHeader {
         display: flex;
         justify-content: space-between;
@@ -336,15 +364,27 @@ export default {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        height: 1.5rem;
+        height: 2rem;
+        margin: 1.5rem 0 0.5rem 0;
     }
     &__subHeaderLogo {
         background-color: lightgray;
         height: 100%;
+        position: relative;
+        width: 15%;
+        margin-right: 2rem;
+        &:before {
+            @include slidingElementAnimation;
+        }
     }
     &__subHeader {
         background-color: lightgray;
         height: 100%;
+        position: relative;
+        width: 50%;
+        &:before {
+            @include slidingElementAnimation;
+        }
     }
     &__list {
         border-top: 1px solid lightgray;

@@ -39,7 +39,7 @@ export default class DatasCalculator {
                     break;
 
                 case "newHospitalizations":
-                    currentKey = "Nouvelles Hospitalisations";
+                    currentKey = "Nouvelles hospitalisations";
                     break;
 
                 case "intensive_care":
@@ -47,7 +47,7 @@ export default class DatasCalculator {
                     break;
 
                 case "new_intensive_care":
-                    currentKey = "Nouvelles Réanimations";
+                    currentKey = "Nouvelles réanimations";
                     break;
             
                 default:
@@ -181,42 +181,57 @@ export default class DatasCalculator {
             let weekAgoData = {};
             let dailyDatas = {};
             let weeklyDatas = {};
+            let datasRecorder = {
+                new_hospitalizations: 0,
+                new_intensive_care: 0
+            }
+            console.log(dataset);
+            dataset = dataset.dailyDatas;
+            const authKeys = ["new_hopitalizations", "new_intensive_care", "deaths", "recovered"];
+            for (const [statusKey, statusValues] of Object.entries(dataset)) {
 
-            for (let i = 0; i < dataset.length; i++) {
+                if (authKeys.includes(statusKey)) {
 
-                if (i === 0) {
-                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
-                        todayDatas[key] = value;
+                    let dayIndex = 1;
+                    for (let i = statusValues.length - 1; i > 0; i--) {
+
+                        if (dayIndex === 1) {
+
+                            todayDatas[statusKey] = statusValues[i];
+
+                        } else if (dayIndex === 2 && (dateTypeToReturn === false || dateTypeToReturn === "dailyEvolution")) {
+
+                            yesterdayDatas[statusKey] = statusValues[i];
+
+                            if (typeof datasRecorder[statusKey] !== "undefined") {
+                                dailyDatas[statusKey] = yesterdayDatas[statusKey] + todayDatas[statusKey];
+                            } else {
+                                dailyDatas[statusKey] = todayDatas[statusKey] - yesterdayDatas[statusKey];
+                            }
+
+                        } else if (dayIndex === 7 && (dateTypeToReturn === false || dateTypeToReturn === "weeklyEvolution")) {
+
+                            weekAgoData[statusKey] = statusValues[i];
+
+                            if (typeof datasRecorder[statusKey] !== "undefined") {
+                                weeklyDatas[statusKey] = datasRecorder[statusKey] + statusValues[i];
+                            } else {
+                                weeklyDatas[statusKey] = todayDatas[statusKey] - weekAgoData[statusKey];
+                            }
+                            break;
+
+                        }
+
+                        //Sum datas that are not cumulative by nature (hospitalizations, intensive care)
+                        if (typeof datasRecorder[statusKey] !== "undefined") {
+                            datasRecorder[statusKey] += statusValues[i];
+                        }
+                        dayIndex++;
+
                     }
+
                 }
-
-                if (i === 1 && (dateTypeToReturn === false || dateTypeToReturn === "dailyEvolution")) {
-
-                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
-                        yesterdayDatas[key] = value;
-                    }
-
-                    //Get dailyEvolution
-                    for (const [key, value] of Object.entries(todayDatas)) {
-                        dailyDatas[key] = value - yesterdayDatas[key];
-                    }
-
-                }
-
-                if (i === 6 && (dateTypeToReturn === false || dateTypeToReturn === "weeklyEvolution")) {
-
-                    for (const [key, value] of Object.entries(dataset[i].cumulativeDatas)) {
-                        weekAgoData[key] = value;
-                    }
-
-                    for (const [key, value] of Object.entries(todayDatas)) {
-                        weeklyDatas[key] = value - weekAgoData[key];
-                    }
-
-                    break;
-
-                }
-
+            
             }
 
             if (typeof dailyDatas !== "undefined" && typeof weeklyDatas !== "undefined") {
@@ -240,10 +255,12 @@ export default class DatasCalculator {
             const customStartDate = new Date(customPeriodDates.startDate.split("-")[0], customPeriodDates.startDate.split("-")[1] - 1, customPeriodDates.startDate.split("-")[2]).getTime();
             const customEndDate = new Date(customPeriodDates.endDate.split("-")[0], customPeriodDates.endDate.split("-")[1] - 1, customPeriodDates.endDate.split("-")[2]).getTime();
 
+            console.log(new Date(customStartDate), new Date(customEndDate));
+
             for (let i = 0; i < dataset.length; i++) {
 
                 const currentDate = new Date(dataset[i].date.split("-")[0], dataset[i].date.split("-")[1] - 1, dataset[i].date.split("-")[2]).getTime();
-
+                console.log(new Date(currentDate));
                 if (currentDate === customStartDate || currentDate === customEndDate) {
 
                     if (currentDate === customStartDate) {
@@ -260,7 +277,7 @@ export default class DatasCalculator {
 
                     }
 
-                    if (typeof startDateData !== "undefined" && typeof endDateData !== "undefined") {
+                    if (Object.entries(startDateData).length > 0 && typeof Object.entries(endDateData).length > 0) {
                         break;
                     }
 
@@ -274,11 +291,23 @@ export default class DatasCalculator {
                 customPeriodDatas[key] = value - startDateData[key];
             }
 
+            console.log(customPeriodDatas);
+
             return customPeriodDatas;
 
         }
     }
     numberFunctionalities = {
+        formatNumber(number) {
+
+            //Test if number is already a float number or not
+            if (number.toString().split("").includes(".") === false) {
+                return String(number).replace(/(.)(?=(\d{3})+$)/g,'$1.');
+            } else {
+                return number.toString();
+            }
+
+        },
         getPercentageOfPartFromTotal: (part, total) => {
 
             return 100 * part / total;

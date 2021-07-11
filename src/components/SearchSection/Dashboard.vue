@@ -81,11 +81,21 @@ export default {
                 areDatasComputed.value = false;
                 const dashboardDatasCreator = new DashboardDatasCreator();
 
+                //Empty datas object (world locationInfos object and country locationInfos Object doesn't contain the same properties)
+                datas.locationInfos = {};
+                for (let keyValue of Object.entries(datas.diseaseDatas)) {
+
+                    if (typeof value !== "string") {
+                        keyValue[1] = {};
+                    }
+
+                }
+
                 if (newValue.locationType === "country") {
                     newValue.country === "France" ? datas = dashboardDatasCreator.getCountryDatas(newValue.country, datas, worldLiveDatas.value, departementsLiveDatas.value): datas = dashboardDatasCreator.getCountryDatas(newValue.country, datas, worldLiveDatas.value);
                     datas.diseaseDatas.evolutionDatas = worldLocationEvolutionDatas.value[newValue.country];
                 } else if (newValue.locationType === "departement") {
-                    datas = dashboardDatasCreator.getDepartementDatas(newValue.departement, datas, departementsLiveDatas.value, departementsStaticDatas);
+                    datas = dashboardDatasCreator.getDepartementDatas(newValue.departement, newValue.country, datas, departementsLiveDatas.value, departementsStaticDatas);
                     datas.diseaseDatas.evolutionDatas = franceDepartementsEvolutionDatas.value[newValue.departement];
                     console.log(datas);
                 } else if (newValue.locationType === "continent") {
@@ -124,6 +134,8 @@ export default {
 </script>
 
 <style lang="scss">
+$selectionColor: lightblue;
+
 @keyframes dashboardAppearance {
     from {
         opacity: 0;
@@ -139,8 +151,12 @@ export default {
     margin: 0 auto;
     &__datasContainer {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         align-items: flex-start;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+        }
     }
 }
 
@@ -169,6 +185,59 @@ export default {
         font-size: 1.5rem;
         opacity: 0;
         transform: translateY(100%);
+    }
+}
+
+.datasPanel {
+    overflow: hidden;
+    background-color: white;
+    margin: 1.5rem 0;
+    padding: 0 1rem 1rem 1rem;
+    color: #303030;
+    border-radius: 3px;
+    &__headerContainer {
+        border-bottom: 1px solid #303030;
+    }
+    &__header {
+        margin: 0;
+        padding: 1rem 0;
+    }
+}
+
+.selectableStatus {
+    background-color: inherit;
+    border: 2px solid black;
+    font-size: 1.2rem;
+    margin: 0.2rem 0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    transition: all 300ms;
+    &:hover {
+        cursor: pointer;
+    }
+    &--confirmedActive {
+        border-color: #FF6866;
+        color: #FF6866;
+    }
+    &--deathsActive {
+        border-color: #3A3A3A;
+        color: #3A3A3A;
+    }
+    &--recoveredActive {
+        border-color: #4BFF35;
+        color: #4BFF35;
+    }
+    &--hospitalizationsActive {
+        border-color: #FFC042;
+        color: #FFC042;
+    }
+    &--intensive_careActive {
+        border-color: #FF6866;
+        color: #FF6866;
+    }
+    &--inactive {
+        border-color: black;
+        color: black;
     }
 }
 </style>

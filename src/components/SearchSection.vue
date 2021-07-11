@@ -1,14 +1,16 @@
 <template>
-    <section id="searchResults">
+    <section id="searchSection" class="searchSection">
 
         <world-france-search-maps :formSelectedLocation="addedFormLocation" @clicked-location="transmitClickedLocation"></world-france-search-maps>
         <search-form @form-submitted="onFormSubmission" @added-form-location="transmitAddedFormLocation" :clickedLocation="clickedLocation"></search-form>
         <div class="resultsContainer" id="locationDashboard">
-            <app-loader v-if="isContentLoading === true"></app-loader>
+            <app-loader v-if="isContentLoading === true && areRequestResultsReceived === false"></app-loader>
             <country-dashboard v-if="isContentLoading === false && areRequestResultsReceived === true" :formRequestCriteria="formRequestCriteria"></country-dashboard>
+            <div v-if="isContentLoading === false && areRequestResultsReceived === false" class="resultsContainer__noDatasPlaceholderContainer">
+                <p class="resultsContainer__noDatasPlaceholder">Aucune données à afficher</p>
+            </div>
         </div>
-
-        </section>
+    </section>
 </template>
 
 <script>
@@ -166,13 +168,32 @@ export default {
 </script>
 
 <style lang="scss">
+.searchSection {
+    background-color: white;
+}
+
 .resultsContainer {
     margin: 0 auto;
     padding: 5rem 0;
     width: 100%;
-    background-color: #93B1A7;
-    &__sourceLink {
-        text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    background: #e6f0f0;
+    &__noDatasPlaceholderContainer {
+        background: url("../assets/img/dashboard/bacteriaCellCovid.png") no-repeat, #e6f0f0;
+        background-position: center;
+        background-size: 80%;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &__noDatasPlaceholder {
+        background-color: #ffffffa1;
+        border-radius: 3px;
+        padding: 0.5rem 1rem;
     }
 }
 </style>

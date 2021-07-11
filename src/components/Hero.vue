@@ -7,10 +7,8 @@
                 <h2 class="hero__thirdTitle">Statistiques françaises et internationales</h2>
             </div>
 
-            <a title="Commencer votre recherche" href="#searchResults" class="hero__seeMore">
-				<div class="hero__seeMoreContentContainer">
-					<p>Commencer</p> <i class="fas fa-long-arrow-alt-down hero__seeMoreArrow"></i>
-				</div>
+            <a title="Commencer votre recherche" href="#searchSection" class="hero__seeMore">
+				<p>Commencer</p> <i class="fas fa-long-arrow-alt-down hero__seeMoreArrow"></i>
 			</a>
 
         </section>
@@ -30,14 +28,20 @@
 	0% {
 		transform: translateY(0%);
 	}
-	25% {
+	44% {
+		transform: translateY(0%);
+	}
+	47% {
 		transform: translateY(-10%);
 	}
 	50% {
 		transform: translateY(0%);
 	}
-	75% {
+	53% {
 		transform: translateY(10%);
+	}
+	56% {
+		transform: translateY(0%);
 	}
 	100% {
 		transform: translateY(0%);
@@ -51,29 +55,54 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: url("../assets/img/heroBg.jpg")
-		no-repeat center;
+	background: url("../assets/img/hero/heroBgMobile.jpg") no-repeat center;
 	background-size: cover;
 	background-attachment: fixed;
+	@media (min-width: 1024px) {
+		background: url("../assets/img/hero/heroBg.jpg") no-repeat center;
+		background-size: cover;
+		background-attachment: fixed;
+	}
 	&__titlesContainer {
+		user-select: none;
 		text-align: center;
-		position: relative;
-		bottom: 0%;
-		text-transform: uppercase;
+		width: 90%;
+		@media (min-width: 1024px) {
+			width: auto;
+			position: relative;
+			top: 3%;
+		}
 		h2 {
-			margin: 0;
+			line-height: 175%;
 		}
 	}
 	&__firstTitle {
 		letter-spacing: 0.2rem;
+		font-size: 8vw;
+		margin: 0;
+		text-transform: uppercase;
+		@media (min-width: 768px) {
+			margin-bottom: -1.2rem;
+			font-size: 2rem;
+		}
 	}
 	&__secondTitle {
-		font-size: 7rem;
+		font-size: 15vw;
 		letter-spacing: 0.5rem;
 		margin: 0;
+		text-transform: uppercase;
+		@media (min-width: 768px) {
+			font-size: 7rem;
+			letter-spacing: 0.8rem;
+		}
 	}
 	&__thirdTitle {
 		letter-spacing: 0.1rem;
+		margin-top: 2rem;
+		font-size: 1.7rem;
+		@media (min-width: 768px) {
+			letter-spacing: 0.2rem;
+		}
 	}
 	&__seeMore {
 		display: block;
@@ -88,18 +117,18 @@
 		bottom: 7%;
 		left: 50%;
 		transform: translate(-50%, 50%);
-		&__seeMoreContentContainer {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			p {
-				font-size: 2.5rem;
-			}
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		p {
+			text-transform: uppercase;
+			letter-spacing: 0.2rem;
+			font-weight: bold;
 		}
 	}
 	&__seeMoreArrow {
-		animation: shakeUpAndDown 750ms both infinite;
+		animation: shakeUpAndDown 4000ms both infinite ease-in-out;
 		font-size: 2.5rem;
 	}
 }

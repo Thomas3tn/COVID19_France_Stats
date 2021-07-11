@@ -8,7 +8,7 @@
             <twitter-panel></twitter-panel>
         </div>
         <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'global'"></weekly-daily-datas-panel>
-        <location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'global'"></location-evolution-graph>
+        <!--<location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'global'"></location-evolution-graph>-->
     </div>
 </template>
 
@@ -18,7 +18,7 @@ import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue
 import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
 import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
 import TwitterPanel from "./LocationAsidePanel/TwitterPanel.vue";
-import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph.vue";
+//import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
 
 export default {
@@ -34,7 +34,7 @@ export default {
         WeeklyDailyDatasPanel,
         VaccinationChart,
         TwitterPanel,
-        LocationEvolutionGraph,
+        //LocationEvolutionGraph,
         RelativeDatasPanel
     }
 }

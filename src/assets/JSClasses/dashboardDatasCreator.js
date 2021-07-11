@@ -20,6 +20,14 @@ export default class DashboardDatasCreator {
                 case "recovered":
                     currentKey = "Guéris";
                     break;
+
+                case "hospitalizations":
+                    currentKey = "Hospitalisations";
+                    break;
+
+                case "intensive_care":
+                    currentKey = "Réanimations";
+                    break;
                 
                 case "administered":
                     currentKey = "Doses administrées";
@@ -80,7 +88,7 @@ export default class DashboardDatasCreator {
         //Fill array with to indicate which datas retrieve for each dashboard component
 
         const locationDatasAuthKeys = {
-            locationInfos: ["country", "demonym", "gini", "population", "sq_km_area", "life_expectancy", "continent", "abbreviation", "location", "capital_city", "lat", "long", "updated"],
+            locationInfos: ["country", "demonym", "gini", "population", "sq_km_area", "life_expectancy", "continent", "abbreviation", "location", "capital_city", "lat", "long", "updated", "fr_name"],
             currentSituation: ["confirmed", "deaths", "recovered", "people_vaccinated", "hospitalizations", "intensive_care"],
             vaccinationDatas: ["population", "administered", "people_vaccinated", "people_partially_vaccinated"],
             relativeDatas: ["population", "sq_km_area", "confirmed", "deaths", "recovered"]
@@ -133,15 +141,16 @@ export default class DashboardDatasCreator {
         return datas;
 
     }
-    getDepartementDatas(departement, datas, departementsLiveDatas, departementsStaticDatas) {
+    getDepartementDatas(departement, country, datas, departementsLiveDatas, departementsStaticDatas) {
 
         let staticDatasKey = departement.split("-")[0] + departement.split("-")[1];
-        const locationDatas = Object.assign(departementsLiveDatas.datas[departement], departementsStaticDatas[staticDatasKey]);
+        let locationDatas = Object.assign(departementsLiveDatas.datas[departement], departementsStaticDatas[staticDatasKey]);
+        locationDatas.country = country;
         console.log(locationDatas);
         const locationDatasAuthKeys = {
-            locationInfos: ["location", "sq_km_area", "capital_city", "population", "life_expectancy", "lat", "long", "code", "nom", "date", "source", "sourceType"],
-            relativeDatas: ["population", "sq_km_area", "hospitalises"],
-            currentSituation: ["hospitalises", "reanimation", "deces", "gueris"]
+            locationInfos: ["location", "country", "sq_km_area", "capital_city", "population", "life_expectancy", "lat", "long", "code", "nom", "date", "source", "sourceType"],
+            relativeDatas: ["population", "sq_km_area", "hospitalizations", "deaths", "intensive_care", "recovered"],
+            currentSituation: ["hospitalizations", "intensive_care", "deaths", "recovered"]
         }
 
         datas = this.setCountryDatas(datas, locationDatas, locationDatasAuthKeys);
@@ -291,9 +300,9 @@ export default class DashboardDatasCreator {
 
         for (const worldLiveDatasKeyValue of Object.entries(worldLiveDatas)) {
 
-            datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
-
             if (worldLiveDatasKeyValue[0] !== "Global") {
+
+                datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
 
                 for (const [countryKey, countryValue] of Object.entries(worldLiveDatasKeyValue[1].All)) {
 
@@ -304,7 +313,7 @@ export default class DashboardDatasCreator {
     
                             if (countryKey === "country") {
                                 typeof datas.locationInfos.countriesList === "undefined" ? datas.locationInfos.countriesList = [countryValue] : datas.locationInfos.countriesList.push(countryValue);
-                            } else {
+                            } else if (countryKey === "gini") {
                                 typeof datas.locationInfos[countryKey] === "undefined" ? datas.locationInfos[countryKey] = [countryValue] : datas.locationInfos[countryKey].push(countryValue);
                             }
                             

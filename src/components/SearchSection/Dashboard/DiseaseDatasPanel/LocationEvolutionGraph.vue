@@ -1,38 +1,19 @@
 <template>
   <div class="datasPanel">
     <div class="datasPanel__headerContainer">
-      <h3 class="datasPanel__header">Evolution</h3>
+      <h3 class="datasPanel__header">Évolution épidémique quotidienne</h3>
     </div>
-    <div class="">
-      <form>
-        <div>
-          <select v-model="chartType">
-            <option value="cumulativeDatas" selected="true">Données cumulatives</option>
-            <option value="dailyDatas">Données quotidiennes</option>
-          </select>
-          <div>
-            <input
-              v-model="chartCriteria"
-              value="confirmed"
-              type="checkbox"
-              id="confirmedInput"
-              checked="true"
-            /><label for="confirmedInput">Cas confirmés</label>
-            <input
-              v-model="chartCriteria"
-              value="deaths"
-              type="checkbox"
-              id="deathsInput"
-              checked="true"
-            /><label for="deathsInput">Décès</label>
-            <input
-              v-model="chartCriteria"
-              value="recovered"
-              type="checkbox"
-              id="recoveredInput"
-              checked="true"
-            /><label for="recoveredInput">Guéris</label>
-          </div>
+    <div class="locationEvolutionDatasPanel__contentContainer">
+      <form class="locationEvolutionChartForm">
+        <select v-model="chartType" class="locationEvolutionChartForm__selectInput">
+          <option value="cumulativeDatas" selected="true">Données cumulatives</option>
+          <option value="dailyDatas">Données quotidiennes</option>
+        </select>
+        <div class="locationEvolutionChartForm__checkboxesContainer">
+          <template v-for="item in statusCheckboxesList[chartType]" :key="item.idName">
+            <input v-model="chartCriteria[item.idName]" :value="item.idName" type="checkbox" :id="item.idName + 'Input'" class="locationEvolutionChartForm__checkboxInput" checked="true"/>
+            <label :for="item.idName + 'Input'" :id="item.idName + 'Label'" class="selectableStatus" :title="item.dashboardName"><font-awesome-icon :icon="item.logo"/></label>
+          </template>
         </div>
       </form>
       <div class="locationEvolutionGraph__graphContainer">
@@ -40,7 +21,7 @@
         :chartId="'locationEvolutionGraph'"
         :chartData="chartDatas"
         :chartOptions="chartOptions"
-        :chartType="'line'"
+        :chartType="graphType"
         ></chart>
       </div>
     </div>
@@ -49,10 +30,18 @@
 
 <script>
 //Vue elements
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, inject, onMounted } from "vue";
 
 //Vue components
 import Chart from "./SharedComponents/Chart.vue";
+
+//JS Script
+import DatasCalculator from "../../../../assets/JSClasses/DatasCalculator.js";
+
+import { faCross, faMale, faWalking, faHospitalUser, faHospital, faAmbulance, faProcedures } from "@fortawesome/free-solid-svg-icons";
+
+//Lodash (deep object cloning)
+import _ from "lodash";
 
 export default {
   props: {
@@ -68,148 +57,36 @@ export default {
   },
   setup(props) {
 
+    console.log(props.locationEvolutionDatas, props.locationType);
+
+    let datasCalculator = new DatasCalculator();
+    const chartStatusKey = inject("chartStatusKey", {});
+
     //Chart type & Chart criteria
     const chartType = ref("dailyDatas");
-    const chartCriteria = ref(["confirmed", "deaths", "recovered"]);
+    let chartCriteria = reactive({});
+    const graphType = "line";
 
-    //Chart datas
+    //Stored datas
     const datas = reactive({
-      dailyDatas: {
-        confirmed: {
-          label: "Cas confirmés",
-          dataName: "confirmed",
-          data: [],
-          backgroundColor: "#FF413E",
-          borderColor: "#FF413E",
-          lineTension: 0,
-          pointBackgroundColor: "#FFF",
-        },
-        deaths: {
-          label: "Décès",
-          dataName: "deaths",
-          data: [],
-          backgroundColor: "#2D2D2D",
-          borderColor: "#2D2D2D",
-          lineTension: 0,
-          pointBackgroundColor: "#FFF",
-        },
-        recovered: {
-          label: "Guéris",
-          dataName: "recovered",
-          data: [],
-          backgroundColor: "#64E64D",
-          borderColor: "#64E64D",
-          lineTension: 0,
-          pointBackgroundColor: "#FFF",
-        }
-      },
-      cumulativeDatas: {
-        confirmed: {
-        label: "Cas confirmés",
-        dataName: "confirmed",
-        data: [],
-        backgroundColor: "#FF413E",
-        borderColor: "#FF413E",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-        },
-        deaths: {
-          label: "Décès",
-          dataName: "deaths",
-          data: [],
-          backgroundColor: "#2D2D2D",
-          borderColor: "#2D2D2D",
-          lineTension: 0,
-          pointBackgroundColor: "#FFF",
-        },
-        recovered: {
-          label: "Guéris",
-          dataName: "recovered",
-          data: [],
-          backgroundColor: "#64E64D",
-          borderColor: "#64E64D",
-          lineTension: 0,
-          pointBackgroundColor: "#FFF",
-        }
-      }
-      
+      dailyDatas: {},
+      cumulativeDatas: {}
     });
-
-    if (props.locationType === "departement") {
-
-      datas.dailyDatas.hospitalizations = {
-        label: "Hospitalisations",
-        dataName: "hospitalizations",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-      datas.dailyDatas.newHospitalizations = {
-        label: "Nouvelles hospitalisations",
-        dataName: "newHospitalizations",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-      datas.dailyDatas.intensiveCare = {
-        label: "Réanimations",
-        dataName: "intensiveCare",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-      datas.dailyDatas.newIntensiveCare = {
-        label: "Nouvelles réanimations",
-        dataName: "newIntensiveCare",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-
-      datas.cumulativeDatas.intensiveCare = {
-        label: "Réanimations",
-        dataName: "intensiveCare",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-      datas.cumulativeDatas.hospitalizations = {
-        label: "Hospitalisations",
-        dataName: "hospitalizations",
-        data: [],
-        backgroundColor: "#64E64D",
-        borderColor: "#64E64D",
-        lineTension: 0,
-        pointBackgroundColor: "#FFF",
-      };
-
-    }
 
     //Chart Datas
     const chartDatas = reactive({
       labels: [],
-      datasets: [
-        datas.dailyDatas.confirmed,
-        datas.dailyDatas.deaths,
-        datas.dailyDatas.recovered
-      ],
+      datasets: [],
     });
+
     const chartOptions = reactive({
       scales: {
           xAxes: [
             {
               stacked: true,
-              gridLines: { display: false },
+              gridLines: {
+                display: false
+              }
             },
           ],
           yAxes: [
@@ -229,11 +106,10 @@ export default {
           ],
         },
         maintainAspectRatio: false,
-        legend: {
-          labels: {
-            boxWidth: 10,
-          },
-          position: "top",
+        plugins: {
+          legend: {
+            display: false
+          }
         },
         animation: {
           duration: 2000,
@@ -241,8 +117,26 @@ export default {
         }
     });
 
+    let statusCheckboxesList = reactive({
+      dailyDatas: {},
+      cumulativeDatas: {}
+    });
+
     watch(props.locationEvolutionDatas, (newValue) => {
 
+      let chartLine = {
+        label: "",
+        dataName: "",
+        data: [],
+        backgroundColor: "",
+        borderColor: "",
+        lineTension: 0,
+        pointBackgroundColor: "#FFF",
+        pointRadius: 0,
+        pointHitRadius: 5
+      }
+
+      //Fill labels and datas object
       if (props.locationType === "country" || props.locationType === "global") {
 
         //Iterate over each of data contained inside the locationEvolutionDatas props object
@@ -250,9 +144,45 @@ export default {
 
           if (key !== "creation_date") {
 
+            //Dynamically create chartCriteria object keys
+            chartCriteria[key] = true;
+
+            statusCheckboxesList[key] = {};
+            statusCheckboxesList[key]["idName"] = key;
+            statusCheckboxesList[key]["dashboardName"] = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key);
+
+            switch (key) {
+              case "confirmed":
+                statusCheckboxesList[key]["logo"] = faMale;
+                break;
+
+              case "deaths":
+                  statusCheckboxesList[key]["logo"] = faCross;
+                  break;
+
+              case "recovered":
+                  statusCheckboxesList[key]["logo"] = faWalking;
+                  break;
+            
+              default:
+                statusCheckboxesList[key]["logo"] = "";
+                break;
+            }
+
             //Access corresponding reactive object
-            let currentCumulativeChartLine = datas.cumulativeDatas[key];
-            let currentDailyChartLine = datas.dailyDatas[key];
+            let currentCumulativeChartLine = _.cloneDeep(chartLine);
+            let currentDailyChartLine = _.cloneDeep(chartLine);
+
+            currentCumulativeChartLine.label = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key);
+            currentDailyChartLine.label = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key);
+            currentCumulativeChartLine.dataName = key;
+            currentDailyChartLine.dataName = key;
+            currentDailyChartLine.backgroundColor = chartStatusKey.statusColor[key];
+            currentCumulativeChartLine.backgroundColor = chartStatusKey.statusColor[key];
+            currentCumulativeChartLine.borderColor = chartStatusKey.statusColor[key];
+            currentDailyChartLine.borderColor = chartStatusKey.statusColor[key];
+
+            console.log(currentCumulativeChartLine, currentDailyChartLine);
 
             let keysArray = [];
             let valuesArray = [];
@@ -260,8 +190,7 @@ export default {
             //Create cumulative datas
             for (const [dateProp, dataValue] of Object.entries(value)) {
 
-              //Adding date graph keys
-              //We only add the 1st day of the month to not overload the graph key
+              //Add chart date labels (only first day of each month)
               if (key === "confirmed") {
 
                 if (dateProp.split("-")[2] === "01") {
@@ -305,126 +234,185 @@ export default {
 
             }
 
+            datas.dailyDatas[key] = currentDailyChartLine;
+            datas.cumulativeDatas[key] = currentCumulativeChartLine;
+
           }
 
         }
 
       } else if (props.locationType === "departement") {
 
-        let datesLabels = [];
+        //Loop over dates array, cumulativeDatas and dailyDatas
+        //Set dates labels
+        for (const [key, value] of Object.entries(newValue.datas)) {
 
-        for (let i = 0; i < props.locationEvolutionDatas.length; i++) {
+          if (key === "dates") {
 
-          //Iterate over each day datas type object
-          for (const [dataTypeKey, dataTypeValue] of Object.entries(dataTypeValue)) {
+            for (let i = 0; i < value.length; i++) {
 
-            if (dataTypeKey === "date") {
-              datesLabels.push(dataTypeValue);
-            } else {
-
-              let currentDataType = dataTypeKey;
-
-              //Iterate over each property of a certain datatype of a certain date
-              for (const [dataName, dataNumber] of Object.entries(dataTypeValue)) {
-
-                if (typeof datas[currentDataType][dataName] !== "undefined") {
-                  datas[currentDataType][dataName]["data"].push(dataNumber);
+              if (value[i].split("-")[2] === "01") {
+                  chartDatas.labels.push(value[i].split("-")[1] + "/" + value[i].split("-")[0]);
+                } else {
+                  chartDatas.labels.push("");
                 }
 
+            }
+
+          } else if (key === "dailyDatas" || key === "cumulativeDatas") {
+
+            //Loop inside cumulativeDatas/dailyDatas object
+            for (const [statusKey, statusValue] of Object.entries(value)) {
+
+              statusCheckboxesList[key][statusKey] = {};
+              statusCheckboxesList[key][statusKey]["idName"] = statusKey;
+              statusCheckboxesList[key][statusKey]["dashboardName"] = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(statusKey);
+
+              switch (statusKey) {
+                case "hospitalizations":
+                  statusCheckboxesList[key][statusKey]["logo"] = faHospital;
+                  break;
+
+                case "deaths":
+                  statusCheckboxesList[key][statusKey]["logo"] = faCross;
+                  break;
+
+                case "recovered":
+                  statusCheckboxesList[key][statusKey]["logo"] = faWalking;
+                  break;
+
+                case "intensive_care":
+                  statusCheckboxesList[key][statusKey]["logo"] = faProcedures;
+                  break;
+
+                case "new_hospitalizations":
+                  statusCheckboxesList[key][statusKey]["logo"] = faHospitalUser;
+                  break;
+
+                case "new_intensive_care":
+                  statusCheckboxesList[key][statusKey]["logo"] = faAmbulance;
+                  break;
+              
+                default:
+                  statusCheckboxesList[key][statusKey]["logo"] = "";
+                  break;
               }
 
+              console.log(statusCheckboxesList);
+
+              let currentChartLine = _.cloneDeep(chartLine);
+              currentChartLine.label = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(statusKey);
+              currentChartLine.dataName = statusKey;
+              currentChartLine.backgroundColor = chartStatusKey.statusColor[statusKey];
+              currentChartLine.borderColor = chartStatusKey.statusColor[statusKey];
+              currentChartLine.data = statusValue;
+
+              datas[key][statusKey] = currentChartLine;
+
             }
-          
+
           }
 
         }
 
-        chartDatas.labels = datesLabels;
+      }
 
+      //Dynamically fill the chartCriteria object
+      for (const keyValue of Object.entries(statusCheckboxesList[chartType.value])) {
+        chartCriteria[keyValue[0]] = true;
+      }
+
+      //Dynamically fill the chartDatas.datasets array
+      for (const keyValue of Object.entries(chartCriteria)) {
+        chartDatas.datasets.push(datas[chartType.value][keyValue[0]]);
       }
 
     }, {immediate: true, deep: true});
 
     //Remove and add new data type
-    watch(chartType, (newValue, oldValue) => {
+    watch(() => chartType.value, (newValue, oldValue) => {
 
-      if (newValue !== oldValue) {
+      console.log(oldValue, newValue)
 
-        chartDatas.datasets = [];
+      //Update chart Datas (dataset)
+      for (const keyValue of Object.entries(statusCheckboxesList.dailyDatas)) {
 
-        if (newValue === "cumulativeDatas") {
-          for (let i = 0; i < chartCriteria.value.length; i++) {
-            chartDatas.datasets.push(datas.cumulativeDatas[chartCriteria.value[i]]);
-          }
-        } else if (newValue === "dailyDatas") {
-          for (let i = 0; i < chartCriteria.value.length; i++) {
-            chartDatas.datasets.push(datas.dailyDatas[chartCriteria.value[i]]);
-          }
-        } else {
-          console.error("The chart value data type" + newValue + " hasn't been recognized, it has to be either: cumulativeDatas or dailyDatas");
+        if (newValue === "dailyDatas" && typeof chartCriteria[keyValue[0]] === "undefined") {
+          chartCriteria[keyValue[0]] = true;
+        } else if (newValue === "cumulativeDatas" && typeof statusCheckboxesList.cumulativeDatas[keyValue[0]] === "undefined") {
+          delete chartCriteria[keyValue[0]];
         }
 
       }
+      
+      let newDatasets = [];
+      for (const keyValue of Object.entries(datas[newValue])) {
+        newDatasets.push(keyValue[1]);
+      }
+      chartDatas.datasets = newDatasets;
 
     });
 
     //Add/remove chart line
-    watch(chartCriteria, (newValue, oldValue) => {
+    watch(() => { return { ...chartCriteria }}, (newValue, oldValue) => {
 
       console.log(newValue, oldValue);
 
-      //Add new line
-      if (newValue.length > oldValue.length) {
-        console.log("Add line");
-        console.log(chartDatas.datasets);
-        let newStatus = newValue;
-        const statusOrder = ["confirmed", "deaths", "recovered"];
+      if (Object.entries(newValue).length === Object.entries(oldValue).length) {
 
-        for (let i = 0; i < chartDatas.datasets.length; i++) {
+        for (const [key, value] of Object.entries(newValue)) {
 
-          for (let c = 0; c < newStatus.length; c++) {
-            if (newStatus[c] === chartDatas.datasets[i].dataName) {
-              newStatus.splice(c, 1);
-              c = c - 1;
+        if (value !== oldValue[key]) {
+
+          //Add chart line
+          if (value === true) {
+
+            chartDatas.datasets.push(datas[chartType.value][key]);
+            chartDatas.labels.push(key);
+
+            let newActiveLabel = document.getElementById(key + "Label");
+            if (newActiveLabel.className.split(" ").includes("selectableStatus--inactive")) {
+
+              let newActiveLabelClasses = newActiveLabel.className.split(" ");
+
+              for (let i = 0; i < newActiveLabelClasses.length; i++) {
+
+                  if (newActiveLabelClasses[i] === "selectableStatus--inactive") {
+                    newActiveLabelClasses.splice(i, 1);
+                    break;
+                  }
+
+              }
+
+              newActiveLabel.className = newActiveLabelClasses.join(" ");
+
             }
-          }
+            document.getElementById(key + "Label").className += " selectableStatus--" + key + "Active";
 
-        }
+          //Remove chart line
+          } else if (value === false) {
 
-        let statusIndex;
-        for (let i = 0; i < statusOrder.length; i++) {
-          if (statusOrder[i] === newStatus[0]) {
-            statusIndex = i;
-            break;
-          }
-        }
+            for (let i = 0; i < chartDatas.datasets.length; i++) {
 
-        chartDatas.datasets.splice(statusIndex, 0, datas[chartType.value][newStatus[0]]);
-        console.log(chartDatas.datasets);
+              if (chartDatas.datasets[i].dataName === key) {
 
-      //Remove line
-      } else if (newValue.length < oldValue.length) {
-        console.log("Remove Line");
-
-        for (let i = 0; i < chartDatas.datasets.length; i++) {
-
-          //For each chart line registered in datasets, we find if that line is still in the chartCriteria array
-          //If not we delete it
-          if (newValue.includes(chartDatas.datasets[i].dataName) === false) {
-
-            const labelToRemove = chartDatas.datasets[i].dataName;
-            chartDatas.datasets.splice(i, 1);
-
-            for (let c = 0; c < chartDatas.labels.length; c++) {
-
-              if (chartDatas.labels[c] === labelToRemove) {
-                chartDatas.labels.splice(c, 1);
+                chartDatas.datasets.splice(i, 1);
                 break;
+
               }
 
             }
 
-            break;
+            for (let i = 0; i < chartDatas.labels.length; i++) {
+
+              if (chartDatas.labels[i] === key) {
+                chartDatas.labels.splice(i, 1);
+              }
+
+            }
+
+            //Delete selected className
+            document.getElementById(key + "Label").className = "selectableStatus selectableStatus--inactive";
 
           }
 
@@ -432,15 +420,30 @@ export default {
 
       }
 
+      }
+
+      
+
+    }), {deep: true};
+
+    onMounted(() => {
+      console.log(statusCheckboxesList);
+      for (const keyValue of Object.entries(chartCriteria)) {
+        document.getElementById(keyValue[0] + "Label").className += " selectableStatus--" + keyValue[0] + "Active";
+      }
+
     });
 
-    console.log(chartDatas.datasets);
+    
 
     return {
       chartCriteria,
       chartType,
       chartDatas,
-      chartOptions
+      chartOptions,
+      datas,
+      statusCheckboxesList,
+      graphType
     }
 
   },
@@ -454,6 +457,45 @@ export default {
 .locationEvolutionGraph {
   &__graphContainer {
     height: 400px;
+  }
+}
+
+.locationEvolutionChartForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1rem 0;
+  @media (min-width: 768px) {
+    position: relative;
+    left: 6%;
+    flex-direction: row;
+  }
+  &__checkboxesContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 40%;
+    @media (min-width: 768px) {
+      width: 17%;
+    }
+    @media (min-width: 1024px) {
+      width: 12%;
+    }
+    label {
+      margin-right: 0.8rem;
+    }
+  }
+  &__selectInput {
+    margin-bottom: 1.5rem;
+    padding: 0.2rem 0.5rem;
+    @media (min-width: 768px) {
+      margin-bottom: 0;
+      margin-right: 1.5rem;
+    }
+  }
+  &__checkboxInput {
+    display: none;
   }
 }
 </style>

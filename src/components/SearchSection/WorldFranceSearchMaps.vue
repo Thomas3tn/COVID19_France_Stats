@@ -99,7 +99,11 @@ export default {
 }
 
 .searchMap {
+    display: none;
     position: relative;
+    @media (min-width: 768px) {
+        display: block;
+    }
     &__headerContainer {
         margin-top: 2rem;
         margin-bottom: 1rem;
@@ -119,7 +123,7 @@ export default {
     &__worldMapBtn {
         border-radius: 0 5px 5px 0;
         padding: 2rem 0.5rem;
-        background-color: #93B1A7;
+        background-color: #334455;
         color: white;
         animation: buttonAppearance 500ms ease-out both;
         position: absolute;
@@ -155,7 +159,7 @@ export default {
 }
 
 .noDatas {
-    fill: #FFFFFF;
+    fill: #e6e6e6;
 }
 
 .confirmedCasesLvl1 {
@@ -171,10 +175,18 @@ export default {
 }
 
 .confirmedCasesLvl4 {
-    fill: #F8746F;
+    fill: #ff8581;
 }
 
 .confirmedCasesLvl5 {
-    fill: #EC3E55;
+    fill: #eb4a5f;
+}
+
+.confirmedCasesLvl6 {
+    fill: #e73a51;
+}
+
+.confirmedCasesLvl7 {
+    fill: #e7213c;
 }
 </style>

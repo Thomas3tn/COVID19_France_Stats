@@ -4,35 +4,35 @@
             <div class="weeklyDailyDatasPanel__btnsPart">
                 <button @click="displayedDatatype = 'dailyDatas'" id="dailyDatasEvoBtn" title="Tendance quotidienne" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--left"><h3>Tendance quotidienne</h3></button>
                 <p>/</p>
-                <button @click="displayedDatatype = 'weeklyDatas'" id="weeklyDatasEvoBtn" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3>Tendance hebdomadaire</h3></button>
-                <template v-if="datas.customPeriodDatas.confirmed !== null">
+                <button @click="displayedDatatype = 'weeklyDatas'" id="weeklyDatasEvoBtn" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3>hebdomadaire</h3></button>
+                <template v-if="hasCustomPeriodBeenSubmitted === true">
                     <p>/</p>
-                    <button @click="displayedDatatype = 'customPeriodDatas'" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent">{{ customPeriodBtnContent }}</button>
+                    <button @click="displayedDatatype = 'customPeriodDatas'" id="customPeriodDatasEvoBtn" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent"><h3>{{ customPeriodBtnContent }}</h3></button>
                 </template>
             </div>
-            <form @submit.prevent="customPeriodSubmission" class="weeklyDailyDatasPanel__customPeriodForm">
-                <i class="far fa-calendar-alt"></i>
-                <div class="weeklyDailyDatasPanel__dateInputContainer">
-                    <i class="far fa-calendar-alt"></i>
-                    <div class="weeklyDailyDatasPanel__inputPart">
-                        <label for="wdpStartDate">Date de début <abbr title="Si non renseignée, cette date est fixée au 22/01/2020">?</abbr></label>
-                        <input type="date" placeholder="Ex: 24/05/2021" id="wdpStartDate" v-model="customPeriodDates.startDate" min="2020-01-22" :max="endDateLimit"/>
-                    </div>
-                </div>
-                <div class="weeklyDailyDatasPanel__dateInputContainer">
-                    <i class="far fa-calendar-alt"></i>
-                    <div class="weeklyDailyDatasPanel__inputPart">
-                        <label for="wdpEndDate">Date de fin <abbr title="Si non renseignée, cette date est fixée au jour actuel">?</abbr></label>
-                        <input type="date" placeholder="Ex: 05/09/2020" id="wdpEndDate" v-model="customPeriodDates.endDate" min="2020-01-22" :max="endDateLimit"/>
-                    </div>
-                </div>
-                <button type="submit" title="Entrer période"><i class="fas fa-search"></i></button>
-            </form>
+            <button id="customPeriodFormToggleBtn" title="Ajouter période personnalisée" class="weeklyDailyDatasPanel__toggleFormBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><i class="far fa-calendar-plus"></i></button>
         </div>
         <div class="datasPanel__contentContainer weeklyDailyDatasPanel__contentContainer">
             <template v-for="item in displayedDatas" :key="item.dataName">
                 <stat-item v-if="item.dataNumber !== null" :statNumber="item.dataNumber" :statName="item.dataName"></stat-item>
             </template>
+            <form @submit.prevent="customPeriodSubmission" id="customPeriodForm" class="weeklyDailyDatasPanel__customPeriodForm weeklyDailyDatasPanel__customPeriodForm--hidden">
+                <div class="weeklyDailyDatasPanel__dateInputContainer">
+                    <i class="fas fa-hourglass-start"></i>
+                    <div class="weeklyDailyDatasPanel__inputPart">
+                        <label for="wdpStartDate" class="weeklyDailyDatasPanel__inputLabel">Date de début <abbr title="Si non renseignée, cette date est fixée au 22/01/2020">?</abbr></label>
+                        <input type="date" placeholder="Ex: 24/05/2021" class="weeklyDailyDatasPanel__dateInput" id="wdpStartDate" v-model="customPeriodDates.startDate" min="2020-01-22" :max="endDateLimit"/>
+                    </div>
+                </div>
+                <div class="weeklyDailyDatasPanel__dateInputContainer">
+                    <i class="fas fa-hourglass-end"></i>
+                    <div class="weeklyDailyDatasPanel__inputPart">
+                        <label for="wdpEndDate" class="weeklyDailyDatasPanel__inputLabel">Date de fin <abbr title="Si non renseignée, cette date est fixée au jour actuel">?</abbr></label>
+                        <input type="date" placeholder="Ex: 05/09/2020" class="weeklyDailyDatasPanel__dateInput" id="wdpEndDate" v-model="customPeriodDates.endDate" min="2020-01-22" :max="endDateLimit"/>
+                    </div>
+                </div>
+                <button type="submit" title="Entrer période" class="weeklyDailyDatasPanel__submitBtn"><i class="fas fa-search"></i></button>
+            </form>
         </div>
     </div>
 </template>
@@ -60,70 +60,77 @@ export default {
 
         let datasCalculator = new DatasCalculator();
 
-        let currentDate = new Date();
-        let month = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getMonth() + 1);
-        let monthDay = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getDate() - 1);
-        const endDateLimit = currentDate.getFullYear() + "-" + month + "-" + monthDay;
-        let customPeriodDates = reactive({
-            startDate: "",
-            endDate: ""
-        });
-        let customPeriodBtnContent = computed(() => "Du " + customPeriodDates.startDate.split("-")[2] + "-" + customPeriodDates.startDate.split("-")[1] + "-" + customPeriodDates.startDate.split("-")[0] + " au " + customPeriodDates.endDate.split("-")[2] + "-" + customPeriodDates.endDate.split("-")[1] + "-" + customPeriodDates.endDate.split("-")[0]);
-
-        //Store all period types datas
-        let datas = reactive({
-            dailyDatas: {
-                confirmed: null,
-                deaths: null,
-                recovered: null,
-                hospitalizations: null,
-                intensiveCare: null
-            },
-            weeklyDatas: {
-                confirmed: null,
-                deaths: null,
-                recovered: null,
-                hospitalizations: null,
-                intensiveCare: null
-            },
-            customPeriodDatas: {
-                confirmed: null,
-                deaths: null,
-                recovered: null,
-                hospitalizations: null,
-                intensiveCare: null
-            }
-        });
+        let isCustomPeriodFormDisplayed = ref(false);
+        let hasCustomPeriodBeenSubmitted = ref(false);
 
         //Indicates which type of datas is displayed
         let displayedDatatype = ref("dailyDatas");
 
         //Store datas that have to be displayed
-        let displayedDatas = reactive({
-            confirmed: {
-                dataName: "Cas confirmés",
-                dataNumber: datas.dailyDatas.confirmed
+        let displayedDatas = reactive({});
+
+        //Calculate custom period form end date limit
+        const endDateLimit = computed(() => {
+
+            let currentDate = new Date();
+            let month = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getMonth() + 1);
+            let monthDay = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getDate() - 1);
+            return currentDate.getFullYear() + "-" + month + "-" + monthDay;
+
+        });
+        
+
+        let customPeriodDates = reactive({
+            startDate: "",
+            endDate: ""
+        });
+
+        let customPeriodBtnContent = computed(() => customPeriodDates.startDate.split("-")[2] + "/" + customPeriodDates.startDate.split("-")[1] + "/" + customPeriodDates.startDate.split("-")[0] + " - " + customPeriodDates.endDate.split("-")[2] + "/" + customPeriodDates.endDate.split("-")[1] + "/" + customPeriodDates.endDate.split("-")[0]);
+
+        //Store all period types datas
+        let datas = reactive({
+            dailyDatas: {
             },
-            deaths: {
-                dataName: "Décès",
-                dataNumber: datas.dailyDatas.deaths
+            weeklyDatas: {
             },
-            recovered: {
-                dataName: "Guéris",
-                dataNumber: datas.dailyDatas.recovered
-            },
-            hospitalizations: {
-                dataName: "Hospitalisations",
-                dataNumber: datas.dailyDatas.hospitalizations
-            },
-            intensiveCare: {
-                dataName: "Réanimations",
-                dataNumber: datas.dailyDatas.intensiveCare
+            customPeriodDatas: {
             }
         });
 
-        //Functions
+        //Dynamically create datas and displayed datas properties
+        if (props.locationType === "departement") {
 
+            for (const [key, value] of Object.entries(props.locationEvolutionDatas.datas.cumulativeDatas)) {
+
+                displayedDatas[key] = {
+                    dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key),
+                    dataNumber: value[0]
+                }
+
+                for (const keyValue of Object.entries(datas)) {
+                    datas[keyValue[0]][key] = null;
+                }
+
+            }
+
+        } else {
+
+            for (const evolutionDatasKeyValue of Object.entries(props.locationEvolutionDatas)) {
+
+                displayedDatas[evolutionDatasKeyValue[0]] = {
+                    dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(evolutionDatasKeyValue[0]),
+                    dataNumber: 0
+                }
+
+                for (const datasKeyValue of Object.entries(datas)) {
+                    datas[datasKeyValue[0]][evolutionDatasKeyValue[0]] = null;
+                }
+
+            }
+
+        }
+
+        //Functions
         function checkCustomDatesInput() {
 
             const startDateLimit = new Date("2020", "00", "22").getTime();
@@ -199,7 +206,9 @@ export default {
             if (checkCustomDatesInput() === true) {
 
                 getPeriodEvolutionDatas("customPeriodEvolution");
+                hasCustomPeriodBeenSubmitted.value = true;
                 displayedDatatype.value = "customPeriodDatas";
+                isCustomPeriodFormDisplayed.value = false;
 
             } else {
                 alert("Votre saisie ne correspond pas aux critères requis");
@@ -210,55 +219,90 @@ export default {
         getPeriodEvolutionDatas();
 
         onMounted(() => {
-            document.getElementById(displayedDatatype.value + "EvoBtn").className = " selectedBtn";
+            document.getElementById(displayedDatatype.value + "EvoBtn").className += " selectedBtn";
         });
 
         watch(displayedDatatype, (newValue, oldValue) => {
 
             if (newValue !== oldValue) {
 
-                displayedDatas.confirmed.dataNumber = datas[newValue]["confirmed"];
-                displayedDatas.deaths.dataNumber = datas[newValue]["deaths"];
-                displayedDatas.recovered.dataNumber = datas[newValue]["recovered"];
+                for (const [key, value] of Object.entries(displayedDatas)) {
+                    value.dataNumber = datas[displayedDatatype.value][key];
+                }
 
-                /*if (typeof document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button") !== "undefined") {
+                //Update classnames
+                if (document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button").length > 0) {
 
                     let btns = document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button");
-                    console.log(btns.length);
 
                     for (let i = 0; i < btns.length; i++) {
 
-                        if (btns[i].className !== "") {
+                        let currentElementClasses = btns[i].className.split(" ");
 
-                            let currentElementClasses = btns[i].split(" ");
+                        if (currentElementClasses.includes("selectedBtn")) {
 
-                            if (currentElementClasses.includes("selectedBtn")) {
+                            for (let c = 0; c < currentElementClasses.length; c++) {
 
-                                for (let c = 0; c < currentElementClasses.length; c++) {
-
-                                    if (currentElementClasses[c] === "selectedBtn") {
-                                        currentElementClasses.splice(c, 1);
-                                        break;
-                                    }
-
+                                if (currentElementClasses[c] === "selectedBtn") {
+                                    currentElementClasses.splice(c, 1);
+                                    break;
                                 }
 
-                                btns[i].className = currentElementClasses.join(" ");
-
                             }
+
+                            btns[i].className = currentElementClasses.join(" ");
 
                         }
 
                     }
 
-                    document.getElementById(displayedDatatype.value + "EvoBtn").className === "" ? document.getElementById(displayedDatatype.value + "EvoBtn").className = "selectedBtn" : document.getElementById(displayedDatatype.value + "EvoBtn").className += " selectedBtn";
+                    //document.getElementById(newValue.value + "EvoBtn").className += " selectedBtn";
 
-                }*/
+                }
 
             }
 
         }, {immediate: true});
         
+        watch(isCustomPeriodFormDisplayed, (newValue) => {
+            
+            if (newValue === true) {
+
+                let customPeriodFormClasses = document.getElementById("customPeriodForm").className.split(" ");
+
+                for (let i = 0; i < customPeriodFormClasses.length; i++) {
+
+                    if (customPeriodFormClasses[i] === "weeklyDailyDatasPanel__customPeriodForm--hidden") {
+                        customPeriodFormClasses.splice(i, 1);
+                        break;
+                    }
+
+                }
+
+                document.getElementById("customPeriodForm").className = customPeriodFormClasses.join(" ");
+                document.getElementById("customPeriodFormToggleBtn").className += " selectedBtn";
+
+            } else if (newValue === false) {
+
+                document.getElementById("customPeriodForm").className += " weeklyDailyDatasPanel__customPeriodForm--hidden";
+
+                let formToggleBtnClasses = document.getElementById("customPeriodFormToggleBtn").className.split(" ");
+
+                for (let i = 0; i < formToggleBtnClasses.length; i++) {
+
+                    if (formToggleBtnClasses[i] === "selectedBtn") {
+                        formToggleBtnClasses.splice(i, 1);
+                        break;
+                    }
+
+                }
+
+                document.getElementById("customPeriodFormToggleBtn").className = formToggleBtnClasses.join(" ");
+
+            }
+
+        });
+
         return {
             endDateLimit,
             displayedDatatype,
@@ -266,7 +310,9 @@ export default {
             datas,
             customPeriodDates,
             customPeriodSubmission,
-            customPeriodBtnContent
+            customPeriodBtnContent,
+            hasCustomPeriodBeenSubmitted,
+            isCustomPeriodFormDisplayed
         }
 
     },
@@ -277,12 +323,22 @@ export default {
 </script>
 
 <style lang="scss">
+.selectedBtn {
+    color: lightblue;
+}
+
 .weeklyDailyDatasPanel {
     &__headerContainer {
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
+        flex-direction: column;
+        padding-bottom: 1rem;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+            padding-bottom: 0;
+        }
     }
     &__btn {
         cursor: pointer;
@@ -291,7 +347,7 @@ export default {
         padding: 0;
         transition: all 300ms;
         &:hover {
-            color: #93B1A7;
+            color: lightblue;
         }
         &--left {
             margin-right: 0.25rem;
@@ -303,34 +359,100 @@ export default {
     &__btnsPart {
         display: flex;
         justify-content: space-between;
-        font-weight: bold;
+        align-items: center;
+        flex-direction: column;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+        }
+        p {
+            display: none;
+            @media (min-width: 1024px) {
+                display: block;
+            }
+        }
+    }
+    &__toggleFormBtn {
+        border: 1px solid black;
+        border-radius: 3px;
+        background-color: inherit;
+        padding: 0.2rem 0.5rem;
+        transition: all 300ms;
+        width: 100%;
+        @media (min-width: 1024px) {
+            width: auto;
+        }
+        &:hover {
+            cursor: pointer;
+            border-color: lightblue;
+            color: lightblue;
+        }
     }
     &__customPeriodForm {
         display: flex;
+        justify-content: center;
         align-items: center;
         position: absolute;
-        top: 0;
-        left: 100%;
-        transform: translateX(0%);
-        transition: all 300ms;
-        &:hover {
-            transform: translateX(-95%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        &--hidden {
+            display: none;
         }
     }
     &__dateInputContainer {
         display: flex;
         align-items: center;
+        margin: 0 1rem;
+        i {
+            font-size: 2rem;
+        }
     }
     &__inputPart {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
+        margin-left: 1.5rem;
+    }
+    &__inputLabel {
+        margin-bottom: 0.3rem;
+    }
+    &__dateInput {
+        background-color: rgb(250, 250, 250);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid black;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    &__submitBtn {
+        font-size: 1.3rem;
+        padding: 0.5rem 1rem;
+        margin-left: 1.5rem;
+        border: 1px solid black;
+        border-radius: 3px;
+        background-color: inherit;
+        transition: all 300ms;
+        &:hover {
+            border-color: lightblue;
+            color: lightblue;
+            cursor: pointer;
+        }
     }
     &__contentContainer {
         display: flex;
         justify-content: space-around;
         align-items: center;
+        flex-direction: column;
+        flex-wrap: wrap;
+        position: relative;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+        }
     }
 }
 </style>

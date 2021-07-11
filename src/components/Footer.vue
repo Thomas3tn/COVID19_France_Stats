@@ -49,14 +49,14 @@ export default {
         font-size: 1.2rem;
 		width: 100%;
 		height: 100%;
-		background-color: rgb(30, 30, 30);
+        background-color: #334455;
 		color: white;
 		border: none;
 		cursor: pointer;
 		padding: 0.5rem 0;
 		transition: all 300ms;
 		&:hover {
-			background-color: lighten(rgb(30, 30, 30), 7%);
+			background-color: lighten(#334455, 7%);
 		}
 	}
 	&__infosContainer {
@@ -64,7 +64,7 @@ export default {
         flex-direction: column;
 		justify-content: space-around;
 		align-items: flex-start;
-		background-color: rgb(30, 30, 30);
+        background-color: #334455;
 		color: white;
 		padding: 1rem 4rem;
         @media (min-width: 1024px) {
@@ -76,13 +76,42 @@ export default {
 .aboutContainer {
     flex: 3;
     text-align: justify;
+    margin-right: 3rem;
+    @media (min-width: 1120px) {
+        flex: 4;
+    }
+    @media (min-width: 1260px) {
+        flex: 5;
+    }
 }
 
 .quickLinksContainer {
-    flex: 1;
+    flex: 2;
+    ul {
+        list-style-type: square;
+    }
+    li {
+        margin-bottom: 0.3rem;
+    }
     a {
         color: white;
         text-decoration: none;
+        position: relative;
+        &:before {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        &:hover::before {
+            visibility: visible;
+            width: 100%;
+        }
         &:visited {
             color: white;
         }

@@ -10,16 +10,31 @@
 </template>
 
 <script>
+import { ref } from "vue";
+
+import CookiesManager from "../assets/JSClasses/CookiesManager.js";
+
 export default {
     setup(props, context) {
 
+        let dsaPopupDisplayed = ref(true);
+
         function closePopup() {
+
             context.emit("close-dsa-popup");
+            dsaPopupDisplayed.value = false;
+            CookiesManager.createDsaCookie();
+
+        }
+
+        //If a DSA cookie exists, the popup is displayed
+        if (CookiesManager.isDsaCookieValid() === true) {
+            dsaPopupDisplayed.value = false;
         }
 
         window.addEventListener("scroll", () => {
 
-            if (window.scrollY > screen.height) {
+            if (window.scrollY > screen.height && dsaPopupDisplayed.value === true) {
                 document.getElementById("dsaPopup").className = "dsaPopup";
             }
 
@@ -35,9 +50,11 @@ export default {
 
 <style lang="scss">
 .dsaPopup {
+    width: 80%;
+    right: 50%;
+    transform: translateX(50%);
     z-index: 10;
-    width: 20%;
-    background: url("../assets/img/DatasSaveAgreementPopup/medicalFolder.svg") no-repeat center;
+    background: url("../assets/img/datasSaveAgreementPopup/medicalFolder.svg") no-repeat center;
     background-size: 50%;
     background-color: rgb(248, 248, 248);
     position: fixed;
@@ -46,10 +63,18 @@ export default {
     justify-content: space-around;
     align-items: center;
     bottom: 3%;
-    right: 1.5%;
     padding: 1rem;
     opacity: 1;
+    border-radius: 3px;
     transition: all 500ms;
+    @media (min-width: 768px) {
+        width: 20vw;
+        right: 1.5%;
+        transform: translateX(0%);
+    }
+    @media (min-width: 1440px) {
+        width: 20%;
+    }
     &--hidden {
         display: none;
         opacity: 0;
@@ -70,7 +95,7 @@ export default {
         width: 100%;
     }
     &__closeBtn {
-        background-color: #93B1A7;
+        background-color: #457b9d;
         color: white;
         width: 60%;
         border: none;
@@ -78,7 +103,7 @@ export default {
         transition: all 300ms;
         &:hover {
             cursor: pointer;
-            background-color: lighten(#93B1A7, 5%);
+            background-color: lighten(#457b9d, 5%);
         }
     }
     &__moreInfosLink {

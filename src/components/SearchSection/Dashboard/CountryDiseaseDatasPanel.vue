@@ -1,5 +1,9 @@
 <template>
     <div class="diseaseDatasPanel">
+        <div v-if="diseaseDatas.country === 'China'" class="datasPanel warningPanel">
+            <font-awesome-icon :icon="faExclamationTriangle" class="warningPanel__warningSign"/>
+            <p>Certaines sources affirment que les données à propos de la Chine sont en réalité sous-estimées et que les chiffres réels sont en fait plus élevés.</p>
+        </div>
         <current-situation-panel :currentSituationDatas="diseaseDatas.currentSituation"></current-situation-panel>
         <detailed-geo-datas-panel v-if="detailedGeoDatasPanelCountries.includes(diseaseDatas.country)" :locationRegionsDatas="diseaseDatas.regionsDatas" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
         <div class="diseaseDatasPanel__vaccRelDatasContainer">
@@ -7,7 +11,7 @@
             <relative-datas-panel :relativeDatas="diseaseDatas.relativeDatas"></relative-datas-panel>
         </div>
         <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></weekly-daily-datas-panel>
-        <location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></location-evolution-graph>
+        <!--<location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></location-evolution-graph>-->
     </div>
 </template>
 
@@ -17,7 +21,9 @@ import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue
 import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
 import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
-import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph";
+//import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph";
+
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 export default {
     props: {
@@ -31,7 +37,8 @@ export default {
         const detailedGeoDatasPanelCountries = ["France", "US", "Canada", "India", "Brazil", "China", "Russia"];
 
         return {
-            detailedGeoDatasPanelCountries
+            detailedGeoDatasPanelCountries,
+            faExclamationTriangle
         }
 
     },
@@ -41,29 +48,29 @@ export default {
         WeeklyDailyDatasPanel,
         VaccinationChart,
         RelativeDatasPanel,
-        LocationEvolutionGraph
+        //LocationEvolutionGraph
     }
 }
 </script>
 
 <style lang="scss">
-.datasPanel {
-    overflow: hidden;
-    background-color: white;
-    margin: 3rem 0rem 3rem 1rem;
-    padding: 0 1rem;
-    color: #303030;
-    &__headerContainer {
-        border-bottom: 1px solid #303030;
-    }
-    &__header {
-        margin: 0;
-        padding: 1rem 0;
+.warningPanel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &__warningSign {
+        color: #FFCF2D;
+        font-size: 2rem;
+        margin-right: 1rem;
     }
 }
 
 .diseaseDatasPanel {
-    flex: 2;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    flex: 3;
+    width: 100%;
     > div {
         &:first-child {
             margin-top: 0;
@@ -76,8 +83,19 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: stretch;
-        div {
+        flex-direction: column;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+            > div {
             flex: 1;
+            margin: 0;
+            }
+            > div:first-child {
+                margin-right: 1rem;
+            }
+            > div:last-child {
+                margin-left: 1rem;
+            }
         }
     }
 }

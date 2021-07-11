@@ -3,7 +3,7 @@
         <h2 class="searchMap__header">MONDE <span class="searchMap__header--status">CAS CONFIRMÉS</span></h2>
         <p class="searchMap__subHeader">État du monde hebdomadaire face à la pandémie de COVID-19</p>
     </div>
-    <svg id="worldSearchMapSvg" version="1.2" viewBox="105 -28 1850 886">
+    <svg id="worldSearchMapSvg" version="1.2" viewBox="-5 -28 2150 886">
         <a id="Afghanistan" @click="transmitDatas" xlink:title="Afghanistan">
             <path d="M1383 261.6l1.5 1.8-2.9 0.8-2.4 1.1-5.9 0.8-5.3 1.3-2.4 2.8 1.9 2.7 1.4 3.2-2 2.7 0.8 2.5-0.9 2.3-5.2-0.2 3.1 4.2-3.1 1.7-1.4 3.8 1.1 3.9-1.8 1.8-2.1-0.6-4 0.9-0.2 1.7-4.1 0-2.3 3.7 0.8 5.4-6.6 2.7-3.9-0.6-0.9 1.4-3.4-0.8-5.3 1-9.6-3.3 3.9-5.8-1.1-4.1-4.3-1.1-1.2-4.1-2.7-5.1 1.6-3.5-2.5-1 0.5-4.7 0.6-8 5.9 2.5 3.9-0.9 0.4-2.9 4-0.9 2.6-2-0.2-5.1 4.2-1.3 0.3-2.2 2.9 1.7 1.6 0.2 3 0 4.3 1.4 1.8 0.7 3.4-2 2.1 1.2 0.9-2.9 3.2 0.1 0.6-0.9-0.2-2.6 1.7-2.2 3.3 1.4-0.1 2 1.7 0.3 0.9 5.4 2.7 2.1 1.5-1.4 2.2-0.6 2.5-2.9 3.8 0.5 5.4 0z">
             </path>
@@ -1398,29 +1398,39 @@ export default {
         const mapKeys = {
             key1: {
                 min: 0,
-                max: 100,
+                max: 200,
                 class: "confirmedCasesLvl1"
             },
             key2: {
-                min: 101,
-                max: 500,
+                min: 201,
+                max: 1000,
                 class: "confirmedCasesLvl2"
             },
             key3: {
-                min: 501,
-                max: 2000,
+                min: 1001,
+                max: 9000,
                 class: "confirmedCasesLvl3"
             },
             key4: {
-                min: 2001,
-                max: 8000,
+                min: 9001,
+                max: 50000,
                 class: "confirmedCasesLvl4"
             },
             key5: {
-                min: 8001,
-                max: 100000000000000000000,
+                min: 50001,
+                max: 100001,
                 class: "confirmedCasesLvl5"
             },
+            key6: {
+                min: 100001,
+                max: 200000,
+                class: "confirmedCasesLvl6"
+            },
+            key7: {
+                min: 200001,
+                max: 1000000000000000000000,
+                class: "confirmedCasesLvl7"
+            }
         }
 
         function setDetailedMap(locationDatas, mapKeys) {
@@ -1472,7 +1482,7 @@ export default {
                 setDetailedMap(worldEvolutionDatas.value, mapKeys);
             }
 
-        }, { immediate: true});
+        }, {immediate: true});
 
         watch(() => props.selectedLocationRequested, (newValue, oldValue) => {
 

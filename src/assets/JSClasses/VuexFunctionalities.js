@@ -109,7 +109,6 @@ export default {
                         failure: 0
                     };
 
-                    console.log(requestParameters);
 
                     for (let statusIndex = 0; statusIndex < requestParameters.urlStatusKeysValues.length; statusIndex++) {
 
@@ -117,7 +116,6 @@ export default {
 
                             const currentStatusIndex = statusIndex;
 
-                            console.log("https://covid-api.mmediagroup.fr/v1/history?" + requestParameters.urlStatusKeysValues[currentStatusIndex] + "&" + requestParameters.urlLocationKeyValue);
                             fetch("https://covid-api.mmediagroup.fr/v1/history?" + requestParameters.urlStatusKeysValues[currentStatusIndex] + "&" + requestParameters.urlLocationKeyValue)
                             .then(response => response.json())
                             .then(response => {
@@ -136,8 +134,6 @@ export default {
                                         locationEvolutionDatas.datas[key][requestParameters.urlStatusKeysValues[currentStatusIndex].split("=")[1]] = value.All.dates;
                                     }
 
-                                    console.log(locationEvolutionDatas);
-
                                 } else {
 
                                     if (typeof locationEvolutionDatas.datas[requestParameters.locationName] === "undefined") {
@@ -146,8 +142,6 @@ export default {
                                     locationEvolutionDatas.creation_date = Date.now();
                                     locationEvolutionDatas.datas[requestParameters.locationName][requestParameters.urlStatusKeysValues[currentStatusIndex].split("=")[1]] = response.All.dates;
 
-                                    console.log(locationEvolutionDatas);
-
                                 }
 
                                 retrievedStatusDatas.success += 1;
@@ -155,8 +149,8 @@ export default {
                             })
                             .catch((error) => {
 
-                                console.log(error);
                                 console.error("Unable to retrieve " + requestParameters.urlStatusKeysValues[currentStatusIndex].split("=")[1] + " evolution datas");
+                                console.error("Error: " + error);
                                 retrievedStatusDatas.failure += 1;
 
                             })
@@ -166,7 +160,6 @@ export default {
 
                                     locationEvolutionDatas.locationType = requestParameters.locationType;
                                     locationEvolutionDatas.isRequestSuccessful = true;
-                                    console.log(locationEvolutionDatas);
                                     resolve(locationEvolutionDatas);
 
                                 } else if (retrievedStatusDatas.failure === requestParameters.urlStatusKeysValues.length) {
