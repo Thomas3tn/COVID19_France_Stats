@@ -423,7 +423,8 @@ export default {
 
         function transmitDatas() {
 
-            if (requestCriteria.continent !== "" && requestCriteria.country !== "" && requestCriteria.departement !== "") {
+            //Check if the user isn't sending an empty request (continent input is always required)
+            if (requestCriteria.continent !== "") {
 
                 let searchCriteria = {};
                 searchCriteria.country = requestCriteria.country;
