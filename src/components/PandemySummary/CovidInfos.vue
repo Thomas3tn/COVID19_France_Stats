@@ -13,16 +13,21 @@
             <covid-info-card v-for="item in cardsContent" :title="item.title" :subTitle="item.subTitle" :content="item.content" :key="item.title"></covid-info-card>
         </div>
         <div class="covidInfo__infosAccordionsContainer">
-            <details v-for="item in cardsContent" :key="item.title" class="covidInfo__accordionDetails">
-                <summary class="covidInfo__accordionSummary"><h3>{{ item.title }}</h3></summary>
-                <p v-for="itemContent in item.content" :key="itemContent">{{ itemContent }}</p>
-            </details>
+            <dropdown-element v-for="item in cardsContent" :key="item.title" :detailsElementId="item.title">
+                <template v-slot:header>
+                    <h3>{{ item.title }}</h3>
+                </template>
+                <template v-slot:content>
+                    <p v-for="itemContent in item.content" :key="itemContent">{{ itemContent }}</p>
+                </template>
+            </dropdown-element>
         </div>
     </div>
 </template>
 
 <script>
 import CovidInfoCard from "./CovidInfos/CovidInfoCard.vue";
+import DropdownElement from "../SearchSection/Dashboard/LocationAsidePanel/DropdownElement.vue";
 
 export default {
     setup() {
@@ -81,7 +86,8 @@ export default {
 
     },
     components: {
-        CovidInfoCard
+        CovidInfoCard,
+        DropdownElement
     }
 }
 </script>
@@ -102,7 +108,10 @@ export default {
         line-height: 1.5;
         width: 85%;
         margin: 0 auto;
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
+            p {
+                margin-top: 0;
+            }
             flex-direction: row;
             div:first-of-type {
             margin-right: 2rem;
@@ -114,7 +123,6 @@ export default {
         }
     }
     &__header {
-        font-size: 2.5rem;
         text-align: center;
         margin-top: 0;
         @media (min-width: 768px) {
@@ -126,7 +134,9 @@ export default {
         display: flex;
         justify-content: center;
         position: relative;
-        left: 60px;
+        height: 28vw;
+        //left: 60px;
+        left: 7vw;
         display: none;
         @media (min-width: 1024px) {
             display: flex;
@@ -145,9 +155,13 @@ export default {
     &__accordionDetails {
         cursor: pointer;
         margin: 0.5rem 0;
+        p {
+            text-align: justify;
+        }
     }
     &__accordionSummary > * {
         display: inline;
+        font-size: clamp(1rem, 1.1vw, 2.5rem);
     }
 }
 </style>

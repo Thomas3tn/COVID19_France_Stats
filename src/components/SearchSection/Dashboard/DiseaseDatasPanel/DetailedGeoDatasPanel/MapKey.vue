@@ -1,13 +1,13 @@
 <template>
-    <div class="mapKey">
+    <div class="mapKey" tabindex="0" @focus="manuallyDisplayMapKey" @blur="manuallyHideMapKey">
         <h4 class="mapKey__title"><span>L</span><span>É</span><span>G</span><span>E</span><span>N</span><span>D</span><span>E</span></h4>
         <table class="mapKey__table">
             <tr>
-                <th>Valeurs</th>
-                <th>Couleur</th>
+                <th scope="col">Valeurs</th>
+                <th scope="col">Couleur</th>
             </tr>
             <tr v-for="item in currentMapKeys" :key="item.color" @mouseenter="toggleRegionsHighlight" @mouseout="toggleRegionsHighlight">
-                <td>{{ item.values }}</td>
+                <td scope="row">{{ item.values }}</td>
                 <td :style="'background: ' + item.color"></td>
             </tr>
         </table>
@@ -16,6 +16,8 @@
 
 <script>
 import { computed, inject } from "vue";
+
+import DatasCalculator from "../../../../../assets/JSClasses/DatasCalculator.js";
 
 export default {
     props: {
@@ -35,6 +37,8 @@ export default {
     },
     setup(props, context) {
 
+        const datasCalculator = new DatasCalculator();
+
         console.log(props.mapKeys);
         const chartStatusKey = inject("chartStatusKey", {});
 
@@ -47,15 +51,23 @@ export default {
             for (const keyValue of Object.entries(props.mapKeys[props.displayedDatastype])) {
 
                 let formattedValues = {};
-                props.displayedDatastype === "relativeDatas" ? formattedValues.min = keyValue[1].min + "%" : formattedValues.min = keyValue[1].min;
-                props.displayedDatastype === "relativeDatas" ? formattedValues.max = keyValue[1].max + "%" : formattedValues.max = keyValue[1].max;
+                props.displayedDatastype === "relativeDatas" ? formattedValues.min = keyValue[1].min + "%" : formattedValues.min = datasCalculator.numberFunctionalities.formatNumber(keyValue[1].min);
+                props.displayedDatastype === "relativeDatas" ? formattedValues.max = keyValue[1].max + "%" : formattedValues.max = datasCalculator.numberFunctionalities.formatNumber(keyValue[1].max);
 
-                mapKey.push({values: formattedValues.min + "-" + formattedValues.max, color: chartStatusKey.statusGradient[props.displayedStatus][keyValue[0].split("")[keyValue[0].split("").length - 1]]});
+                mapKey.push({values: formattedValues.min + " - " + formattedValues.max, color: chartStatusKey.statusGradient[props.displayedStatus][keyValue[0].split("")[keyValue[0].split("").length - 1]]});
             }
 
             return mapKey;
 
         });
+
+        function manuallyDisplayMapKey(event) {
+            event.target.className += " mapKey--focused";
+        }
+
+        function manuallyHideMapKey(event) {
+            event.target.className = "mapKey";
+        }
 
         function toggleRegionsHighlight(event) {
             
@@ -71,7 +83,9 @@ export default {
 
         return {
             currentMapKeys,
-            toggleRegionsHighlight
+            toggleRegionsHighlight,
+            manuallyDisplayMapKey,
+            manuallyHideMapKey
         }
 
     }
@@ -80,17 +94,25 @@ export default {
 
 <style lang="scss">
 .mapKey {
-    position: absolute;
-    top: 50%;
-    right: 0%;
-    transform: translate(86%, -50%);
-    transition: all 300ms ease-in-out;
     display: flex;
-    padding: 0.5rem;
-    border: 1px solid black;
+    justify-content: center;
     background-color: #fdfdfd;
-    border-radius: 3px;
+    margin: 1rem 0;
     &:hover {
+        transform: translate(0%, -50%);
+    }
+    @media (min-width: 768px) {
+        margin: 0;
+        padding: 0.5rem;
+        position: absolute;
+        transform: translate(86%, -50%);
+        transition: all 300ms ease-in-out;
+        top: 50%;
+        right: 0%;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+    &--focused {
         transform: translate(0%, -50%);
     }
     &__title {

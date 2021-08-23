@@ -1,8 +1,10 @@
 <template>
     <div class="diseaseDatasPanel">
-        <div v-if="diseaseDatas.country === 'China'" class="datasPanel warningPanel">
+        <div v-if="diseaseDatas.country === 'China'" class="warningPanel datasPanel">
             <font-awesome-icon :icon="faExclamationTriangle" class="warningPanel__warningSign"/>
-            <p>Certaines sources affirment que les données à propos de la Chine sont en réalité sous-estimées et que les chiffres réels sont en fait plus élevés.</p>
+            <p class="warningPanel__content">Certaines sources affirment que les données à propos de la Chine sont en réalité sous-estimées et que les chiffres réels pourraient être en réalité plus élevés.
+                Les chiffres présentées ci-dessous sont ceux communiqués par le gouvernement chinois.
+            </p>
         </div>
         <current-situation-panel :currentSituationDatas="diseaseDatas.currentSituation"></current-situation-panel>
         <detailed-geo-datas-panel v-if="detailedGeoDatasPanelCountries.includes(diseaseDatas.country)" :locationRegionsDatas="diseaseDatas.regionsDatas" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
@@ -11,7 +13,7 @@
             <relative-datas-panel :relativeDatas="diseaseDatas.relativeDatas"></relative-datas-panel>
         </div>
         <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></weekly-daily-datas-panel>
-        <!--<location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></location-evolution-graph>-->
+        <location-evolution-graph :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'country'"></location-evolution-graph>
     </div>
 </template>
 
@@ -21,7 +23,7 @@ import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue
 import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
 import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
-//import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph";
+import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph";
 
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
@@ -48,23 +50,12 @@ export default {
         WeeklyDailyDatasPanel,
         VaccinationChart,
         RelativeDatasPanel,
-        //LocationEvolutionGraph
+        LocationEvolutionGraph
     }
 }
 </script>
 
 <style lang="scss">
-.warningPanel {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    &__warningSign {
-        color: #FFCF2D;
-        font-size: 2rem;
-        margin-right: 1rem;
-    }
-}
-
 .diseaseDatasPanel {
     min-height: 0;
     min-width: 0;
@@ -85,18 +76,34 @@ export default {
         align-items: stretch;
         flex-direction: column;
         @media (min-width: 1024px) {
+            min-height: clamp(23rem, 33vw, 45rem);
             flex-direction: row;
             > div {
             flex: 1;
             margin: 0;
             }
             > div:first-child {
-                margin-right: 1rem;
+                margin-right: 1.5vw;
             }
             > div:last-child {
-                margin-left: 1rem;
+                margin-left: 1.5vw;
             }
         }
+    }
+}
+
+.warningPanel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    &__warningSign {
+        color: #FFCF2D;
+        font-size: 2rem;
+        margin-right: 1rem;
+    }
+    &__content {
+        margin: 0;
     }
 }
 </style>

@@ -2,6 +2,7 @@ export default {
     isDsaCookieValid() {
 
         let browserCookies = document.cookie.split(";");
+        console.log(browserCookies);
 
         for (let i = 0; i < browserCookies.length; i++) {
 

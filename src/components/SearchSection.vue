@@ -29,7 +29,7 @@ export default {
 
         //Vuex
         const store = useStore();
-        const departementsLiveDatas = computed(() => store.state.departementsLiveDatas.datas);
+        const departementsLiveDatas = computed(() => store.state.departementsLiveDatas);
         
         //Datas checkers
         let areRequestResultsReceived = ref(false);
@@ -58,6 +58,8 @@ export default {
 
             if (formRequestCriteria.continent === "Global" && formRequestCriteria.country === "" && formRequestCriteria.departement === "") {
                 return "global";
+            } else if (formRequestCriteria.continent === "Other" && formRequestCriteria.country === "" && formRequestCriteria.departement === "") {
+                return "other";
             } else if (continentsName.includes(formRequestCriteria.continent) && formRequestCriteria.departement === "" && formRequestCriteria.country === "") {
                 return "continent";
             } else if (formRequestCriteria.country !== "" && formRequestCriteria.departement === "") {
@@ -87,7 +89,7 @@ export default {
             formRequestCriteria.continent = formRequest.continent;
             formRequestCriteria.locationType = getLocationType(formRequest);
 
-            if (formRequestCriteria.locationType === "country") {
+            if (formRequestCriteria.locationType === "country" || formRequestCriteria.locationType === "other") {
 
                 store.dispatch("setWorldLocationEvolutionDatas", {location: formRequest.country})
                 .then(response => {
@@ -103,7 +105,6 @@ export default {
 
                 //formRequest object contain departement code but API request need departement name
                 const departementName = departementsLiveDatas.value[formRequest.departement]["nom"];
-                console.log(departementName);
 
                 store.dispatch("setFranceDepartementsEvolutionDatas", {code: formRequest.departement, name: departementName})
                 .then(response => {
@@ -133,8 +134,6 @@ export default {
                 });
 
             }
-
-            console.log(formRequestCriteria.locationType);
 
         }
 
@@ -174,18 +173,18 @@ export default {
 
 .resultsContainer {
     margin: 0 auto;
-    padding: 5rem 0;
+    padding: 6vw 0;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: 25vw;
     background: #e6f0f0;
     &__noDatasPlaceholderContainer {
         background: url("../assets/img/dashboard/bacteriaCellCovid.png") no-repeat, #e6f0f0;
         background-position: center;
         background-size: 80%;
-        height: 300px;
+        min-height: 300px;
         display: flex;
         justify-content: center;
         align-items: center;

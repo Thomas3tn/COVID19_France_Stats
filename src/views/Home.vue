@@ -13,7 +13,7 @@
 
 <script>
 //Vue Elements
-import { ref, reactive, provide, watch } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useStore } from "vuex";
 
 //Components
@@ -36,7 +36,8 @@ export default {
       areWorldEvolutionDatasReceived: false,
       areFranceEvolutionDatasReceived: false,
       areGlobalEvolutionDatasReceived: false,
-      areDepartementsLiveDatasReceived: false
+      areDepartementsLiveDatasReceived: false,
+      areWeeklyEvolutionDatasReceived: false
     });
 
     const areDatasReceived = ref(false);
@@ -88,51 +89,13 @@ export default {
       datasCheckers.areDepartementsLiveDatasReceived = response;
     });
 
-    //Charts status colors
-    const chartStatusKey = reactive({
-      statusColor: {
-        confirmed: "#FF6866",
-        deaths: "#3A3A3A",
-        recovered: "#3CF525",
-        hospitalizations: "#FFC042",
-        intensive_care: "#FF6866",
-        people_vaccinated: "#334455",
-        people_partially_vaccinated: "#457b9d",
-        administered: "#2DFF90",
-        population: "#5caddf",
-        new_hospitalizations: "#FFC042",
-        new_intensive_care: "#FF6866"
-      },
-      statusGradient: {
-        confirmed: {
-          1: "#FFF5C7",
-          2: "#FECCA7",
-          3: "#FDA38B",
-          4: "#ff8581",
-          5: "#eb4a5f",
-          6: "#e73a51"
-        },
-        deaths: {
-          1: "#D6D6D6",
-          2: "#BDBDBD",
-          3: "#9C9C9C",
-          4: "#7F7E7E",
-          5: "#5D5D5D",
-          6: "#3A3A3A"
-        },
-        recovered: {
-          1: "#B5F0AD",
-          2: "#9EF093",
-          3: "#87EF79",
-          4: "#71EF61",
-          5: "#59F146",
-          6: "#3CF525"
-        }
-      }
-      
-    });
-
-    provide("chartStatusKey", chartStatusKey);
+    store.dispatch("setWeeklyEvolutionDatas")
+    .then(response => {
+      datasCheckers.areWeeklyEvolutionDatasReceived = response;
+    })
+    .catch(response => {
+      datasCheckers.areWeeklyEvolutionDatasReceived = response;
+    })
 
     watch(() => { return { ...datasCheckers }}, newValue => {
 
@@ -171,25 +134,5 @@ export default {
 
 <style lang="scss">
 $blue: #5F9EA0;
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  line-height: 1.4;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", sans-serif;
-}
-
-p, button, input, a {
-  font-family: "Roboto", sans-serif;
-}
-
 </style>
 

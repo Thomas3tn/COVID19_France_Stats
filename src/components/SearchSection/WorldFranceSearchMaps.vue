@@ -20,6 +20,7 @@ export default {
             required: false
         }
     },
+    emits: ["clicked-location"],
     setup(props, context) {
 
         let displayedMap = ref("WorldSearchMap");
@@ -98,6 +99,10 @@ export default {
     }
 }
 
+@mixin mapPathHover {
+    cursor: pointer;
+}
+
 .searchMap {
     display: none;
     position: relative;
@@ -109,6 +114,7 @@ export default {
         margin-bottom: 1rem;
     }
     &__header {
+        font-size: clamp(1.4rem, 2.2vw, 3.5rem);
         letter-spacing: 2px;
         text-align: center;
         margin: 0;
@@ -121,7 +127,7 @@ export default {
         margin: 0;
     }
     &__worldMapBtn {
-        border-radius: 0 5px 5px 0;
+        border-radius: 0 2px 2px 0;
         padding: 2rem 0.5rem;
         background-color: #334455;
         color: white;
@@ -154,39 +160,46 @@ export default {
 
 .searchMap a:hover path {
     transition: all 300ms;
-    cursor: pointer;
     stroke-width: 2px;
 }
 
 .noDatas {
     fill: #e6e6e6;
+    cursor: not-allowed;
 }
 
 .confirmedCasesLvl1 {
     fill: #FFF5C7;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl2 {
     fill: #FECCA7;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl3 {
     fill: #FDA38B;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl4 {
     fill: #ff8581;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl5 {
     fill: #eb4a5f;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl6 {
     fill: #e73a51;
+    @include mapPathHover;
 }
 
 .confirmedCasesLvl7 {
     fill: #e7213c;
+    @include mapPathHover;
 }
 </style>

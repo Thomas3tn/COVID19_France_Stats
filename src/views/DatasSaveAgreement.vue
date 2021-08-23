@@ -7,8 +7,8 @@
         départements (actuelles ou historiques) sont enregistrées sur votre navigateur web permettant de répondre de manière immédiate à des 
         requêtes de même type.</p>
       <div class="dsa__btnsContainer">
-        <button @click="deleteLocalStorageDatas" title="Effacer les données sauvegardées" class="dsa__btn dsa__btn--deleteDatas">Effacer les données sauvegardées</button>
-        <router-link :to="{name: 'Home'}" title="J'ai compris" class="dsa__btn dsa__btn--agree">J'ai compris</router-link>
+        <button @click="deleteLocalStorageDatas" title="Effacer les données sauvegardées" class="btn btn--alert">Effacer les données sauvegardées</button>
+        <router-link :to="{name: 'Home'}" title="J'ai compris" class="btn btn--info">J'ai compris</router-link>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
 <script>
 import CookiesManager from "../assets/JSClasses/CookiesManager.js";
 
-//import { onBeforeRouteLeave } from "vue-router";
+import { onBeforeRouteLeave } from "vue-router";
 
 export default {
   setup() {
@@ -49,14 +49,16 @@ export default {
       }
 
     }
-/*
+
     onBeforeRouteLeave((to, from, next) => {
 
+      setDsaCookie();
+      next();
+
     });
-*/
+
     return {
-      deleteLocalStorageDatas,
-      setDsaCookie
+      deleteLocalStorageDatas
     }
 
   }
@@ -87,6 +89,7 @@ export default {
   }
   &__header {
     text-align: center;
+    font-size: clamp(2rem, 3vw, 5rem);
     @media (min-width: 1024px) {
       text-align: left;
     }
@@ -105,36 +108,6 @@ export default {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-  }
-  &__btn {
-    font-size: inherit;
-    border-radius: 15px;
-    border: 2px solid #93B1A7;
-    padding: 0.7rem 1.2rem;
-    margin: 0.5rem 0;
-    text-align: center;
-    &:hover {
-      cursor: pointer;
-    }
-    &--deleteDatas {
-      background-color: rgba(0,0,0,0);
-      transition: all 300ms;
-      &:hover {
-        background-color: #EB4647;
-        border-color: #EB4647;
-        color: white;
-      }
-    }
-    &--agree {
-      background-color: #93B1A7;
-      color: white;
-      text-decoration: none;
-      transition: all 300ms;
-      &:hover {
-        background-color: darken(#93B1A7, 10%);
-        border-color: darken(#93B1A7, 10%);
-      }
-    }
   }
 }
 </style>

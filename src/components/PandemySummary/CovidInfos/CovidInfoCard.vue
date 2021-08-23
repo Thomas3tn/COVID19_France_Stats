@@ -6,7 +6,6 @@
                     <h3 class="covidInfoCard__header">{{ cardMainTitle }}</h3>
                     <h3 v-if="cardSubTitle !== ''" class="covidInfoCard__subHeader">{{ cardSubTitle }}</h3>
                 </div>
-                
             </div>
         </div>
         <div class="covidInfoCard__contentSlide" tabindex="-1">
@@ -118,14 +117,14 @@ export default {
         opacity: 0;
     }
     to {
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0,0,0,0.7);
         opacity: 1;
     }
 }
 
 @keyframes contentDisappearance {
     from {
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0,0,0,0.7);
         opacity: 1;
     }
     to {
@@ -136,8 +135,8 @@ export default {
 
 .covidInfoCard {
     z-index: 1;
-    height: 400px;
-    width: 275px;
+    height: 100%;
+    width: 20vw; 
     border: 5px solid lightgray;
     border-radius: 9px;
     display: flex;
@@ -229,13 +228,21 @@ export default {
             width: 5px;
         }
         &::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: rgba(255, 255, 255, 0.1);
         }
         &::-webkit-scrollbar-thumb {
-            background: #888;
+            background: #f1f1f1;
         }
         &::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #e4e4e4;
+        }
+        ul {
+            list-style-type: square;
+            li {
+                margin-bottom: 0.5rem;
+                position: relative;
+                right: 4%;
+            }
         }
     }
     &__headerBanner {
@@ -257,14 +264,14 @@ export default {
         width: 90%;
     }
     &__header {
-        font-size: 1.5rem;
+        font-size: calc(0.7rem + 1vw);
         font-family: "Open Sans", sans-serif;
         margin: 0;
         letter-spacing: 3px;
     }
     &__subHeader {
         margin: 0;
-        font-size: 0.8rem;
+        font-size: calc(0.03rem + 1vw);
     }
 }
 </style>

@@ -1,14 +1,14 @@
 <template>
-<button @click="loadWorldMap" class="searchMap__worldMapBtn" title="Retour carte du monde">
+<button @click="loadWorldMap" class="searchMap__worldMapBtn" title="Retour au planisphère">
    <font-awesome-icon :icon="faAngleLeft" class="searchMap__worldMapBtn--arrow"/>
    <font-awesome-icon :icon="faGlobeAmericas" class="searchMap__worldMapBtn--globe"/>
 </button>
 <div class="searchMap__headerContainer">
    <h2 class="searchMap__header">FRANCE <span class="searchMap__header--status">HOSPITALISATIONS</span></h2>
-   <p class="searchMap__subHeader">État du nombre d'hospitalisations par milliers d'habitants</p>
+   <p class="searchMap__subHeader">État du taux d'hospitalisations par milliers d'habitants</p>
 </div>
 <svg
-   viewBox="-340 0 1350 550"
+   viewBox="-350 0 1350 550"
    id="franceSearchMapSvg"
    version="1.0">
    <a id="DEP-2B" @click="transmitDatas" xlink:title="2B - Haute-Corse">
@@ -444,7 +444,7 @@
 import departementsStaticDatas from "../../../assets/staticDatas/franceDepartementsDatas.js";
 
 //Vue Elements
-import { onMounted, computed, watch } from "vue";
+import { computed, watch, onMounted } from "vue";
 
 //Vuex
 import { useStore } from "vuex";
@@ -459,10 +459,12 @@ export default {
          default: ""
       }
    },
+   emits: ["world-map-request", "clicked-country"],
    setup(props, context) {
 
       const store = useStore();
-      let departementsLiveDatas = computed(() => store.state.departementsLiveDatas.datas);
+      let departementsLiveDatas = computed(() => store.state.departementsLiveDatas);
+      let areDepartementsLiveDatasReceived = computed(() => store.state.areDepartementsLiveDatasReceived);
 
       const mapKeys = {
          key1: {
@@ -498,7 +500,6 @@ export default {
 
          for (let i = 0; i < mapPaths.length; i++) {
 
-            //Calculer hopitalisations pour 100.000 habitant pour current departmennt
             let currDepStatDatasKey = mapPaths[i].id.split("-")[0] + mapPaths[i].id.split("-")[1];
             let hospPerThous = (locationDatas[mapPaths[i].id].hospitalizations / staticDatas[currDepStatDatasKey]["population"]) * 100000;
 
@@ -520,9 +521,8 @@ export default {
       }
 
       onMounted(() => {
-
+         console.log(departementsLiveDatas.value);
          setDetailedMap(departementsLiveDatas.value, departementsStaticDatas, mapKeys);
-
       });
 
       //After clicking the return button, inform the parent component to demount France map and mount world map
@@ -538,15 +538,14 @@ export default {
       watch(() => props.selectedLocationRequested, (newValue, oldValue) => {
 
          if (newValue !== oldValue) {
-
             console.log(newValue);
-
          }
 
       }, {immediate: true});
 
       return {
          departementsLiveDatas,
+         areDepartementsLiveDatasReceived,
          loadWorldMap,
          transmitDatas,
          faAngleLeft,

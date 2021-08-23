@@ -1,16 +1,17 @@
 <template>
     <div class="datasPanel relativeDatasPanel">
-        <div class="datasPanel__headerContainer">
+        <header class="datasPanel__headerContainer">
             <h3 class="datasPanel__header">Données relatives</h3>
-        </div>
+        </header>
         <div class="datasPanel__contentContainer relativeDatasPanel__contentParentContainer">
             <div class="relativeDatasPanel__contentChildContainer">
-                <stat-item :statName="'Infections/km²'" :statNumber="displayedDatas.statPerKms"></stat-item>
-                <stat-item :statName="'Infections/milliers d\'habs'" :statNumber="displayedDatas.statPerThousand"></stat-item>
+                <stat-item :statName="translatedDisplayedDatatype + '/km²'" :statNumber="displayedDatas.statPerKms"></stat-item>
+                <stat-item :statName="translatedDisplayedDatatype + '/milliers d\'habs'" :statNumber="displayedDatas.statPerThousand"></stat-item>
             </div>
             <div class="relativeDatasPanel__btnsContainer">
-                <button v-for="item in statusBtnsList" :key="item.idName" class="selectableStatus" :id="item.idName + 'RelativeDatasBtn'" @click="updateDisplayedDatatype" :value="item.idName" :title="item.dashboardName">
-                    <font-awesome-icon :icon="item.logo"/>
+                <button v-for="item in statusBtnsList" :key="item.idName" class="selectableStatus selectableStatus--verticalDisplay" :id="item.idName + 'RelativeDatasBtn'" @click="updateDisplayedDatatype" :value="item.idName" :title="item.dashboardName">
+                    <font-awesome-icon :icon="item.logo" aria-hidden="true"/>
+                    <span class="screenreaderText">{{item.dashboardName}}</span>
                 </button>
             </div>
         </div>
@@ -39,6 +40,8 @@ export default {
 
         //Current datatype displayed
         let displayedDatatype = ref("");
+
+        let translatedDisplayedDatatype = computed(() => datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(displayedDatatype.value));
 
         //Current datas displayed
         let displayedDatas = reactive({
@@ -118,7 +121,7 @@ export default {
                     let statusBtns = Array.from(document.querySelectorAll(".relativeDatasPanel__btnsContainer button"));
 
                     for (let i = 0; i < statusBtns.length; i++) {
-                        statusBtns[i].className = "selectableStatus selectableStatus--inactive";
+                        statusBtns[i].className = "selectableStatus selectableStatus--verticalDisplay selectableStatus--inactive";
                     }
 
 
@@ -152,7 +155,8 @@ export default {
             displayedDatas,
             datas,
             statusBtnsList,
-            updateDisplayedDatatype
+            updateDisplayedDatatype,
+            translatedDisplayedDatatype
         }
 
     },

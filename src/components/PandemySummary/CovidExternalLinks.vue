@@ -9,27 +9,27 @@
             </div>
             <a class="externalLink externalLink--two" :href="covidDefinition.url" :title="covidDefinition.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--two">
-                    <h3 class="externalLink__header">En savoir plus sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
+                    <h3 class="externalLink__header">En savoir plus sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__arrow externalLink__arrow--horizontalArrow" aria-hidden="true"></i></h3>
                 </div>
                 <img class="externalLink__img externalLink__img--two" src="../../assets/img/externalLinksMosaic/covidInfosBg2.jpg" :alt="covidDefinition.imgAltText"/>
             </a>
             <a class="externalLink externalLink--three" :href="covidGuidelines.url" :title="covidGuidelines.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--three">
                     <h3 class="externalLink__header">Conseils de l'OMS</h3>
-                    <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
+                    <i class="fas fa-long-arrow-alt-down externalLink__arrow externalLink__arrow--verticalArrow" aria-hidden="true"></i>
                 </div>
                 <img class="externalLink__img externalLink__img--three" src="../../assets/img/externalLinksMosaic/omsTipsBg2.jpg" :alt="covidGuidelines.imgAltText"/>
             </a>
             <a class="externalLink externalLink--four" :href="covidNews.url" :title="covidNews.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--four">
                     <h3 class="externalLink__header">Dernières actualités</h3>
-                    <i class="fas fa-long-arrow-alt-down externalLink__verticalArrow"></i>
+                    <i class="fas fa-long-arrow-alt-down externalLink__arrow externalLink__arrow--verticalArrow" aria-hidden="true"></i>
                 </div>
                 <img class="externalLink__img externalLink__img--four" src="../../assets/img/externalLinksMosaic/newsBg2.jpg" :alt="covidNews.imgAltText"/>
             </a>
             <a class="externalLink externalLink--five" :href="covidMyths.url" :title="covidMyths.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--five">
-                    <h3 class="externalLink__header">Idées reçues sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__horizontalArrow"></i></h3>
+                    <h3 class="externalLink__header">Idées reçues sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__arrow externalLink__arrow--horizontalArrow" aria-hidden="true"></i></h3>
                 </div>
                 <img id="img" class="externalLink__img externalLink__img--five" src="../../assets/img/externalLinksMosaic/fakeNewsBg2.jpg" :alt="covidMyths.imgAltText"/>
             </a>
@@ -75,6 +75,10 @@ export default {
 </script>
 
 <style lang="scss">
+@mixin headerFontSize {
+    font-size: clamp(1.8rem, 3vw, 5rem);;
+}
+
 .externalLinks {
     background-color: #e6f0f0;
     display: flex;
@@ -83,17 +87,17 @@ export default {
 }
 
 .externalLinksContainer {
-    min-height: 640px;
+    min-height: 52vw;
     width: 90%;
     margin: 4rem auto 4rem auto;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
-    grid-auto-rows: minmax(100px, 200px);
+    gap: 4vw;
     color: white;
     font-family: "Open-Sans", sans-serif;
     @media (min-width: 1024px) {
         grid-template-columns: repeat(4, 1fr);
+        gap: 1.5vw;
     }
 }
 
@@ -106,7 +110,9 @@ export default {
     justify-content: center;
     align-items: center;
     border-radius: 3px;
+    min-height: 15rem;
     @media (min-width: 1024px) {
+        min-height: 12rem;
         &--one {
             grid-column: 1/3;
             grid-row: 1;
@@ -124,17 +130,20 @@ export default {
             justify-content: left;
         }
     }
+    @media (min-width: 1440px) {
+        min-height: 14rem;
+    }
     //Does not apply hover effect on the header div
     &:hover:not(div) {
         cursor: pointer;
         img {
             transform: scale(1.1);
         }
-        .externalLink__verticalArrow {
-            transform: translateY(50%);
+        .externalLink__arrow--verticalArrow {
+            transform: translateY(25%);
         }
-        .externalLink__horizontalArrow {
-            transform: translateX(50%);
+        .externalLink__arrow--horizontalArrow {
+            transform: translateX(25%);
         }
     }
     &__headerContainer {
@@ -144,10 +153,12 @@ export default {
         flex-direction: column;
         z-index: 1;
         text-align: center;
-        font-size: 2rem;
         color: white;
         &--two {
-            width: 80%;
+            width: 50%;
+            @media (min-width: 1024px) {
+                width: 80%;
+            }
         }
         &--three {
             width: 85%;
@@ -156,26 +167,36 @@ export default {
             width: 85%;
         }
         &--five {
-            width: 50%;
+            width: 70%;
             text-align: left;
-            margin-left: 2.2rem;
+            @media (min-width: 768px) {
+                width: 50%;
+            }
+            @media (min-width: 1024px) {
+                position: relative;
+                left: 5.5%;
+            }
         }
     }
     &__header {
         margin: 0;
+        + i, > i {
+            @include headerFontSize;
+        }
         &--mainHeader {
-            font-size: 2.5rem;
+            @include headerFontSize;
         }
     }
-    &__verticalArrow {
-        transform-origin: top;
-        transform: translateY(0%);
+    &__arrow {
         transition: all 300ms;
-    }
-    &__horizontalArrow {
-        transform: translateX(0%);
-        transition: all 300ms;
-        transform-origin: left;
+        &--horizontalArrow {
+            transform: translateX(0%);
+            transform-origin: left;
+        }
+        &--verticalArrow {
+            transform-origin: top;
+            transform: translateY(0%);
+        }
     }
     &__img {
         max-width: 100%;
@@ -183,6 +204,7 @@ export default {
         transform: scale(1);
         transition: all 300ms;
         position: absolute;
+        -webkit-user-drag: none;
         &--one {
             min-height: 100%;
             min-width: 100%;

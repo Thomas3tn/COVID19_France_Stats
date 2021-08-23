@@ -1,7 +1,7 @@
 <template>
     <div class="regionsListPanel">
         <div class="regionsListPanel__chartMainContainer">
-            <div class="regionsListPanel__chartSubContainer">
+            <div id="regionsListPanelChartContainer">
                 <chart :chartId="'regionsDatasChart'" :chartData="chartData" :chartOptions="chartOptions" :chartType="'bar'"></chart>
             </div>
         </div>
@@ -12,7 +12,7 @@
 import Chart from "../SharedComponents/Chart.vue";
 import DatasCalculator from "../../../../../assets/JSClasses/DatasCalculator.js";
 
-import { reactive, computed, watch, inject } from "vue";
+import { reactive, computed, watch, inject, onMounted } from "vue";
 
 export default {
     props: {
@@ -24,8 +24,15 @@ export default {
             type: Object,
             required: true
         },
+        displayedCountry: {
+            type: String,
+            required: false,
+            default: "France"
+        }
     },
     setup(props) {
+
+        console.log(props.regionsDatas);
 
         let datasCalculator = new DatasCalculator();
         const chartStatusKey = inject("chartStatusKey", {});
@@ -62,7 +69,7 @@ export default {
             deaths: computed(() => []),
             recovered: computed(() => []),
             hospitalizations: computed(() => []),
-            intensive_care: computed(() => [])
+            intensiveCare: computed(() => [])
         });
 
         const datasKeys = ["confirmed", "deaths", "recovered", "hospitalizations", "intensive_care"];
@@ -131,6 +138,13 @@ export default {
 
         }, {immediate: true});
 
+        onMounted(() => {
+            
+            //Set custom chart height according to the number of regions
+            document.getElementById("regionsListPanelChartContainer").style.height = Object.entries(props.regionsDatas).length * 32.5 + "px";
+        
+        });
+
         return {
             headerStatus,
             chartData,
@@ -164,9 +178,6 @@ export default {
         &::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-    }
-    &__chartSubContainer {
-        height: 1000px;
     }
 }
 </style>

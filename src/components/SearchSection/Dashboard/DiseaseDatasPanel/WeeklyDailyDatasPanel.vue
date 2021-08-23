@@ -1,37 +1,37 @@
 <template>
     <div class="datasPanel weeklyDailyDatasPanel">
         <div class="datasPanel__headerContainer weeklyDailyDatasPanel__headerContainer">
-            <div class="weeklyDailyDatasPanel__btnsPart">
-                <button @click="displayedDatatype = 'dailyDatas'" id="dailyDatasEvoBtn" title="Tendance quotidienne" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--left"><h3>Tendance quotidienne</h3></button>
-                <p>/</p>
-                <button @click="displayedDatatype = 'weeklyDatas'" id="weeklyDatasEvoBtn" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3>hebdomadaire</h3></button>
+            <header class="weeklyDailyDatasPanel__btnsPart">
+                <button @click="displayedDatatype = 'dailyDatas'" id="dailyDatasEvoBtn" ref="dailyDatasEvoBtn" title="Tendance quotidienne" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--left"><h3 class="datasPanel__header">Tendance quotidienne</h3></button>
+                <p class="datasPanel__header">/</p>
+                <button @click="displayedDatatype = 'weeklyDatas'" id="weeklyDatasEvoBtn" title="Tendance hebdomadaire" class="weeklyDailyDatasPanel__btn weeklyDailyDatasPanel__btn--right"><h3 class="datasPanel__header">{{ secondButtonContent }}</h3></button>
                 <template v-if="hasCustomPeriodBeenSubmitted === true">
-                    <p>/</p>
-                    <button @click="displayedDatatype = 'customPeriodDatas'" id="customPeriodDatasEvoBtn" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent"><h3>{{ customPeriodBtnContent }}</h3></button>
+                    <p class="datasPanel__header">/</p>
+                    <button @click="displayedDatatype = 'customPeriodDatas'" id="customPeriodDatasEvoBtn" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent"><h3 class="datasPanel__header">{{ customPeriodBtnContent }}</h3></button>
                 </template>
-            </div>
-            <button id="customPeriodFormToggleBtn" title="Ajouter période personnalisée" class="weeklyDailyDatasPanel__toggleFormBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><i class="far fa-calendar-plus"></i></button>
+            </header>
+            <button id="customPeriodFormToggleBtn" title="Ajouter période personnalisée" class="datasPanel__toggleFormBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><i class="far fa-calendar-plus"></i></button>
         </div>
         <div class="datasPanel__contentContainer weeklyDailyDatasPanel__contentContainer">
-            <template v-for="item in displayedDatas" :key="item.dataName">
-                <stat-item v-if="item.dataNumber !== null" :statNumber="item.dataNumber" :statName="item.dataName"></stat-item>
+            <template v-for="item in datas[displayedDatatype]" :key="item.dataName">
+                <stat-item v-if="item.dataNumber !== null" :statNumber="item.dataNumber" :statName="item.dataName" :dataType="'evolutionDatas'"></stat-item>
             </template>
-            <form @submit.prevent="customPeriodSubmission" id="customPeriodForm" class="weeklyDailyDatasPanel__customPeriodForm weeklyDailyDatasPanel__customPeriodForm--hidden">
-                <div class="weeklyDailyDatasPanel__dateInputContainer">
-                    <i class="fas fa-hourglass-start"></i>
-                    <div class="weeklyDailyDatasPanel__inputPart">
-                        <label for="wdpStartDate" class="weeklyDailyDatasPanel__inputLabel">Date de début <abbr title="Si non renseignée, cette date est fixée au 22/01/2020">?</abbr></label>
-                        <input type="date" placeholder="Ex: 24/05/2021" class="weeklyDailyDatasPanel__dateInput" id="wdpStartDate" v-model="customPeriodDates.startDate" min="2020-01-22" :max="endDateLimit"/>
+            <form @submit.prevent="customPeriodSubmission" id="customPeriodForm" class="weeklyDailyDatasPanel__customPeriodForm weeklyDailyDatasPanel__customPeriodForm--hidden" aria-hidden="true">
+                <div class="datasPanelForm__inputContainer">
+                    <i class="fas fa-hourglass-start datasPanelForm__logoLabel"></i>
+                    <div class="datasPanelForm__inputPart">
+                        <label for="wdpStartDate" class="datasPanelForm__label">Date de début <abbr title="Si non renseignée, cette date est fixée au 22/01/2020">?</abbr></label>
+                        <input type="date" placeholder="Ex: 24/05/2021" class="datasPanelForm__input" id="wdpStartDate" v-model="customPeriodDates.startDate" min="2020-01-22" :max="endDateLimit" required aria-required="true"/>
                     </div>
                 </div>
-                <div class="weeklyDailyDatasPanel__dateInputContainer">
-                    <i class="fas fa-hourglass-end"></i>
-                    <div class="weeklyDailyDatasPanel__inputPart">
-                        <label for="wdpEndDate" class="weeklyDailyDatasPanel__inputLabel">Date de fin <abbr title="Si non renseignée, cette date est fixée au jour actuel">?</abbr></label>
-                        <input type="date" placeholder="Ex: 05/09/2020" class="weeklyDailyDatasPanel__dateInput" id="wdpEndDate" v-model="customPeriodDates.endDate" min="2020-01-22" :max="endDateLimit"/>
+                <div class="datasPanelForm__inputContainer">
+                    <i class="fas fa-hourglass-end datasPanelForm__logoLabel"></i>
+                    <div class="datasPanelForm__inputPart">
+                        <label for="wdpEndDate" class="datasPanelForm__label">Date de fin <abbr title="Si non renseignée, cette date est fixée au jour actuel">?</abbr></label>
+                        <input type="date" placeholder="Ex: 05/09/2020" class="datasPanelForm__input" id="wdpEndDate" v-model="customPeriodDates.endDate" min="2020-01-22" :max="endDateLimit" required aria-required="true"/>
                     </div>
                 </div>
-                <button type="submit" title="Entrer période" class="weeklyDailyDatasPanel__submitBtn"><i class="fas fa-search"></i></button>
+                <button type="submit" title="Valider la période personnalisée" class="selectableStatus"><i class="fas fa-search" aria-hidden="true"></i><span class="screenreaderText">Valider la période personnalisée</span></button>
             </form>
         </div>
     </div>
@@ -62,6 +62,16 @@ export default {
 
         let isCustomPeriodFormDisplayed = ref(false);
         let hasCustomPeriodBeenSubmitted = ref(false);
+
+        let secondButtonContent = computed(() => {
+
+            if (window.innerWidth < 1024) {
+                return "Tendance hebdomadaire";
+            } else {
+                return "hebdomadaire";
+            }
+
+        });
 
         //Indicates which type of datas is displayed
         let displayedDatatype = ref("dailyDatas");
@@ -100,15 +110,13 @@ export default {
         //Dynamically create datas and displayed datas properties
         if (props.locationType === "departement") {
 
-            for (const [key, value] of Object.entries(props.locationEvolutionDatas.datas.cumulativeDatas)) {
+            for (const keyValue of Object.entries(props.locationEvolutionDatas.datas.cumulativeDatas)) {
 
-                displayedDatas[key] = {
-                    dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key),
-                    dataNumber: value[0]
-                }
-
-                for (const keyValue of Object.entries(datas)) {
-                    datas[keyValue[0]][key] = null;
+                for (const datasKeyValue of Object.entries(datas)) {
+                    datas[datasKeyValue[0]][keyValue[0]] = {
+                        dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(keyValue[0]),
+                        dataNumber: 0
+                    };
                 }
 
             }
@@ -117,13 +125,17 @@ export default {
 
             for (const evolutionDatasKeyValue of Object.entries(props.locationEvolutionDatas)) {
 
-                displayedDatas[evolutionDatasKeyValue[0]] = {
-                    dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(evolutionDatasKeyValue[0]),
-                    dataNumber: 0
-                }
+                if (evolutionDatasKeyValue[0] !== "creation_date") {
 
-                for (const datasKeyValue of Object.entries(datas)) {
-                    datas[datasKeyValue[0]][evolutionDatasKeyValue[0]] = null;
+                    for (const datasKeyValue of Object.entries(datas)) {
+
+                        datas[datasKeyValue[0]][evolutionDatasKeyValue[0]] = {
+                            dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(evolutionDatasKeyValue[0]),
+                            dataNumber: 0
+                        }
+
+                    }
+
                 }
 
             }
@@ -160,13 +172,16 @@ export default {
                         if (action === false || action === "weeklyDailyEvolution") {
 
                             let results = datasCalculator.datasListFunctionalities.getWeeklyDailyEvolution(value);
-                            datas.dailyDatas[key] = results.dailyEvolution;
-                            datas.weeklyDatas[key] = results.weeklyEvolution;
+                            for (const keyValue of Object.entries(results)) {
+
+                                datas[keyValue[0]][key]["dataNumber"] = keyValue[1];
+
+                            }
 
                         } else if (action === "customPeriodEvolution") {
 
-                            let result = datasCalculator.datasListFunctionalities.getCustomPeriodEvolution(value, customPeriodDates);
-                            datas.customPeriodDatas[key] = result;
+                            let results = datasCalculator.datasListFunctionalities.getCustomPeriodEvolution(value, customPeriodDates);
+                            datas.customPeriodDatas[key]["dataNumber"] = results;
 
                         }
 
@@ -180,10 +195,11 @@ export default {
 
                     let results = datasCalculator.datasListFunctionalities.getDepartementWeeklyDailyEvolution(props.locationEvolutionDatas.datas);
                     console.log(results);
+
                     for (const [datasKey, datasValue] of Object.entries(results)) {
-                        console.log(datasKey)
+
                         for (const [key, value] of Object.entries(datasValue)) {
-                            datas[datasKey][key] = value;
+                            datas[datasKey][key]["dataNumber"] = value;
                         }
 
                     }
@@ -192,7 +208,7 @@ export default {
 
                     let results = datasCalculator.datasListFunctionalities.getDepartementCustomPeriodEvolution(props.locationEvolutionDatas.datas, customPeriodDates);
                     for (const [key, value] of Object.entries(results)) {
-                        datas.customPeriodDatas[key] = value;
+                        datas.customPeriodDatas[key]["dataNumber"] = value;
                     }
 
                 }
@@ -225,10 +241,6 @@ export default {
         watch(displayedDatatype, (newValue, oldValue) => {
 
             if (newValue !== oldValue) {
-
-                for (const [key, value] of Object.entries(displayedDatas)) {
-                    value.dataNumber = datas[displayedDatatype.value][key];
-                }
 
                 //Update classnames
                 if (document.querySelectorAll(".weeklyDailyDatasPanel__btnsPart > button").length > 0) {
@@ -281,6 +293,7 @@ export default {
 
                 document.getElementById("customPeriodForm").className = customPeriodFormClasses.join(" ");
                 document.getElementById("customPeriodFormToggleBtn").className += " selectedBtn";
+                document.getElementById("customPeriodFormToggleBtn").setAttribute("arai-hidden", "false");
 
             } else if (newValue === false) {
 
@@ -298,12 +311,14 @@ export default {
                 }
 
                 document.getElementById("customPeriodFormToggleBtn").className = formToggleBtnClasses.join(" ");
+                document.getElementById("customPeriodFormToggleBtn").setAttribute("arai-hidden", "true");
 
             }
 
         });
 
         return {
+            secondButtonContent,
             endDateLimit,
             displayedDatatype,
             displayedDatas,
@@ -334,7 +349,6 @@ export default {
         align-items: center;
         position: relative;
         flex-direction: column;
-        padding-bottom: 1rem;
         @media (min-width: 1024px) {
             flex-direction: row;
             padding-bottom: 0;
@@ -371,24 +385,9 @@ export default {
             }
         }
     }
-    &__toggleFormBtn {
-        border: 1px solid black;
-        border-radius: 3px;
-        background-color: inherit;
-        padding: 0.2rem 0.5rem;
-        transition: all 300ms;
-        width: 100%;
-        @media (min-width: 1024px) {
-            width: auto;
-        }
-        &:hover {
-            cursor: pointer;
-            border-color: lightblue;
-            color: lightblue;
-        }
-    }
     &__customPeriodForm {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         position: absolute;
@@ -398,49 +397,11 @@ export default {
         width: 100%;
         height: 100%;
         background-color: white;
+        @media (min-width: 1024px) {
+            flex-direction: row;
+        }
         &--hidden {
             display: none;
-        }
-    }
-    &__dateInputContainer {
-        display: flex;
-        align-items: center;
-        margin: 0 1rem;
-        i {
-            font-size: 2rem;
-        }
-    }
-    &__inputPart {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        margin-left: 1.5rem;
-    }
-    &__inputLabel {
-        margin-bottom: 0.3rem;
-    }
-    &__dateInput {
-        background-color: rgb(250, 250, 250);
-        padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-        border: 1px solid black;
-        &:hover {
-            cursor: pointer;
-        }
-    }
-    &__submitBtn {
-        font-size: 1.3rem;
-        padding: 0.5rem 1rem;
-        margin-left: 1.5rem;
-        border: 1px solid black;
-        border-radius: 3px;
-        background-color: inherit;
-        transition: all 300ms;
-        &:hover {
-            border-color: lightblue;
-            color: lightblue;
-            cursor: pointer;
         }
     }
     &__contentContainer {

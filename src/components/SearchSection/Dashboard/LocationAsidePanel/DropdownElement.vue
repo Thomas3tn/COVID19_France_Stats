@@ -1,53 +1,63 @@
 <template>
-    <div class="twitterPanel__feedContainer" id="twitterFeedContainer">
-        <a class="twitter-timeline" :href="url" data-chrome="noscrollbar noheader nofooter noborders">>A Twitter List by TwitterDev</a>
-    </div>
+    <details class="dropdownElement" :id="detailsElementId + 'DropdownElement'" @toggle="isContentDisplayed = !isContentDisplayed">
+        <summary class="dropdownElement__summaryContainer" title="Inverser l'affichage">
+            <slot name="header"></slot>
+            <i class="fas fa-chevron-down dropdownElement__chevronLogo"></i>
+        </summary>
+        <slot name="content"></slot>
+    </details>
 </template>
 
 <script>
 //Vue Element
-import { ref } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 export default {
     props: {
-        country: {
+        detailsElementId: {
             type: String,
-            required: false
+            required: true
+        },
+        openByDefault: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     setup(props) {
 
-        let url = ref("");
+        let isContentDisplayed = ref(false);
 
-        switch (props.country) {
-            case "France":
-                url = "https://twitter.com/Covid_infoFR"
-                break;
+        watch(() => isContentDisplayed.value, newValue => {
 
-            case "United Stats":
-                url = "https://twitter.com/WHCOVIDResponse";
-                break;
+            let chevronClasses = document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.lastElementChild.className;
+            console.log(chevronClasses);
+            let chevronClassesArray = chevronClasses.split(" ");
 
-            case "United Kingdom":
-                url = "https://twitter.com/UKCovid19Stats";
-                break;
+            for (let i = 0; i < chevronClassesArray.length; i++) {
 
-            case "India":
-                url = "https://twitter.com/COVIDNewsByMIB";
-                break;
-        
-            default:
-                url = "https://twitter.com/COVID_19_Latest";
-                break;
-        }
+                if ((newValue === true && chevronClassesArray[i] === "chevronUpsideDown") || (newValue === false && chevronClassesArray[i] === "chevronNormalPosition")) {
+                    chevronClassesArray.splice(i, 1);
+                    break;
+                }
 
-        let mapInit = document.createElement("script");
-        mapInit.setAttribute("src", "https://platform.twitter.com/widgets.js");
-        mapInit.setAttribute("charset", "utf-8");
-        document.head.appendChild(mapInit);
+            }
+
+            newValue === true ? chevronClassesArray.push("chevronNormalPosition") : chevronClassesArray.push("chevronUpsideDown");
+            document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.lastElementChild.className = chevronClassesArray.join(" ");
+
+        });
+
+        onMounted(() => {
+            
+            if (props.openByDefault === true) {
+                document.getElementById(props.detailsElementId + "DropdownElement").setAttribute("open", "true");
+            }
+
+        })
 
         return {
-            url,
+            isContentDisplayed
         }
 
     }
@@ -82,7 +92,7 @@ export default {
     animation: chevronNormalPosition 300ms both ease-in-out;
 }
 
-.twitterPanel {
+.dropdownElement {
     background-color: inherit;
     margin-top: 2rem;
     &__headerContainer {
@@ -100,6 +110,8 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        text-align: left;
+        padding-bottom: calc(max(1rem, 1vw));
         div {
             display: flex;
             justify-content: center;
@@ -108,7 +120,8 @@ export default {
         &:hover {
             cursor: pointer;
         }
-        > h3 {
+        h3 {
+            margin: 0;
             margin-left: 0.5rem;
         }
         &--colored {

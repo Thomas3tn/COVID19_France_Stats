@@ -68,12 +68,15 @@ export default {
     border-radius: 3px;
     transition: all 500ms;
     @media (min-width: 768px) {
-        width: 20vw;
+        width: 50%;
         right: 1.5%;
         transform: translateX(0%);
     }
+    @media (min-width: 1024px) {
+        width: 30%;
+    }
     @media (min-width: 1440px) {
-        width: 20%;
+        width: 25%;
     }
     &--hidden {
         display: none;
@@ -83,6 +86,10 @@ export default {
         width: 30%;
         height: auto;
         margin: 0 auto;
+    }
+    &__header {
+        font-size: clamp(1.5rem, 2vw, 3.4rem);
+        text-align: center;
     }
     &__content {
         text-align: justify;
@@ -107,9 +114,9 @@ export default {
         }
     }
     &__moreInfosLink {
-        margin-top: 0.5rem;
+        margin-top: 4%;
         color: black;
-        font-size: 0.7rem;
+        font-size: clamp(0.7rem, 0.9vw, 1.4rem);
     }
 }
 </style>

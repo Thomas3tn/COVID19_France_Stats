@@ -1,8 +1,8 @@
 <template>
     <div class="datasPanel" id="detailedGeoDatasPanel">
-        <div class="datasPanel__headerContainer">
+        <header class="datasPanel__headerContainer">
             <h3 class="datasPanel__header">Situation geographique détaillée</h3>
-        </div>
+        </header>
         <div class="detailedGeoDatasPanel__contentContainer">
             <div class="detailedGeoDatasPanel__locationGraphsContainer">
                 <div id="currentSituationMap" class="detailedGeoDatasPanel__mapContainer">
@@ -22,28 +22,31 @@
                     <ocenia-map v-else-if="displayedCountry === 'Oceania'"></ocenia-map>
                     <world-map v-else-if="displayedCountry === 'Global'"></world-map>
                 </div>
-                <regions-list-panel :regionsDatas="locationRegionsDatas" :displayedStatus="displayedDatas"></regions-list-panel>
+                <regions-list-panel :regionsDatas="locationRegionsDatas" :displayedStatus="displayedDatas" :displayedCountry="displayedCountry"></regions-list-panel>
             </div>
             <form class="detailedGeoDatasForm" @submit.prevent>
                 <div class="detailedGeoDatasForm__mapInputs">
-                    <select v-model="formCriteria.displayedDatastype" class="detailedGeoDatasForm__selectInput">
-                        <option value="relativeDatas">Données relatives</option>
-                        <option value="rawDatas">Données brutes</option>
-                    </select>
+                    <div class="detailedGeoDatasForm__datatypeContainer">
+                        <label for="datasTypeDetailMapInput"><i class="far fa-list-alt datasPanelForm__logoLabel" aria-hidden="true"></i><span class="screenreaderText">Type de données</span></label>
+                        <select v-model="formCriteria.displayedDatastype" class="datasPanelForm__input datasPanelForm__inputPart" id="datasTypeDetailMapInput">
+                            <option value="relativeDatas">Données relatives</option>
+                            <option value="rawDatas">Données brutes</option>
+                        </select>
+                    </div>
                     <div class="detailedGeoDatasForm__statusContainer">
                         <template v-for="item in currentStatusKeys" :key="item.idName">
                             <template v-if="displayedDatas === item.idName">
-                                <input type="radio" @click="changeDisplayedDatas" class="detailedGeoDatasForm__radioInput" :id="item.idName + 'DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName" checked/>
-                                <label :for="item.idName + 'DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" :title="item.dashboardName" :class="'selectableStatus selectableStatus--' + item.idName + 'Active'"><font-awesome-icon :icon="item.logo"/></label>
+                                <input type="radio" @click="changeDisplayedDatas" class="detailedGeoDatasForm__radioInput" :id="item.idName + '_DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName" checked/>
+                                <label :for="item.idName + '_DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" :title="item.dashboardName" :class="'selectableStatus selectableStatus--horizontalDisplay selectableStatus--' + item.idName + 'Active'" @keyup="onKeyboardInput" tabindex="0" role="button" aria-pressed="true"><font-awesome-icon :icon="item.logo" aria-hidden="true"/><span class="screenreaderText">{{ item.dashboardName }}</span></label>
                             </template>
                             <template v-else>
-                                <input type="radio" @click="changeDisplayedDatas" class="detailedGeoDatasForm__radioInput" :id="item.idName + 'DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName"/>
-                                <label :for="item.idName + 'DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" class="selectableStatus" :title="item.dashboardName"><font-awesome-icon :icon="item.logo"/></label>
+                                <input type="radio" @click="changeDisplayedDatas" class="detailedGeoDatasForm__radioInput" :id="item.idName + '_DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName" aria-pressed="false"/>
+                                <label :for="item.idName + '_DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" class="selectableStatus selectableStatus--horizontalDisplay" :title="item.dashboardName" @keyup="onKeyboardInput" tabindex="0" role="button"><font-awesome-icon :icon="item.logo" aria-hidden="true"/><span class="screenreaderText">{{ item.dashboardName }}</span></label>
                             </template>
                         </template>
                     </div>
                 </div>
-                <button @click="isDetailedChartListDisplayed = !isDetailedChartListDisplayed" id="detailedGeoDatasPanelToggleContentBtn" class="detailedGeoDatasForm__contentToggleBtn" title="Alterner carte/liste"><font-awesome-icon :icon="faList"/></button>
+                <button @click="isDetailedChartListDisplayed = !isDetailedChartListDisplayed" id="detailedGeoDatasPanelToggleContentBtn" class="detailedGeoDatasForm__contentToggleBtn" title="Alterner carte/liste"><font-awesome-icon :icon="faList" aria-hidden="true"/><span class="screenreaderText">Altérner affichage carte/liste des régions</span></button>
             </form>
         </div>
     </div>
@@ -51,7 +54,7 @@
 
 <script>
 //Vue & Vuex Elements
-import { ref, onMounted, reactive, watch, inject } from "vue";
+import { ref, onMounted, reactive, watch, inject, computed } from "vue";
 
 //Vue Components
 import MapKey from "./DetailedGeoDatasPanel/MapKey.vue";
@@ -90,7 +93,7 @@ export default {
     },
     setup(props) {
 
-        console.log(props.locationRegionsDatas);
+        console.log(props.displayedCountry, props.locationRegionsDatas);
 
         const datasCalculator = new DatasCalculator();
         const chartStatusKey = inject("chartStatusKey", {});
@@ -110,36 +113,36 @@ export default {
             relativeDatas: {
                 key1: {
                     min: 0,
-                    max: 0,
+                    max: 2,
                     class: "confirmedCasesLvl1",
                     color: ""
                 },
                 key2: {
-                    min: 0,
-                    max: 5,
+                    min: 2,
+                    max: 6,
                     class: "confirmedCasesLvl2",
                     color: ""
                 },
                 key3: {
-                    min: 5,
+                    min: 6,
                     max: 12,
                     class: "confirmedCasesLvl3",
                     color: ""
                 },
                 key4: {
                     min: 12,
-                    max: 25,
+                    max: 19,
                     class: "confirmedCasesLvl4",
                     color: ""
                 },
                 key5: {
-                    min: 25,
-                    max: 38,
+                    min: 19,
+                    max: 32,
                     class: "confirmedCasesLvl5",
                     color: ""
                 },
                 key6: {
-                    min: 38,
+                    min: 32,
                     max: 100,
                     class: "confirmedCasesLvl6",
                     color: ""
@@ -185,11 +188,11 @@ export default {
             }
         });
 
-        /*let mapKeysRawDatasValues = computed(() => {
+        let mapKeysRawDatasValues = computed(() => {
 
             let highestValues = {};
             let mapKeysRawDatasValues = {};
-            let authorizedValues = ["confirmed", "deaths", "recovered"];
+            let authorizedValues = ["confirmed", "deaths", "recovered", "hospitalizations", "intensive_care"];
 
             //Find the highest value for each status
             for (const [regionKey, regionValue] of Object.entries(props.locationRegionsDatas)) {
@@ -215,7 +218,7 @@ export default {
             //Calculate each intermediate values from the highest value
             for (const [key, value] of Object.entries(highestValues)) {
 
-                let highestValue = (value * 10 / 100) + highestValue;
+                let highestValue = Math.round(value * 10 / 100) + value;
                 let valuesGap = highestValue / 6;
                 mapKeysRawDatasValues[key] = {};
                 
@@ -224,10 +227,8 @@ export default {
                     let currentKey = "key" + i;
 
                     mapKeysRawDatasValues[key][currentKey] = {};
-                    console.log(mapKeysRawDatasValues, i);
-                    //i === 1 ? mapKeysRawDatasValues["key" + i]["min"] = 0 : mapKeysRawDatasValues["key" + i]["min"] = mapKeysRawDatasValues["key" + (i - 1)]["min"] + 1;
-                    mapKeysRawDatasValues[currentKey]["min"] = 0
-                    mapKeysRawDatasValues[currentKey]["max"] = valuesGap * i;
+                    i === 1 ? mapKeysRawDatasValues[key][currentKey]["min"] = 0 : mapKeysRawDatasValues[key][currentKey]["min"] = mapKeysRawDatasValues[key]["key" + (i - 1)]["max"] + 1;
+                    mapKeysRawDatasValues[key][currentKey]["max"] = Math.round(valuesGap * i);
 
                 }
 
@@ -235,9 +236,17 @@ export default {
 
             return mapKeysRawDatasValues;
 
-        });*/
+        });
 
         //Functions
+        function onKeyboardInput(event) {
+
+            if (event.key === "Enter") {
+                formCriteria.displayedStatus = event.target.htmlFor.split("_")[0];
+            }
+
+        }
+
         function changeDisplayedDatas(event) {
             formCriteria.displayedStatus = event.currentTarget.value;
         }
@@ -249,6 +258,31 @@ export default {
         function setDetailedMap(displayedDatastype, displayedDatas, locationDatas, mapKeys) {
 
             let mapPaths = document.querySelectorAll("#currentSituationMap svg a");
+            console.log(displayedDatastype, displayedDatas, locationDatas, mapKeys);
+
+            //Check if country/continent is equal to 0
+            //In that case each province/country data is add to the displayedDatasTotal variable
+            let displayedDatasTotal = 0;
+
+            if (props.displayedCountry === "Global") {
+                displayedDatasTotal = locationDatas.Global[displayedDatas];
+            } else {
+
+                if (locationDatas.All[displayedDatas] === 0) {
+
+                    for (const [key, value] of Object.entries(locationDatas)) {
+
+                        if (key !== "All") {
+                            displayedDatasTotal += value[displayedDatas];
+                        }
+
+                    }
+
+                } else {
+                    displayedDatasTotal = locationDatas.All[displayedDatas];
+                }
+
+            }
 
             for (let i = 0; i < mapPaths.length; i++) {
 
@@ -256,14 +290,14 @@ export default {
 
                     let currentRegionData;
                     if (props.displayedCountry === "Global") {
-                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / locationDatas.Global[displayedDatas]) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
+                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / displayedDatasTotal) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
                     } else {
-                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / locationDatas.All[displayedDatas]) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
+                        displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / displayedDatasTotal) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
                     }
 
                     for (const keyValue of Object.entries(mapKeys[displayedDatastype])) {
 
-                        if (currentRegionData > keyValue[1].min && currentRegionData >= keyValue[1].max) {
+                        if (currentRegionData >= keyValue[1].min && currentRegionData <= keyValue[1].max) {
 
                             let currentMapPathChildren = mapPaths[i].children;
                             for (let a = 0; a < currentMapPathChildren.length; a++) {
@@ -302,7 +336,7 @@ export default {
                     let currentMapPathChildren = mapPaths[i].children;
                     for (let a = 0; a < currentMapPathChildren.length; a++) {
                         currentMapPathChildren[a].removeAttribute("style");
-                        currentMapPathChildren[a].setAttribute("class", "selectedMapLocation");
+                        currentMapPathChildren[a].setAttribute("class", formCriteria.displayedStatus + "HighlightAnimation");
                     }
 
                 }
@@ -319,7 +353,7 @@ export default {
             for (let i = 0; i < mapPaths.length; i++) {
 
                 //SVG element className return an object and we access its className by the baseVal attribute
-                if (mapPaths[i].firstElementChild.className.baseVal === "selectedMapLocation") {
+                if (mapPaths[i].firstElementChild.className.baseVal === formCriteria.displayedStatus + "HighlightAnimation") {
 
                     let currentMapPathChildren = mapPaths[i].children;
                     for (let a = 0; a < currentMapPathChildren.length; a++) {
@@ -390,11 +424,13 @@ export default {
         formCriteria.displayedStatus = displayedDatas.value;
 
         //Set gradient colors
-        for (const [key, value] of Object.entries(mapKeys.relativeDatas)) {
-            value.color = chartStatusKey.statusGradient[displayedDatas.value][key.split("")[key.split("").length - 1]];
-        }
+        for (const keyValue of Object.entries(mapKeys)) {
 
-        console.log(mapKeys.relativeDatas);
+            for (const [key, value] of Object.entries(keyValue[1])) {
+                value.color = chartStatusKey.statusGradient[displayedDatas.value][key.split("")[key.split("").length - 1]];
+            }
+
+        }
 
         onMounted(() => {
 
@@ -408,6 +444,7 @@ export default {
 
             setDetailedMap(formCriteria.displayedDatastype, displayedDatas.value, props.locationRegionsDatas, mapKeys);
             document.querySelector("#detailedGeoDatasPanel .regionsListPanel").className += " regionsListPanel--hidden";
+            document.getElementById("detailedGeoDatasPanelToggleContentBtn").className = document.getElementById("detailedGeoDatasPanelToggleContentBtn").className.split(" ")[0] + " " + document.getElementById("detailedGeoDatasPanelToggleContentBtn").className.split(" ")[0] + "--" + formCriteria.displayedStatus;
 
         });
 
@@ -418,29 +455,16 @@ export default {
             displayedDatas.value = newValue.displayedStatus;
 
             //Update mapKeys values
-            /*if (newValue.displayedDatastype === "rawDatas") {
+            if ((newValue.displayedDatastype === "rawDatas" && oldValue.displayedDatastype !== "rawDatas")) {
 
                 for (const [key, value] of Object.entries(mapKeys[newValue.displayedDatastype])) {
 
-                    value.min = mapKeysRawDatasValues[key]["min"];
-                    value.max = mapKeysRawDatasValues[key]["max"];
+                    value.min = mapKeysRawDatasValues.value[newValue.displayedStatus][key]["min"];
+                    value.max = mapKeysRawDatasValues.value[newValue.displayedStatus][key]["max"];
 
                 }
 
-                if (newValue.displayedStatus !== oldValue.displayedStatus) {
-
-                    for (const [key, value] of Object.entries(mapKeys[newValue.displayedDatastype])) {
-
-                        value.min = mapKeysRawDatasValues[key]["min"];
-                        value.max = mapKeysRawDatasValues[key]["max"];
-                        
-                    }
-
-                }
-
-                console.log(mapKeysRawDatasValues);
-
-            }*/
+            }
 
             //Update mapKeys color to the new status
             for (const [key, value] of Object.entries(mapKeys[newValue.displayedDatastype])) {
@@ -452,7 +476,8 @@ export default {
             let statusLabels = document.querySelectorAll(".detailedGeoDatasForm__statusContainer label");
 
             for (let i = 0; i < statusLabels.length; i++) {
-                statusLabels[i].className = "selectableStatus selectableStatus--inactive";
+                statusLabels[i].className = "selectableStatus selectableStatus--horizontalDisplay selectableStatus--inactive";
+                statusLabels[i].setAttribute("aria-pressed", "false");
             }
 
             let newActiveStatus = document.getElementById(newValue.displayedStatus + "DetailedMapLabel");
@@ -474,6 +499,9 @@ export default {
             }
 
             document.getElementById(newValue.displayedStatus + "DetailedMapLabel").className += " selectableStatus--" + newValue.displayedStatus + "Active";
+            document.getElementById(newValue.displayedStatus + "DetailedMapLabel").setAttribute("aria-pressed", "true");
+
+            document.getElementById("detailedGeoDatasPanelToggleContentBtn").className = document.getElementById("detailedGeoDatasPanelToggleContentBtn").className.split(" ")[0] + " " + document.getElementById("detailedGeoDatasPanelToggleContentBtn").className.split(" ")[0] + "--" + newValue.displayedStatus;
 
             //Change toggle content button active color when status is changed
             if (isDetailedChartListDisplayed.value === true && (oldValue.displayedStatus !== newValue.displayedStatus)) {
@@ -539,6 +567,8 @@ export default {
             faList,
             highlightRegions,
             removeRegionsHighlight,
+            onKeyboardInput,
+            mapKeysRawDatasValues
 
         }
 
@@ -565,23 +595,104 @@ export default {
 </script>
 
 <style lang="scss">
-@keyframes selectedMapLocation {
+
+@mixin highlightRegionsAnimation {
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+@mixin highlightAnimationStart {
+    transform-origin: center;
+    transform: scale(1);
+    stroke-width: 0.5px;
+}
+
+@mixin highlightAnimationEnd {
+    transform: scale(1.01);
+    transform-origin: center;
+    stroke-width: 1.5px;
+}
+
+@keyframes confirmedHighlight {
     0% {
         fill: #FFF5C7;
-        transform-origin: center;
-        transform: scale(1);
-        stroke-width: 0.5px;
+        @include highlightAnimationStart;
     }
     100% {
         fill: #e73a51;
-        transform: scale(1.01);
-        transform-origin: center;
-        stroke-width: 1.5px;
+        @include highlightAnimationEnd;
     }
 }
 
-.selectedMapLocation {
-    animation: selectedMapLocation 2000ms infinite alternate ease-in-out;
+@keyframes recoveredHighlight {
+    from {
+        fill: #B5F0AD;
+        @include highlightAnimationStart;
+    }
+    to {
+        fill: #3CF525;
+        @include highlightAnimationEnd;
+    }
+}
+
+@keyframes deathsHighlight {
+    from {
+        fill: #D6D6D6;
+        @include highlightAnimationStart;
+    }
+    to {
+        fill: #3A3A3A;
+        @include highlightAnimationEnd;
+    }
+}
+
+@keyframes hospitalizationsHighlight {
+    from {
+        fill: #FFE1A4;
+        @include highlightAnimationStart;
+    }
+    to {
+        fill: #FFC042;
+        @include highlightAnimationEnd;
+    }
+}
+
+@keyframes intensiveCareHighlight {
+    from {
+        fill: #FFF5C7;
+        @include highlightAnimationStart;
+    }
+    to {
+        fill: #e73a51;
+        @include highlightAnimationEnd;
+    }
+}
+
+.confirmedHighlightAnimation {
+    animation-name: confirmedHighlight;
+    @include highlightRegionsAnimation;
+}
+
+.recoveredHighlightAnimation {
+    animation-name: recoveredHighlight;
+    @include highlightRegionsAnimation;
+}
+
+.deathsHighlightAnimation {
+    animation-name: deathsHighlight;
+    @include highlightRegionsAnimation;
+}
+
+.hospitalizationsAnimation {
+    animation-name: hospitalizationsHighlight;
+    @include highlightRegionsAnimation;
+}
+
+.intensive_careAnimation {
+    animation-name: intensiveCareHighlight;
+    @include highlightRegionsAnimation;
 }
 
 .detailedGeoDatasPanel {
@@ -631,25 +742,54 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: column;
+    @media (min-width: 768px) {
+        flex-direction: row;
+    }
     &__mapInputs {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        width: 35%;
+        margin-top: 1rem;
+        margin-bottom: 2.5rem;
+        @media (min-width: 768px) {
+            flex-direction: row;
+            margin: 0;
+        }
+    }
+    &__datatypeContainer {
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        @media (min-width: 768px) {
+            margin-right: 2vw;
+            margin-bottom: 0;
+        }
     }
     &__selectInput {
-        border-radius: 3px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        height: 32px;
+        border: 1px solid black;
+        background-color: rgb(250, 250, 250);
     }
     &__statusContainer {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
-        width: 40%;
+        width: 100%;
+        @media (min-width: 768px) {
+            justify-content: space-between;
+            width: 40%;
+        }
     }
     &__radioInput {
         display: none;
     }
     &__contentToggleBtn {
+        width: 100%;
         border: 2px solid black;
         border-radius: 3px;
         background-color: inherit;
@@ -657,8 +797,28 @@ export default {
         font-size: 1.2rem;
         cursor: pointer;
         transition: all 300ms;
-        &:hover {
-            background-color: darken(white, 5%);
+        @media (min-width: 768px) {
+            width: auto;
+        }
+        &--confirmed:hover {
+            color: #FF6866;
+            border-color: #FF6866;
+        }
+        &--deaths:hover {
+            color: #3A3A3A;
+            border-color: #3A3A3A;
+        }
+        &--recovered:hover {
+            color: #3CF525;
+            border-color: #3CF525;
+        }
+        &--hospitalizations {
+            color: #FFC042;
+            border-color: #FFC042;
+        }
+        &--intensive_care {
+            color: #FF6866;
+            border-color: #FF6866;
         }
     }
 }

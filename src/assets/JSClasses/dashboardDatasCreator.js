@@ -83,6 +83,7 @@ export default class DashboardDatasCreator {
     }
     getCountryDatas(country, datas, worldLiveDatas, departementsLiveDatas = false) {
 
+        console.log(locationDatas);
         const locationDatas = worldLiveDatas[country]["All"];
 
         //Fill array with to indicate which datas retrieve for each dashboard component
@@ -102,7 +103,7 @@ export default class DashboardDatasCreator {
 
         if (country === "France") {
 
-            for (const [key, value] of Object.entries(regionsDatas.datas)) {
+            for (const [key, value] of Object.entries(regionsDatas)) {
                 datas.diseaseDatas.regionsDatas[key] = value;
             }
             
@@ -144,11 +145,11 @@ export default class DashboardDatasCreator {
     getDepartementDatas(departement, country, datas, departementsLiveDatas, departementsStaticDatas) {
 
         let staticDatasKey = departement.split("-")[0] + departement.split("-")[1];
-        let locationDatas = Object.assign(departementsLiveDatas.datas[departement], departementsStaticDatas[staticDatasKey]);
+        let locationDatas = Object.assign(departementsLiveDatas[departement], departementsStaticDatas[staticDatasKey]);
         locationDatas.country = country;
         console.log(locationDatas);
         const locationDatasAuthKeys = {
-            locationInfos: ["location", "country", "sq_km_area", "capital_city", "population", "life_expectancy", "lat", "long", "code", "nom", "date", "source", "sourceType"],
+            locationInfos: ["location", "demonym", "country", "sq_km_area", "capital_city", "population", "life_expectancy", "lat", "long", "code", "nom", "date", "source", "sourceType"],
             relativeDatas: ["population", "sq_km_area", "hospitalizations", "deaths", "intensive_care", "recovered"],
             currentSituation: ["hospitalizations", "intensive_care", "deaths", "recovered"]
         }
@@ -176,6 +177,8 @@ export default class DashboardDatasCreator {
         for (const worldLiveDatasKeyValue of Object.entries(worldLiveDatas)) {
 
             if (worldLiveDatasKeyValue[1].All.continent === continent) {
+
+                console.log(worldLiveDatasKeyValue[1].All.country);
 
                 datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
 
@@ -300,28 +303,24 @@ export default class DashboardDatasCreator {
 
         for (const worldLiveDatasKeyValue of Object.entries(worldLiveDatas)) {
 
-            if (worldLiveDatasKeyValue[0] !== "Global") {
+            datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
 
-                datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
+            for (const [countryKey, countryValue] of Object.entries(worldLiveDatasKeyValue[1].All)) {
 
-                for (const [countryKey, countryValue] of Object.entries(worldLiveDatasKeyValue[1].All)) {
+                if (locationInfos.includes(countryKey)) {
 
-                    if (locationInfos.includes(countryKey)) {
+                    //If current property has to be into an array
+                    if (countryKey === "country" || countryKey === "gini") {
 
-                        //If current property has to be into an array
-                        if (countryKey === "country" || countryKey === "gini") {
-    
-                            if (countryKey === "country") {
-                                typeof datas.locationInfos.countriesList === "undefined" ? datas.locationInfos.countriesList = [countryValue] : datas.locationInfos.countriesList.push(countryValue);
-                            } else if (countryKey === "gini") {
-                                typeof datas.locationInfos[countryKey] === "undefined" ? datas.locationInfos[countryKey] = [countryValue] : datas.locationInfos[countryKey].push(countryValue);
-                            }
-                            
-    
-                        } else {
-                            typeof datas.locationInfos[countryKey] === "undefined" ? datas.locationInfos[countryKey] = countryValue : datas.locationInfos[countryKey] += countryValue;
+                        if (countryKey === "country") {
+                            typeof datas.locationInfos.countriesList === "undefined" ? datas.locationInfos.countriesList = [countryValue] : datas.locationInfos.countriesList.push(countryValue);
+                        } else if (countryKey === "gini") {
+                            typeof datas.locationInfos[countryKey] === "undefined" ? datas.locationInfos[countryKey] = [countryValue] : datas.locationInfos[countryKey].push(countryValue);
                         }
+                        
 
+                    } else {
+                        typeof datas.locationInfos[countryKey] === "undefined" ? datas.locationInfos[countryKey] = countryValue : datas.locationInfos[countryKey] += countryValue;
                     }
 
                 }

@@ -1,26 +1,29 @@
 <template>
-    <aside class="locationDetails">
-        <div class="locationDetails__locationName">
-            <img  v-if="locationLogo !== ''" :src="locationLogo" :title="locationInfos.country || locationInfos.nom">
+    <aside v-if="currentlyDisplayed === true" class="locationDetails">
+        <button class="locationDetails__toggleDisplayBtn" title="Cacher les détails de la localisation" @click="test"><i class="fas fa-chevron-left" aria-hidden="true"></i><span class="screenreaderText">Cacher les détails de la localisation</span></button>
+        <header class="locationDetails__locationName">
+            <img v-if="locationLogo !== '' && isLocationLogoUrlValid === true" :src="locationLogo" :title="locationInfos.nom || locationInfos.fr_name" :alt="locationLogoAltTag" @error="onLocationLogoError">
+            <font-awesome-icon v-if="isLocationLogoUrlValid === false || locationLogo === ''" :icon="defaultLocationLogo" class="locationDetails__defaultLogo"/>
 
             <h2 v-if="locationType === 'continent'">{{ locationInfos.abbreviation }} {{ locationInfos.continent }}</h2>
             <h2 v-if="locationType === 'country'">({{ locationInfos.abbreviation }}) {{ locationInfos.fr_name }}</h2>
-            <h2 v-else-if="locationType === 'departement'">({{ locationInfos.code }}) {{ locationInfos.nom }}</h2>
+            <h2 v-else-if="locationType === 'departement'">({{ formattedDepartementCode }}) {{ locationInfos.nom }}</h2>
 
-        </div>
-        <div>
+        </header>
             <GoogleMap
             api-key="AIzaSyBrX2QbmLhIX_J0hKBelUxLSZD7RiylBEU"
-            style="width: 100%; height: 300px"
+            style="width: 100%; height: 21.4vw; minHeight: 256px"
             :center="{lat: parseInt(locationInfos.lat, 10), lng: parseInt(locationInfos.long, 10)}"
             :zoom="mapZoom"
             >
                 <Marker :options="{ position: {lat: parseInt(locationInfos.lat, 10), lng: parseInt(locationInfos.long, 10)}}" />
             </GoogleMap>
-        </div>
-        <div>
-            <h3 class="locationDetails__overviewHeader"><i class="far fa-compass"></i> Aperçu</h3>
-            <ul class="locationDetails__list">
+        <dropdown-element :detailsElementId="'locationDetails'" :openByDefault="true">
+            <template v-slot:header>
+                <div><i class="far fa-compass" aria-hidden="true"></i><h3> Aperçu</h3></div>
+            </template>
+            <template v-slot:content>
+                <ul class="locationDetails__list">
                 
                 <!-- country/departement location -->
                 <li v-if="locationType === 'country'">Localisation: {{ locationInfos.continent }} ({{ locationInfos.location }})</li>
@@ -36,18 +39,28 @@
 
                 <li v-if="locationType === 'continent'">Pays: {{ countriesList }} ({{ countriesTotalNumber }})</li>
 
-            </ul>
-            <ul class="locationDetails__list">
-                <li>Population: {{ formattedPopulation }} habs</li>
-                <li>Espérance de vie: {{ locationInfos.life_expectancy }} ans</li>
-                <li v-if="locationType === 'country' || locationType === 'continent'">Indice <abbr title="L'indice de GINI mesure l'inégalité des revenus d'un pays, allant de 0 (égalité parfaite) à 100 (inégalité parfaite).">GINI</abbr>: {{ locationInfos.gini}}</li>
-            </ul>
-            <ul>
-                <li v-if="locationType === 'country' && formattedUpdateDateDatas !== ''">Dernière mise à jour: {{ formattedUpdateDateDatas }}</li>
-                <li v-else-if="locationType === 'departement'">Source: {{ locationInfos.source.nom }}</li>
-            </ul>
-        </div>       
-        <twitter-panel :country="locationInfos.country"></twitter-panel>
+                </ul>
+                <ul class="locationDetails__list">
+                    <li>Population: {{ formattedPopulation }} habs</li>
+                    <li>Espérance de vie: {{ locationInfos.life_expectancy }} ans</li>
+                    <li v-if="locationType === 'country' || locationType === 'continent'">Indice <abbr title="L'indice de GINI mesure l'inégalité des revenus d'un pays, allant de 0 (égalité parfaite) à 100 (inégalité parfaite).">GINI</abbr>: {{ locationInfos.gini}}</li>
+                </ul>
+                <ul class="locationDetails__list" v-if="locationType === 'country' && formattedUpdateDateDatas !== ''">
+                    <li>Dernière mise à jour: {{ formattedUpdateDateDatas }}</li>
+                </ul>
+                <ul class="locationDetails__list" v-else-if="locationType === 'departement'">
+                    <li>Source: {{ locationInfos.source.nom }}</li>
+                </ul>
+            </template>
+        </dropdown-element>
+        <dropdown-element :detailsElementId="'locationInfos'">
+            <template v-slot:header>
+                <div><i class="fas fa-newspaper" aria-hidden="true"></i><h3> Dernières actualités</h3></div>
+            </template>
+            <template v-slot:content>
+                <twitter-panel></twitter-panel>
+            </template>
+        </dropdown-element>
     </aside>
 </template>
 
@@ -55,12 +68,15 @@
 //Vue Components
 import { GoogleMap, Marker } from "vue3-google-map";
 import TwitterPanel from "./LocationAsidePanel/TwitterPanel.vue";
+import DropdownElement from "./LocationAsidePanel/DropdownElement.vue";
 
 //Vue Elements
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 //JS Script
 import DatasCalculator from "../../../assets/JSClasses/DatasCalculator.js";
+
+import { faFlag, faMapMarkerAlt, faGlobeEurope, faGlobeAfrica, faGlobeAsia, faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
 
 export default {
     props: {
@@ -71,11 +87,16 @@ export default {
         locationInfos: {
             type: Object,
             required: true
+        },
+        currentlyDisplayed: {
+            type: Boolean,
+            required: true,
         }
     },
-    setup(props) {
+    setup(props, context) {
 
         console.log(props.locationInfos);
+        let isLocationLogoUrlValid = ref(true);
 
         const datasCalculator = new DatasCalculator();
 
@@ -89,6 +110,66 @@ export default {
                 return "";
             }
             
+        });
+
+        let locationLogoAltTag = computed(() => {
+
+            if (props.locationType === "country") {
+                return "Drapeau du pays: " + props.locationInfos.fr_name;
+            } else if (props.locationType === "departement") {
+                return "Logo du département: " + props.locationInfos.nom;
+            } else {
+                return "";
+            }
+
+        })
+
+        let defaultLocationLogo = computed(() => {
+
+            if (props.locationType === "departement") {
+                return faMapMarkerAlt;
+            } else if (props.locationType === "country") {
+                return faFlag;
+            } else if (props.locationType === "continent") {
+
+                switch (props.locationInfos.continent) {
+                    case "Europe":
+                        return faGlobeEurope;
+
+                    case "Afrique":
+                        return faGlobeAfrica
+
+                    case "Asie":
+                        return faGlobeAsia;
+
+                    case "Océanie":
+                        return faGlobeAsia;
+
+                    case "Amérique du Sud":
+                        return faGlobeAmericas;
+
+                    case "Amérique du Nord":
+                        return faGlobeAmericas;
+
+                    default:
+                        return "";
+
+                }
+
+            } else {
+                return "";
+            }
+
+        });
+
+        let formattedDepartementCode = computed(() => {
+
+            if (props.locationType === "departement") {
+                return props.locationInfos.code.split("-")[1];
+            } else {
+                return "";
+            }
+
         });
 
         let formattedSurfaceArea = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.locationInfos.sq_km_area));
@@ -167,6 +248,20 @@ export default {
 
         });
 
+        function onLocationLogoError() {
+            isLocationLogoUrlValid.value = false;
+        }
+
+        function test() {
+            context.emit("toggle-location-panel-display");
+
+        }
+
+        //Add Google Map script tag
+        let googleMapScript = document.createElement("script");
+        googleMapScript.setAttribute("src", "https://unpkg.com/vue3-google-map");
+        document.head.appendChild(googleMapScript);
+
         return {
             locationLogo,
             countriesTotalNumber,
@@ -174,44 +269,133 @@ export default {
             mapZoom,
             formattedSurfaceArea,
             formattedPopulation,
-            formattedUpdateDateDatas
+            formattedUpdateDateDatas,
+            locationLogoAltTag,
+            onLocationLogoError,
+            isLocationLogoUrlValid,
+            defaultLocationLogo,
+            formattedDepartementCode,
+            test,
         }
 
     },
     components: {
         GoogleMap,
         Marker,
-        TwitterPanel
+        TwitterPanel,
+        DropdownElement
     }
 }
 </script>
 
 <style lang="scss">
+$locationDetailsPadding: calc(max(1rem, 1vw));
+
 .locationDetails {
     background-color: white;
-    padding: 1rem;
+    padding-top: $locationDetailsPadding;
+    padding-bottom: $locationDetailsPadding;
+    padding-left: $locationDetailsPadding;
+    padding-right: $locationDetailsPadding;
     border-radius: 3px;
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
     @media (min-width: 1024px) {
         position: sticky;
         top: 0;
         flex: 1;
         margin-bottom: 0;
-        margin-right: 2rem;
+        margin-right: 3vw;
+    }
+    &:hover {
+        .locationDetails__toggleDisplayBtn {
+            transform: translate(0%, 50%);
+            opacity: 1;
+        }
+    }
+    h3 {
+        font-size: clamp(1.5rem, 1.5vw, 2.7rem);
+    }
+    &__toggleDisplayBtn {
+        z-index: -1;
+        opacity: 0;
+        display: none;
+        height: 10%;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translate(100%, 50%);
+        transition: transform 300ms 0ms ease-in-out, opacity 150ms 150ms ease-in-out;
+        background-color: inherit;
+        border-radius: 4px 0 0 4px;
+        border: none;
+        @media (min-width: 1024px) {
+            display: flex;
+        }
+        &:hover {
+            cursor: pointer;
+            transform: translate(0%, 50%);
+            opacity: 1;
+        }
     }
     &__locationName {
         display: flex;
         align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+        @media (min-width: 1024px) {
+            justify-content: flex-start;
+        }
         img {
             width: 20%;
         }
         h2 {
+            margin: 0;
             margin-left: 5%;
+            font-size: clamp(2rem, 1.7vw, 3rem);
+        }
+    }
+    &__defaultLogo {
+        font-size: clamp(2rem, 2vw, 3rem);
+    }
+    &__summaryContainer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 300ms;
+        &:hover {
+            cursor: pointer;
+            color: lightblue;
+        }
+        div {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            i {
+                margin-right: 0.5vw;
+                font-size: 1.5rem;
+            }
         }
     }
     &__list {
         border-bottom: 1px solid black;
         padding-bottom: 0.5rem;
+        list-style-type: square;
+        &:last-of-type {
+            border-bottom: none;
+        }
+        li {
+            position: relative;
+            right: clamp(7%, 2%);
+            //Add vertical margin for high resolution screen
+            margin: 0.1vw 0;
+            abbr {
+                cursor: help;
+            }
+        }
     }
 }
 </style>

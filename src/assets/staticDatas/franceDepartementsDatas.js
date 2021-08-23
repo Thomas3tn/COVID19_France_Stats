@@ -57,7 +57,7 @@ export default {
         life_expectancy: 83.15,
         lat: 43.9210587,
         long: 7.1790785,
-        demonym: ""
+        demonym: "Maralpins"
     },
     DEP07: {
         population: 326606,
@@ -67,7 +67,7 @@ export default {
         life_expectancy: 82.6,
         lat: 44.815194,
         long: 4.3986525,
-        demonym: ""
+        demonym: "Ardéchois"
     },
     DEP08: {
         population: 271845,
@@ -77,7 +77,7 @@ export default {
         life_expectancy: 80.75,
         lat: 49.6980117,
         long: 4.6716005,
-        demonym: ""
+        demonym: "Ardennais"
     },
     DEP09: {
         population: 153066,
@@ -87,7 +87,7 @@ export default {
         life_expectancy: 81.85,
         lat: 42.9455368,
         long: 1.4065544,
-        demonym: ""
+        demonym: "Ariégeois"
     },
     DEP10: {
         population: 310020,
@@ -97,7 +97,7 @@ export default {
         life_expectancy: 81.1,
         lat: 48.3201921,
         long: 4.1905397,
-        demonym: ""
+        demonym: "Aubois"
     },
     DEP11: {
         population: 372806,
@@ -107,7 +107,7 @@ export default {
         life_expectancy: 82.25,
         lat: 43.0542733,
         long: 2.5124715,
-        demonym: ""
+        demonym: "Audois"
     },
     DEP12: {
         population: 279274,
@@ -117,7 +117,7 @@ export default {
         life_expectancy: 83.1,
         lat: 44.3158574,
         long: 2.5065697,
-        demonym: ""
+        demonym: "Aveyronnais"
     },
     DEP13: {
         population: 2034357,
@@ -127,7 +127,7 @@ export default {
         life_expectancy: 82.85,
         lat: 43.5424182,
         long: 5.0343236,
-        demonym: ""
+        demonym: "Bucco-Rhodaniens"
     },
     DEP14: {
         population: 694056,
@@ -137,7 +137,7 @@ export default {
         life_expectancy: 81.75,
         lat: 49.0907648,
         long: -0.2413951,
-        demonym: ""
+        demonym: "Calvadosiens"
     },
     DEP15: {
         population: 144765,
@@ -147,7 +147,7 @@ export default {
         life_expectancy: 81.35,
         lat: 45.0497701,
         long: 2.6997176,
-        demonym: ""
+        demonym: "Cantalous/Cantaliens"
     },
     DEP16: {
         population: 351778,
@@ -157,7 +157,7 @@ export default {
         life_expectancy: 81.95,
         lat: 45.6667902,
         long: 0.097305,
-        demonym: ""
+        demonym: "Charentais"
     },
     DEP17: {
         population: 646932,
@@ -167,7 +167,7 @@ export default {
         life_expectancy: 82.2,
         lat: 45.7302267,
         long: -0.7212876,
-        demonym: ""
+        demonym: "Charentais/Charentais-Maritimes"
     },
     DEP18: {
         population: 303408,
@@ -177,7 +177,7 @@ export default {
         life_expectancy: 80.65,
         lat: 47.0248824,
         long: 2.5753334,
-        demonym: ""
+        demonym: "Berrichons"
     },
     DEP19: {
         population: 240583,
@@ -187,7 +187,7 @@ export default {
         life_expectancy: 81.8,
         lat: 45.3429047,
         long: 1.8176424,
-        demonym: ""
+        demonym: "Corréziens"
     },
     DEP2A: {
         population: 157853,
@@ -197,7 +197,7 @@ export default {
         life_expectancy: 83.6,
         lat: 41.8734082,
         long: 9.0087052,
-        demonym: ""
+        demonym: "Corses du Sud"
     },
     DEP2B: {
         population: 180701,
@@ -207,7 +207,7 @@ export default {
         life_expectancy: 83.3,
         lat: 42.4219698,
         long: 9.1009065,
-        demonym: ""
+        demonym: "Corses du Nord (parfois Alticorses)"
     },
     DEP21: {
         population: 533220,
@@ -217,7 +217,7 @@ export default {
         life_expectancy: 82.9,
         lat: 47.4655034,
         long: 4.7481223,
-        demonym: ""
+        demonym: "Côte-d'Oriens"
     },
     DEP22: {
         population: 599584,
@@ -227,7 +227,7 @@ export default {
         life_expectancy: 81.3,
         lat: 48.4584222,
         long: -2.7505868,
-        demonym: ""
+        demonym: "Costarmoricains"
     },
     DEP23: {
         population: 117503,
@@ -237,7 +237,7 @@ export default {
         life_expectancy: 81.2,
         lat: 46.0593485,
         long: 2.048901,
-        demonym: ""
+        demonym: "Creusois"
     },
     DEP24: {
         population: 413418,
@@ -247,7 +247,7 @@ export default {
         life_expectancy: 82.2,
         lat: 45.1429198,
         long: 0.6321258,
-        demonym: ""
+        demonym: "Dordognais ou Périgordins"
     },
     DEP25: {
         population: 541454,
@@ -257,7 +257,7 @@ export default {
         life_expectancy: 82.15,
         lat: 47.0669915,
         long: 6.2356228,
-        demonym: ""
+        demonym: "Doubiens ou Doubistes"
     },
     DEP26: {
         population: 514732,
@@ -267,7 +267,7 @@ export default {
         life_expectancy: 82.6,
         lat: 44.7296458,
         long: 5.2045596,
-        demonym: ""
+        demonym: "Drômois"
     },
     DEP27: {
         population: 599962,
@@ -277,7 +277,7 @@ export default {
         life_expectancy: 81.45,
         lat: 49.0756358,
         long: 0.9652026,
-        demonym: ""
+        demonym: "Eurois"
     },
     DEP28: {
         population: 431997,
@@ -287,7 +287,7 @@ export default {
         life_expectancy: 82.15,
         lat: 48.4474102,
         long: 1.399882,
-        demonym: ""
+        demonym: "Euréliens"
     },
     DEP29: {
         population: 911735,
@@ -297,7 +297,7 @@ export default {
         life_expectancy: 81.5,
         lat: 48.2451152,
         long: -4.0440902,
-        demonym: ""
+        demonym: "Finistériens"
     },
     DEP30: {
         population: 745458,
@@ -307,7 +307,7 @@ export default {
         life_expectancy: 82.45,
         lat: 43.95995,
         long: 4.297637,
-        demonym: ""
+        demonym: "Gardois"
     },
     DEP31: {
         population: 1380672,
@@ -317,7 +317,7 @@ export default {
         life_expectancy: 83.75,
         lat: 43.3054546,
         long: 0.9716792,
-        demonym: ""
+        demonym: "Garonnais ou Haut-Garonnais"
     },
     DEP32: {
         population: 191283,
@@ -327,7 +327,7 @@ export default {
         life_expectancy: 82.5,
         lat: 43.6955276,
         long: 0.4101019,
-        demonym: ""
+        demonym: "Gersois"
     },
     DEP33: {
         population: 1601845,
@@ -337,7 +337,7 @@ export default {
         life_expectancy: 83.1,
         lat: 44.883746,
         long: -0.6051264,
-        demonym: ""
+        demonym: "Girondins"
     },
     DEP34: {
         population: 1159220,
@@ -347,7 +347,7 @@ export default {
         life_expectancy: 82.8,
         lat: 43.591422,
         long: 3.3553309,
-        demonym: ""
+        demonym: "Héraultais"
     },
     DEP35: {
         population: 1069228,
@@ -356,7 +356,7 @@ export default {
         life_expectancy: 83.15,
         lat: 48.1727681,
         long: -1.6498092,
-        demonym: ""
+        demonym: "Bretilliens"
     },
     DEP36: {
         population: 220595,
@@ -366,7 +366,7 @@ export default {
         life_expectancy: 81.3,
         lat: 46.8121056,
         long: 1.5382052,
-        demonym: ""
+        demonym: "Indrois ou Berrichons"
     },
     DEP37: {
         population: 607760,
@@ -376,7 +376,7 @@ export default {
         life_expectancy: 83.1,
         lat: 47.2232046,
         long: 0.6866703,
-        demonym: ""
+        demonym: "Tourangeaux, Indroligériens ou Indréloiriens"
     },
     DEP38: {
         population: 1263563,
@@ -386,7 +386,7 @@ export default {
         life_expectancy: 83.55,
         lat: 45.2897932,
         long: 5.6343825,
-        demonym: ""
+        demonym: "Isérois"
     },
     DEP39: {
         population: 259746,
@@ -396,7 +396,7 @@ export default {
         life_expectancy: 82.55,
         lat: 46.7833625,
         long: 5.7832857,
-        demonym: ""
+        demonym: "Jurassiens"
     },
     DEP40: {
         population: 410355,
@@ -406,7 +406,7 @@ export default {
         life_expectancy: 82.65,
         lat: 44.0099694,
         long: -0.6433872,
-        demonym: ""
+        demonym: "Landais, Landescots ou Lanusquets"
     },
     DEP41: {
         population: 330248,
@@ -416,7 +416,7 @@ export default {
         life_expectancy: 82.15,
         lat: 47.6597752,
         long: 1.2971835,
-        demonym: ""
+        demonym: "Loir-et-Chériens"
     },
     DEP42: {
         population: 763441,
@@ -426,7 +426,7 @@ export default {
         life_expectancy: 82.9,
         lat: 45.7538536,
         long: 4.0454737,
-        demonym: ""
+        demonym: "Ligériens"
     },
     DEP43: {
         population: 227552,
@@ -436,7 +436,7 @@ export default {
         life_expectancy: 82.4,
         lat: 45.0857249,
         long: 3.8338261,
-        demonym: ""
+        demonym: "Loirains ou Altiligériens"
     },
     DEP44: {
         population: 1412502,
@@ -446,7 +446,7 @@ export default {
         life_expectancy: 82.65,
         lat: 47.3481614,
         long: -1.8727461,
-        demonym: ""
+        demonym: "Loirains ou Mariligériens"
     },
     DEP45: {
         population: 678845,
@@ -456,7 +456,7 @@ export default {
         life_expectancy: 82.65,
         lat: 47.9138724,
         long: 2.3075036,
-        demonym: ""
+        demonym: "Loirétains"
     },
     DEP46: {
         population: 173929,
@@ -466,7 +466,7 @@ export default {
         life_expectancy: 82.35,
         lat: 44.6249918,
         long: 1.6657742,
-        demonym: ""
+        demonym: "Lotois"
     },
     DEP47: {
         population: 331970,
@@ -476,7 +476,7 @@ export default {
         life_expectancy: 82.25,
         lat: 44.3691703,
         long: 0.4539158,
-        demonym: ""
+        demonym: "Lot-et-Garonnais"
     },
     DEP48: {
         population: 76520,
@@ -486,7 +486,7 @@ export default {
         life_expectancy: 81.95,
         lat: 44.5425706,
         long: 3.5211146,
-        demonym: ""
+        demonym: "Lozériens"
     },
     DEP49: {
         population: 814883,
@@ -496,7 +496,7 @@ export default {
         life_expectancy: 83.35,
         lat: 47.3886305,
         long: -0.3909097,
-        demonym: ""
+        demonym: "Angevins"
     },
     DEP50: {
         population: 495983,
@@ -506,7 +506,7 @@ export default {
         life_expectancy: 82.1,
         lat: 49.0918952,
         long: -1.2454371,
-        demonym: ""
+        demonym: "Manchois ou Manchots"
     },
     DEP51: {
         population: 567462,
@@ -516,7 +516,7 @@ export default {
         life_expectancy: 81.8,
         lat: 48.961264,
         long: 4.3122436,
-        demonym: ""
+        demonym: "Marnais"
     },
     DEP52: {
         population: 174069,
@@ -526,7 +526,7 @@ export default {
         life_expectancy: 80.8,
         lat: 48.1329414,
         long: 5.2529108,
-        demonym: ""
+        demonym: "Haut-Marnais"
     },
     DEP53: {
         population: 307084,
@@ -536,7 +536,7 @@ export default {
         life_expectancy: 83,
         lat: 48.1507819,
         long: -0.6491274,
-        demonym: ""
+        demonym: "Mayennais"
     },
     DEP54: {
         population: 733469,
@@ -546,7 +546,7 @@ export default {
         life_expectancy: 82.2,
         lat: 48.9559682,
         long: 5.9870383,
-        demonym: ""
+        demonym: "Meurthois ou Meurthe-et-Mosellans"
     },
     DEP55: {
         population: 185355,
@@ -556,7 +556,7 @@ export default {
         life_expectancy: 81.05,
         lat: 49.0129685,
         long: 5.4286691,
-        demonym: ""
+        demonym: "Meusiens"
     },
     DEP56: {
         population: 754867,
@@ -566,7 +566,7 @@ export default {
         life_expectancy: 81.65,
         lat: 47.8259812,
         long: -2.7633493,
-        demonym: ""
+        demonym: "Morbihannais"
     },
     DEP57: {
         population: 1043524,
@@ -576,7 +576,7 @@ export default {
         life_expectancy: 81.4,
         lat: 49.0207259,
         long: 6.5380352,
-        demonym: ""
+        demonym: "Mosellans"
     },
     DEP58: {
         population: 205828,
@@ -586,7 +586,7 @@ export default {
         life_expectancy: 80.5,
         lat: 47.119697,
         long: 3.5448898,
-        demonym: ""
+        demonym: "Nivernais"
     },
     DEP59: {
         population: 2606234,
@@ -596,7 +596,7 @@ export default {
         life_expectancy: 80.7,
         lat: 50.5289671,
         long: 3.0883524,
-        demonym: ""
+        demonym: "Nordistes"
     },
     DEP60: {
         population: 827153,
@@ -606,7 +606,7 @@ export default {
         life_expectancy: 81.65,
         lat: 49.4120546,
         long: 2.4064878,
-        demonym: ""
+        demonym: "Oisiens ou Isariens"
     },
     DEP61: {
         population: 281593,
@@ -616,7 +616,7 @@ export default {
         life_expectancy: 81.5,
         lat: 48.5760533,
         long: 0.0446617,
-        demonym: ""
+        demonym: "Ornais"
     },
     DEP62: {
         population: 1466743,
@@ -626,7 +626,7 @@ export default {
         life_expectancy: 80.2,
         lat: 50.5144061,
         long: 2.2580078,
-        demonym: ""
+        demonym: "Pas-de-Calaisiens"
     },
     DEP63: {
         population: 659048,
@@ -636,7 +636,7 @@ export default {
         life_expectancy: 82.4,
         lat: 45.7715343,
         long: 3.0839934,
-        demonym: ""
+        demonym: "Puydomois"
     },
     DEP64: {
         population: 679810,
@@ -646,7 +646,7 @@ export default {
         life_expectancy: 83.35,
         lat: 43.1871865,
         long: -0.7282474,
-        demonym: ""
+        demonym: "Béarnais ou Basques"
     },
     DEP65: {
         population: 229191,
@@ -656,7 +656,7 @@ export default {
         life_expectancy: 82.35,
         lat: 43.1437925,
         long: 0.1586661,
-        demonym: ""
+        demonym: "Haut-Pyrénéens ou Bigourdans"
     },
     DEP66: {
         population: 476357,
@@ -666,7 +666,7 @@ export default {
         life_expectancy: 81.8,
         lat: 42.625894,
         long: 2.506509,
-        demonym: ""
+        demonym: "Catalans, Roussillonnais ou Pyrénaliens"
     },
     DEP67: {
         population: 1133552,
@@ -676,7 +676,7 @@ export default {
         life_expectancy: 82.5,
         lat: 48.5991783,
         long: 7.5338186,
-        demonym: ""
+        demonym: "Bas-Rhinois"
     },
     DEP68: {
         population: 764981,
@@ -686,7 +686,7 @@ export default {
         life_expectancy: 82.45,
         lat: 47.8654746,
         long: 7.2315433,
-        demonym: ""
+        demonym: "Haut-Rhinois"
     },
     DEP69: {
         population: 1859524,
@@ -696,7 +696,7 @@ export default {
         life_expectancy: 83.95,
         lat: 45.8802348,
         long: 4.5645336,
-        demonym: ""
+        demonym: "Rhodaniens"
     },
     DEP70: {
         population: 236018,
@@ -706,7 +706,7 @@ export default {
         life_expectancy: 81.55,
         lat: 47.6384233,
         long: 6.0951141,
-        demonym: ""
+        demonym: "Haut-Saônois"
     },
     DEP71: {
         population: 552185,
@@ -716,7 +716,7 @@ export default {
         life_expectancy: 82.05,
         lat: 46.6557086,
         long: 4.5585548,
-        demonym: ""
+        demonym: "Saône-et-Loiriens"
     },
     DEP72: {
         population: 565963,
@@ -726,7 +726,7 @@ export default {
         life_expectancy: 82.3,
         lat: 48.0269287,
         long: 0.2538217,
-        demonym: ""
+        demonym: "Sarthois"
     },
     DEP73: {
         population: 433724,
@@ -736,7 +736,7 @@ export default {
         life_expectancy: 83.5,
         lat: 45.4948952,
         long: 6.3846604,
-        demonym: ""
+        demonym: "Savoyards"
     },
     DEP74: {
         population: 816699,
@@ -746,7 +746,7 @@ export default {
         life_expectancy: 83.35,
         lat: 46.0688208,
         long: 6.344537,
-        demonym: ""
+        demonym: "Savoyards ou Haut-Savoyards"
     },
     DEP75: {
         population: 2175601,
@@ -756,7 +756,7 @@ export default {
         life_expectancy: 84.45,
         lat: 48.8566969,
         long: 2.3514616,
-        demonym: ""
+        demonym: "Parisiens"
     },
     DEP76: {
         population: 1255883,
@@ -766,7 +766,7 @@ export default {
         life_expectancy: 81.35,
         lat: 49.6632374,
         long: 0.9401134,
-        demonym: ""
+        demonym: "Seinomarins"
     },
     DEP77: {
         population: 1412516,
@@ -776,7 +776,7 @@ export default {
         life_expectancy: 82.95,
         lat: 48.6190207,
         long: 3.0418158,
-        demonym: ""
+        demonym: "Seine-et-Marnais"
     },
     DEP78: {
         population: 1441398,
@@ -786,7 +786,7 @@ export default {
         life_expectancy: 84.25,
         lat: 48.7620373,
         long: 1.8871376,
-        demonym: ""
+        demonym: "Yvelinois"
     },
     DEP79: {
         population: 374799,
@@ -796,7 +796,7 @@ export default {
         life_expectancy: 82.75,
         lat: 46.53914,
         long: -0.2994785,
-        demonym: ""
+        demonym: "Deux-Sévriens"
     },
     DEP80: {
         population: 570662,
@@ -806,7 +806,7 @@ export default {
         life_expectancy: 80.5,
         lat: 49.9689714,
         long: 2.373859,
-        demonym: ""
+        demonym: "Samariens"
     },
     DEP81: {
         population: 388596,
@@ -816,7 +816,7 @@ export default {
         life_expectancy: 82.8,
         lat: 43.7921741,
         long: 2.1339648,
-        demonym: ""
+        demonym: "Tarnais"
     },
     DEP82: {
         population: 259124,
@@ -826,7 +826,7 @@ export default {
         life_expectancy: 82.65,
         lat: 44.080656,
         long: 1.2050633,
-        demonym: ""
+        demonym: "Tarn-et-Garonnais"
     },
     DEP83: {
         population: 1067697,
@@ -836,7 +836,7 @@ export default {
         life_expectancy: 82.6,
         lat: 43.4173592,
         long: 6.266462,
-        demonym: ""
+        demonym: "Varois"
     },
     DEP84: {
         population: 559793,
@@ -846,7 +846,7 @@ export default {
         life_expectancy: 82.15,
         lat: 43.9938643,
         long: 5.1818898,
-        demonym: ""
+        demonym: "Vauclusiens ou Vauclusois"
     },
     DEP85: {
         population: 679991,
@@ -856,7 +856,7 @@ export default {
         life_expectancy: 82.55,
         lat: 46.6757732,
         long: -1.2914463,
-        demonym: ""
+        demonym: "Vendéens"
     },
     DEP86: {
         population: 437586,
@@ -866,7 +866,7 @@ export default {
         life_expectancy: 82.7,
         lat: 46.6121165,
         long: 0.465407,
-        demonym: ""
+        demonym: "Viennois"
     },
     DEP87: {
         population: 373199,
@@ -876,17 +876,17 @@ export default {
         life_expectancy: 82.25,
         lat: 45.9190192,
         long: 1.2031768,
-        demonym: ""
+        demonym: "Haut-Viennois"
     },
     DEP88: {
         population: 366112,
-        capital_city: "Epinal",
+        capital_city: "Épinal",
         location: "Grand Est",
         sq_km_area: 5874,
         life_expectancy: 81.2,
         lat: 48.163786,
         long: 6.3820712,
-        demonym: ""
+        demonym: "Vosgiens"
     },
     DEP89: {
         population: 337504,
@@ -896,7 +896,7 @@ export default {
         life_expectancy: 80.7,
         lat: 47.8551257,
         long: 3.6450439,
-        demonym: ""
+        demonym: "Icaunais ou Yonnais"
     },
     DEP90: {
         population: 141852,
@@ -906,7 +906,7 @@ export default {
         life_expectancy: 81.3,
         lat: 47.629231,
         long: 6.8993012,
-        demonym: ""
+        demonym: "Terrifortains ou Belfortains"
     },
     DEP91: {
         population: 1296641,
@@ -916,7 +916,7 @@ export default {
         life_expectancy: 83.85,
         lat: 48.5303402,
         long: 2.2392918,
-        demonym: ""
+        demonym: "Essoniens"
     },
     DEP92: {
         population: 1619120,
@@ -926,7 +926,7 @@ export default {
         life_expectancy: 84.55,
         lat: 48.8401859,
         long: 2.1986412,
-        demonym: ""
+        demonym: "Altoséquanais ou Hauts-Seinais"
     },
     DEP93: {
         population: 1632677,
@@ -936,7 +936,7 @@ export default {
         life_expectancy: 82.35,
         lat: 48.9098125,
         long: 2.4528635,
-        demonym: ""
+        demonym: "Séquano-Dionysiens"
     },
     DEP94: {
         population: 1396913,
@@ -946,7 +946,7 @@ export default {
         life_expectancy: 83.8,
         lat: 48.7744893,
         long: 2.4543321,
-        demonym: ""
+        demonym: "Val-de-Marnais"
     },
     DEP95: {
         population: 1238581,
@@ -956,7 +956,7 @@ export default {
         life_expectancy: "",
         lat: 49.0750704,
         long: 2.2098114,
-        demonym: ""
+        demonym: "Val-d'Oisiens"
     },
     DEP971: {
         population: 387629,
@@ -966,7 +966,7 @@ export default {
         life_expectancy: 82.95,
         lat: 16.2305103,
         long: -61.687126,
-        demonym: ""
+        demonym: "Guadeloupéens"
     },
     DEP972: {
         population: 368783,
@@ -976,7 +976,7 @@ export default {
         life_expectancy: 80.55,
         lat: 14.6367927,
         long: -61.0158269,
-        demonym: ""
+        demonym: "Martiniquais"
     },
     DEP973: {
         population: 276128,
@@ -986,7 +986,7 @@ export default {
         life_expectancy: 80.2,
         lat: 4.0039882,
         long: -52.999998,
-        demonym: ""
+        demonym: "Guyanais"
     },
     DEP974: {
         population: 855961,
@@ -996,7 +996,7 @@ export default {
         life_expectancy: 81.6,
         lat: -21.1307379,
         long: 55.5364801,
-        demonym: ""
+        demonym: "Réunionnais"
     },
     DEP976: {
         population: 256518,
@@ -1006,6 +1006,6 @@ export default {
         life_expectancy: "N/A",
         lat: -12.8253862,
         long: 45.1486261,
-        demonym: ""
+        demonym: "Mahorais"
     }
 }

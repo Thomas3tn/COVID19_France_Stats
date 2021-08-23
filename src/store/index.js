@@ -2,10 +2,12 @@ import { createStore } from 'vuex';
 
 import DatasCalculator from "../assets/JSClasses/DatasCalculator.js";
 import VuexFunctionalities from "../assets/JSClasses/VuexFunctionalities.js";
+import FranceCovidDatas from "../assets/staticDatas/FranceCovidDatas.js";
 
 export default createStore({
   state: {
-    worldLiveDatas: {},
+    worldLiveDatas: null,
+    weeklyEvolutionDatas: {},
     departementsLiveDatas: {},
     worldLocationEvolutionDatas: {
       global_request_creation_date: {},
@@ -13,6 +15,7 @@ export default createStore({
     },
     franceDepartementsEvolutionDatas: {},
     areWorldLiveDatasReceived: false,
+    areWeeklyEvolutionDatasReceived: false,
     areDepartementsLiveDatasReceived: false,
     areWorldEvolutionDatasRequestsReceived: {
       confirmed: false
@@ -30,11 +33,21 @@ export default createStore({
     SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION(state) {
       state.areWorldLiveDatasReceived = true;
     },
+    //WeeklyEvolutionDatas
+    SET_WEEKLY_EVOLUTION_DATAS(state, payload) {
+      state.weeklyEvolutionDatas = payload;
+    },
+    SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION(state) {
+      state.areWeeklyEvolutionDatasReceived = true;
+    },
+    SAVE_WEEKLY_EVOLUTION_DATAS_TO_LOCAL_STORAGE(state) {
+      localStorage.setItem("weeklyEvolutionDatas", JSON.stringify({creation_date: Date.now(), datas: state.weeklyEvolutionDatas}));
+    },
     //DepartementsLiveDatas
     SET_DEPARTEMENTS_LIVE_DATAS(state, payload) {
       state.departementsLiveDatas = payload.datas;
     },
-    SAVE_DEPARTEMENTS_LIVE_DATAS_TO_LOCAL_STORAGE(state,) {
+    SAVE_DEPARTEMENTS_LIVE_DATAS_TO_LOCAL_STORAGE(state) {
       localStorage.setItem("departementsLiveDatas", JSON.stringify({creation_date: Date.now(), datas: state.departementsLiveDatas}));
     },
     SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION(state) {
@@ -74,9 +87,6 @@ export default createStore({
         state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]] = Object.assign(state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]], payload.datas[Object.keys(payload.datas)[0]])
         state.worldLocationEvolutionDatas.datas[Object.keys(payload.datas)[0]]["creation_date"] = payload.creation_date;
 
-        console.log("Country saved in vuex");
-        console.log(state.worldLocationEvolutionDatas.datas);
-
       }
 
     },
@@ -90,7 +100,6 @@ export default createStore({
     },
     SAVE_WORLD_LOCATION_EVOLUTION_DATAS_TO_LOCAL_STORAGE(state) {
       localStorage.setItem("worldLocationEvolutionDatas", JSON.stringify(state.worldLocationEvolutionDatas));
-      console.log("Datas saved to local Storage");
     },
     SET_WORLD_EVOLUTION_DATAS_REQUESTS_RECEIVED_CONFIRMATION(state, payload) {
 
@@ -146,7 +155,7 @@ export default createStore({
             if ((Date.now() - 21600000) < wldCreationDate) {
 
               //Copy local storage datas in Vuex store
-              commit("SET_WORLD_LIVE_DATAS", worldLiveDatas);
+              commit("SET_WORLD_LIVE_DATAS", worldLiveDatas.datas);
               commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
               resolve(true);
   
@@ -177,28 +186,9 @@ export default createStore({
                 //Test if the both vaccines country and cases country have the same country name
                 if (typeof worldLiveDatas[vaccKey] !== "undefined") {
 
-                  console.log(vaccKey + " found by its name");
-
                   worldLiveDatas[vaccKey]["All"]["administered"] = vaccValue.All.administered;
                   worldLiveDatas[vaccKey]["All"]["people_vaccinated"] = vaccValue.All.people_vaccinated;
                   worldLiveDatas[vaccKey]["All"]["people_partially_vaccinated"] = vaccValue.All.people_partially_vaccinated;
-
-                //If not we use country abbreviations to match both datasets
-                } else {
-
-                  for (const [worldKey, worldValue] of Object.entries(worldLiveDatas)) {
-
-                    if (worldValue.abbreviation === vaccValue.abbreviation) {
-
-                      console.log(vaccKey + " found by its abbreviation");
-
-                      worldLiveDatas[worldKey]["All"]["administered"] = vaccValue.All.administered;
-                      worldLiveDatas[worldKey]["All"]["people_vaccinated"] = vaccValue.All.people_vaccinated;
-                      worldLiveDatas[worldKey]["All"]["people_partially_vaccinated"] = vaccValue.All.people_partially_vaccinated;
-
-                    }
-
-                  }
 
                 }
 
@@ -207,8 +197,13 @@ export default createStore({
               fetch("https://coronavirusapi-france.now.sh/FranceLiveGlobalData")
               .then(response => response.json())
               .then(response => {
-
+                console.log(response);
                 let datas = response.FranceGlobalLiveData[0];
+                console.log(datas);
+                if (typeof datas === "undefined") {
+                  datas = FranceCovidDatas.worldLiveDatas;
+                }
+
                 worldLiveDatas["France"]["All"]["hospitalizations"] = datas.hospitalises + datas.nouvellesHospitalisations;
                 worldLiveDatas["France"]["All"]["intensive_care"] = datas.reanimation + datas.nouvellesReanimations;
 
@@ -254,8 +249,6 @@ export default createStore({
                       for (const keyValue of Object.entries(worldLiveDatas)) {
 
                         if (keyValue[1].All.abbreviation === currentCountry.alpha2Code) {
-                          console.log(keyValue[1].All.abbreviation, currentCountry.alpha2Code);
-                          console.log(keyValue[1].All.country, currentCountry.name);
 
                           for (const [subKey, subValue] of Object.entries(currentCountry)) {
 
@@ -296,7 +289,9 @@ export default createStore({
                 })
 
               })
+
             })
+            
           })
           .catch(() => {
             console.error("An error has occured while retrieving world datas.");
@@ -308,33 +303,95 @@ export default createStore({
       });
 
     },
-    setWorldLocationEvolutionDatas({ commit, state }, params) {
+    setWeeklyEvolutionDatas({ commit }) {
 
       return new Promise((resolve, reject) => {
 
-        console.log("Vuex worldLocationEvolutionDatas function called");
+        try {
+          
+          if (localStorage.getItem("weeklyEvolutionDatas")) {
+
+            const weeklyEvolutionDatas = JSON.parse(localStorage.getItem("weeklyEvolutionDatas"));
+            const wedCreationDate = weeklyEvolutionDatas.creation_date;
+
+            if ((Date.now() - 21600000) < wedCreationDate) {
+
+              //Copy local storage datas in Vuex store
+              commit("SET_WEEKLY_EVOLUTION_DATAS", weeklyEvolutionDatas.datas);
+              commit("SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION");
+              resolve(true);
+  
+            } else {
+              throw "localStorageDatasOutaded";
+            }
+
+          } else {
+            throw "noLocalStorageDatas";
+          }
+
+        } catch {
+
+          let today = new Date();
+          const datasCalculator = new DatasCalculator();
+          let previousWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()-7);
+
+          fetch("https://coronavirusapi-france.now.sh/AllDataByDate?date=" + previousWeek.getFullYear() + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(previousWeek.getMonth() + 1) + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(previousWeek.getDate()))
+          .then(results => results.json())
+          .then(results => {
+
+            results = results.allFranceDataByDate;
+            let franceWeekAgoDatas;
+
+            if (results.length === 0) {
+
+              for (let i = 0; i < results.length; i++) {
+
+                if (results[i].nom === "France") {
+                  franceWeekAgoDatas = results[i];
+                  break;
+                }
+  
+              }
+
+            } else {
+              franceWeekAgoDatas = FranceCovidDatas.weeklyEvolutionDatas;
+            }
+
+            commit("SET_WEEKLY_EVOLUTION_DATAS", franceWeekAgoDatas);
+            commit("SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION");
+            commit("SAVE_WEEKLY_EVOLUTION_DATAS_TO_LOCAL_STORAGE");
+            resolve(true);
+
+          })
+          .catch(() => {
+            console.error("An error has occured while retrieving weekly evolution datas.");
+            reject(false);
+          });
+
+        }
+
+      });
+
+    },
+    setWorldLocationEvolutionDatas({ commit, state }, params) {
+
+      return new Promise((resolve, reject) => {
 
         //If the action is called for the first time
         //Insert all in date datas in the worldLocationEvolutionDatas object
         commit("COPY_LOCAL_STORAGE_WORLD_LOCATION_EVOLUTION_DATAS");
         //Vérifier si intègre copie global request creation date
 
-        console.log("pass copy local storage");
-
         let requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.setRequestParameters(params);
         console.log(requestParameters);
         requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.filterNecessaryRequest(state.worldLocationEvolutionDatas, state.areWorldEvolutionDatasRequestsReceived, requestParameters);
 
         if (requestParameters.urlStatusKeysValues.length === 0) {
-          console.log("No requests need to be made");
           resolve(true);
         }
 
         VuexFunctionalities.worldLocationEvolutionDatas.requestsManager(requestParameters)
         .then(locationEvolutionDatas => {
-
-          console.log("Requests were made");
-          console.log(locationEvolutionDatas);
 
           if (locationEvolutionDatas.isRequestSuccessful === true) {
 
@@ -383,7 +440,7 @@ export default createStore({
             if ((Date.now() - 21600000) < dldCreationDate) {
   
               //Copy local storage datas in Vuex store
-              commit("SET_DEPARTEMENTS_LIVE_DATAS", { datas: departementsLiveDatas });
+              commit("SET_DEPARTEMENTS_LIVE_DATAS", { datas: departementsLiveDatas.datas });
               commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
               resolve(true);
   
@@ -404,10 +461,15 @@ export default createStore({
               let departementsLiveDatas = {};
               let datasArray = response.allLiveFranceData;
               let datasCalculator = new DatasCalculator();
+
+              if (datasArray.length === 0) {
+                datasArray = FranceCovidDatas.departementsLiveDatas.allLiveFranceData;
+              }
+
               for (let i = 0; i < datasArray.length; i++) {
 
-                //We only want datas related to France departements (not France) that are created by Santé publique France Data
-                if (datasArray[i].sourceType !== "opencovid19-fr" || datasArray[i].code !== "FRA") {
+                //We only want datas related to France departements (not France or 2015 new regions) that are created by Santé publique France Data
+                if (datasArray[i].sourceType !== "opencovid19-fr" && (datasArray[i].code !== "FRA" || datasArray[i].code.split("-")[0] !== "REG")) {
 
                   departementsLiveDatas[datasArray[i].code] = {};
 
@@ -421,6 +483,7 @@ export default createStore({
 
               commit("SET_DEPARTEMENTS_LIVE_DATAS", { creation_date: Date.now(), datas: departementsLiveDatas });
               commit("SAVE_DEPARTEMENTS_LIVE_DATAS_TO_LOCAL_STORAGE");
+              commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
               resolve(true);
 
           })
@@ -437,8 +500,6 @@ export default createStore({
     setFranceDepartementsEvolutionDatas({ commit, state }, departementCodeName) {
 
       return new Promise((resolve, reject) => {
-
-        console.log("setDeps called");
 
         commit("COPY_LOCAL_STORAGE_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS");
 
@@ -501,6 +562,14 @@ export default createStore({
               recovered: 0
             };
 
+            //Will be used to fill absence of datas
+            let lastKnownDatas = {
+              hospitalizations: 0,
+              intensive_care: 0,
+              deaths: 0,
+              recovered: 0
+            };
+
             for (let i = 0; i < response.length; i++) {
 
               //Response array is composed of two datas sources, agences-regionales-sante and sante-publique-france-data
@@ -508,14 +577,6 @@ export default createStore({
               if ((response[i].sourceType === "agences-regionales-sante" && response[i + 1].sourceType === "sante-publique-france-data") && (response[i].date === response[i + 1].date)) {
                 i = i + 1;
               }
-
-              //Will be used to fill absence of datas
-              let lastKnownDatas = {
-                hospitalizations: 0,
-                intensive_care: 0,
-                deaths: 0,
-                recovered: 0
-              };
 
               departementEvolutionDatas.datas.dates.push(response[i].date);
 
@@ -560,8 +621,8 @@ export default createStore({
 
 
               //Deaths
-              typeof response[i].deces !== "undefined" ? departementEvolutionDatas.datas.dailyDatas.deaths.push(response[i].deces - lastKnownDatas.deaths) : departementEvolutionDatas.datas.dailyDatas.deaths.push(lastKnownDatas.deaths);
-              typeof response[i].deces !== "undefined" ? departementEvolutionDatas.datas.cumulativeDatas.deaths.push(response[i].deces) : departementEvolutionDatas.datas.cumulativeDatas.deaths.push(lastKnownDatas.deaths + 0);
+              typeof response[i].deces !== "undefined" ? departementEvolutionDatas.datas.dailyDatas.deaths.push(response[i].deces - lastKnownDatas.deaths) : departementEvolutionDatas.datas.dailyDatas.deaths.push(0);
+              typeof response[i].deces !== "undefined" ? departementEvolutionDatas.datas.cumulativeDatas.deaths.push(response[i].deces) : departementEvolutionDatas.datas.cumulativeDatas.deaths.push(lastKnownDatas.deaths);
               typeof response[i].deces !== "undefined" ? cumulativeDatasRecorder.deaths = response[i].deces : cumulativeDatasRecorder.deaths += 0;
               typeof response[i].deces !== "undefined" ? lastKnownDatas.deaths = response[i].deces : lastKnownDatas.deaths += 0;
 

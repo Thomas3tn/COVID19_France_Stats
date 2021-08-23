@@ -78,7 +78,8 @@
 	}
 	&__firstTitle {
 		letter-spacing: 0.2rem;
-		font-size: 8vw;
+		//font-size: 8vw;
+		font-size: clamp(1.2rem, 8vw, 3rem);
 		margin: 0;
 		text-transform: uppercase;
 		@media (min-width: 768px) {
@@ -87,19 +88,20 @@
 		}
 	}
 	&__secondTitle {
-		font-size: 15vw;
+		//font-size: 15vw;
 		letter-spacing: 0.5rem;
 		margin: 0;
 		text-transform: uppercase;
-		@media (min-width: 768px) {
+		/*@media (min-width: 768px) {
 			font-size: 7rem;
 			letter-spacing: 0.8rem;
-		}
+		}*/
 	}
 	&__thirdTitle {
 		letter-spacing: 0.1rem;
 		margin-top: 2rem;
 		font-size: 1.7rem;
+		font-size: clamp(1.7rem, 2vw, 3rem);
 		@media (min-width: 768px) {
 			letter-spacing: 0.2rem;
 		}

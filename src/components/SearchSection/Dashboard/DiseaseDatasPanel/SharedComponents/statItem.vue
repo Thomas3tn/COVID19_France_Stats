@@ -1,15 +1,19 @@
 <template>
     <div class="statContainer">
-		<font-awesome-icon :icon="logo" class="statContainer__logo"/>
+		<font-awesome-icon :icon="logo" class="statContainer__statusLogo"/>
         <div class="statContainer__statPart">
-			<p class="statContainer__number" id="confCasesStat">{{ number }}</p>
-            <p class="statContainer__title">{{ statName }}</p>
+			<div class="statContainer__numberContainer">
+				<p class="statContainer__number" id="confCasesStat">{{ number }}</p>
+				<font-awesome-icon v-if="evolutionLogo !== ''" :icon="evolutionLogo" class="statContainer__evolutionLogo"/>
+			</div>
+			<p v-if="formattedDataName.dataNameSecondPart !== 'undefined'" class="statContainer__title">{{ formattedDataName.dataNameFirstPart }}<br/>{{ formattedDataName.dataNameSecondPart }}</p>
+			<p v-else class="statContainer__title">{{ formattedDataName.dataNameFirstPart }}</p>
         </div>
     </div>
 </template>
 
 <script>
-import { faCross, faHospitalUser, faMale, faMapMarkedAlt, faProcedures, faSyringe, faUsers, faWalking } from "@fortawesome/free-solid-svg-icons";
+import { faCross, faHospitalUser, faMale, faMapMarkedAlt, faProcedures, faSyringe, faUsers, faWalking, faAngleDoubleUp, faChevronDown, faGripLines } from "@fortawesome/free-solid-svg-icons";
 import DatasCalculator from "../../../../../assets/JSClasses/DatasCalculator.js";
 import { computed } from "vue";
 
@@ -23,7 +27,12 @@ export default {
             type: [String, Number],
 			required: false,
 			default: "N/A"
-        }
+        },
+		dataType: {
+			type: String,
+			required: false,
+			default: "currentDatas"
+		}
     },
 	setup(props) {
 
@@ -55,11 +64,19 @@ export default {
 				logo = faProcedures;
 				break;
 
-			case "Infections/milliers d'habs":
+			case "Cas confirmés/milliers d'habs":
+			case "Guéris/milliers d'habs":
+			case "Décès/milliers d'habs":
+			case "Hospitalisations/milliers d'habs":
+			case "Réanimations/milliers d'habs":
 				logo = faUsers;
 				break;
 
-			case "Infections/km²":
+			case "Cas confirmés/km²":
+			case "Guéris/km²":
+			case "Décès/km²":
+			case "Hospitalisations/km²":
+			case "Réanimations/km²":
 				logo = faMapMarkedAlt;
 				break;
 
@@ -69,10 +86,47 @@ export default {
 		}
 
 		let number = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.statNumber));
+		let formattedDataName = computed(() => {
+
+			if (props.statName.split("/").length > 1) {
+
+				return {
+					dataNameFirstPart: props.statName.split("/")[0] + "/",
+					dataNameSecondPart: props.statName.split("/")[1]
+				}
+
+			} else {
+				return { dataNameFirstPart: props.statName };
+			}
+
+		});
+
+		let evolutionLogo = computed(() => {
+
+			if (props.dataType === "evolutionDatas") {
+
+				let dataNumber;
+				typeof props.statNumber === "string" ? dataNumber = parseInt(props.statNumber, 10) : dataNumber = props.statNumber;
+
+				if (dataNumber > 0) {
+					return faAngleDoubleUp;
+				} else if (dataNumber < 0) {
+					return faChevronDown
+				} else {
+					return faGripLines;
+				}
+
+			} else {
+				return "";
+			}
+
+		});
 
 		return {
 			logo,
-			number
+			number,
+			evolutionLogo,
+			formattedDataName
 		}
 
 	}
@@ -84,10 +138,20 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 1.5rem 1.5rem 1.5rem 0;
-	&__logo {
-		font-size: 2.5rem;
-		margin-right: 0.5rem;
+	margin: 1.5rem 0;
+	@media (min-width: 768px) {
+		margin: 1.5rem;
+	}
+	&__evolutionLogo {
+		display: block;
+		position: relative;
+		top: -11px;
+		left: 6%;
+		font-size: 1.2rem;
+	}
+	&__statusLogo {
+		font-size: clamp(2rem, 2.8vw, 3.5rem);
+		margin-right: 0.6rem;
 	}
 	&__statPart {
 		display: flex;
@@ -96,11 +160,16 @@ export default {
 	}
 	&__title {
 		margin: 0;
-		font-size: 0.8rem;
+		font-size: clamp(1rem, 1vw, 3.5rem);
+	}
+	&__numberContainer {
+		display: flex;
+		justify-content: flex-start;
+		align-items: baseline;
 	}
 	&__number {
 		margin: 0;
-		font-size: 2.3rem;
+		font-size: clamp(2rem, 2.7vw, 4.5rem);
 	}
 }
 

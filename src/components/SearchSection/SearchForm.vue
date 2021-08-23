@@ -4,10 +4,10 @@
         <div class="form__inputsContainer">
 
             <div class="inputContainer">
-                <i class="fas fa-globe-europe inputContainer__logo"></i>
+                <i class="fas fa-globe-europe inputContainer__logo" aria-hidden="true"></i>
                 <div class="inputContainer__inputPart">
                     <label for="continentInput" class="inputContainer__title">Continent</label>
-                    <select v-model="requestCriteria.continent" id="continentInput" class="inputContainer__input" title="Sélectionner le continent de votre choix">
+                    <select v-model="requestCriteria.continent" id="continentInput" class="inputContainer__input" title="Sélectionner le continent de votre choix" required aria-required="true">
                         <option value="Global">Monde</option>
                         <option value="Africa">Afrique</option>
                         <option value="North America">Amérique du Nord</option>
@@ -15,13 +15,13 @@
                         <option value="Asia">Asie</option>
                         <option value="Europe">Europe</option>
                         <option value="Oceania">Océanie</option>
-                        <option value="Other">Autre</option>
+                        <!--<option value="Other">Autre</option>-->
                     </select>
                 </div>
             </div>
             
             <div class="inputContainer" v-if="requestCriteria.continent !== '' && requestCriteria.continent !== 'Global'">
-                <i class="fas fa-flag inputContainer__logo"></i>
+                <i class="fas fa-flag inputContainer__logo" aria-hidden="true"></i>
                 <div class="inputContainer__inputPart">
                     <label class="inputContainer__title" for="countryInput">Pays</label>
                     <select v-model="requestCriteria.country" id="countryInput" class="inputContainer__input" title="Sélectionner le pays de votre choix">
@@ -239,7 +239,7 @@
             </div>
 
             <div class="inputContainer" v-if="requestCriteria.country === 'France'">
-                <i class="fas fa-map-marker-alt inputContainer__logo"></i>
+                <i class="fas fa-map-marker-alt inputContainer__logo" aria-hidden="true"></i>
                 <div class="inputContainer__inputPart">
                     <label class="inputContainer__title" for="searchLocationInput">Département</label>
                     <select name="locationName" v-model="requestCriteria.departement" class="inputContainer__input" title="Sélectionner le département de votre choix" id="searchLocationInput">
@@ -348,7 +348,6 @@
                     </select>
                 </div>
             </div>
-
         </div>               
         
         <input type="submit" value="Rechercher" title="Rechercher" class="form__submitBtn" id="searchFormSubmitBtn"/>
@@ -430,7 +429,6 @@ export default {
                 searchCriteria.country = requestCriteria.country;
                 searchCriteria.departement = requestCriteria.departement;
                 searchCriteria.continent = requestCriteria.continent;
-                typeof searchCriteria.departement === "undefined" ? searchCriteria.locationType = "country" : searchCriteria.locationType = "departement";
                 context.emit("form-submitted", searchCriteria);
 
             }
@@ -452,18 +450,18 @@ export default {
 	display: flex;
     flex-direction: column;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: center;
     flex-wrap: wrap;
     background-color: #334455;
     border-radius: 3px;
     color: white;
-    padding: 0.5rem 1rem;
-    @media (min-width: 768px) {
+    padding: 0.7% 1.4%;
+    @media (min-width: 1024px) {
         flex-direction: row;
         width: 90%;
         margin: 0 auto;
         position: relative;
-        top: 27px;
+        top: 2.4vw;
     }
 	&__inputsContainer {
 		display: flex;
@@ -487,6 +485,7 @@ export default {
 		align-items: center;
 	}
 	&__submitBtn {
+        font-size: clamp(1rem, 1.1vw, 2.5rem);
         border-radius: 3px;
 		color: white;
 		background-color: #ffa600;
@@ -496,6 +495,7 @@ export default {
         width: 90%;
         margin: 1rem auto;
         @media (min-width: 1024px) {
+            padding: 0.5% 1%;
             width: auto;
             margin: 0;
         }
@@ -507,14 +507,13 @@ export default {
     align-items: center;
     margin: 0.4rem auto;
     width: 90%;
-    margin-left: 1.5rem;
-    @media (min-width: 768xp) {
-        margin: 0 1rem 0 0;
+    @media (min-width: 768px) {
         width: auto;
+        margin-left: 1.5rem;
     }
     &__logo {
         display: none;
-        font-size: 1.4rem;
+        font-size: clamp(1.5rem, 2vw, 3rem);
         margin-right: 1rem;
         @media (min-width: 768px) {
             display: block;
@@ -533,14 +532,7 @@ export default {
     }
     &__input {
         border-radius: 3px;
-    }
-    &__mandatoryInput {
-        color: red;
-    }
-    &__abbr {
-        &:hover {
-            cursor: pointer;
-        }
+        font-size: clamp(1rem, 1.1vw, 2.5rem);
     }
 }
 
