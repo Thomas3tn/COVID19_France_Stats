@@ -20,15 +20,15 @@
                 <div class="datasPanelForm__inputContainer">
                     <i class="fas fa-hourglass-start datasPanelForm__logoLabel"></i>
                     <div class="datasPanelForm__inputPart">
-                        <label for="wdpStartDate" class="datasPanelForm__label">Date de début <abbr title="Si non renseignée, cette date est fixée au 22/01/2020">?</abbr></label>
-                        <input type="date" placeholder="Ex: 24/05/2021" class="datasPanelForm__input" id="wdpStartDate" v-model="customPeriodDates.startDate" min="2020-01-22" :max="endDateLimit" required aria-required="true"/>
+                        <label for="wdpStartDate" class="datasPanelForm__label">Date de début <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.startDate">?</abbr></label>
+                        <input type="date" placeholder="Ex: 24/05/2021" class="datasPanelForm__input" id="wdpStartDate" v-model="customPeriodDates.startDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate" required aria-required="true"/>
                     </div>
                 </div>
                 <div class="datasPanelForm__inputContainer">
                     <i class="fas fa-hourglass-end datasPanelForm__logoLabel"></i>
                     <div class="datasPanelForm__inputPart">
-                        <label for="wdpEndDate" class="datasPanelForm__label">Date de fin <abbr title="Si non renseignée, cette date est fixée au jour actuel">?</abbr></label>
-                        <input type="date" placeholder="Ex: 05/09/2020" class="datasPanelForm__input" id="wdpEndDate" v-model="customPeriodDates.endDate" min="2020-01-22" :max="endDateLimit" required aria-required="true"/>
+                        <label for="wdpEndDate" class="datasPanelForm__label">Date de fin <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.endDate">?</abbr></label>
+                        <input type="date" placeholder="Ex: 05/09/2020" class="datasPanelForm__input" id="wdpEndDate" v-model="customPeriodDates.endDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate" required aria-required="true"/>
                     </div>
                 </div>
                 <button type="submit" title="Valider la période personnalisée" class="selectableStatus"><i class="fas fa-search" aria-hidden="true"></i><span class="screenreaderText">Valider la période personnalisée</span></button>
@@ -79,18 +79,12 @@ export default {
         //Store datas that have to be displayed
         let displayedDatas = reactive({});
 
-        //Calculate custom period form end date limit
-        const endDateLimit = computed(() => {
-
-            let currentDate = new Date();
-            let month = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getMonth() + 1);
-            let monthDay = datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getDate() - 1);
-            return currentDate.getFullYear() + "-" + month + "-" + monthDay;
-
-        });
-        
-
         let customPeriodDates = reactive({
+            startDate: "",
+            endDate: ""
+        });
+
+        let customPeriodDatesLimit = reactive({
             startDate: "",
             endDate: ""
         });
@@ -113,26 +107,69 @@ export default {
             for (const keyValue of Object.entries(props.locationEvolutionDatas.datas.cumulativeDatas)) {
 
                 for (const datasKeyValue of Object.entries(datas)) {
+
                     datas[datasKeyValue[0]][keyValue[0]] = {
                         dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(keyValue[0]),
                         dataNumber: 0
-                    };
+                    }
+
+                }
+
+            }
+
+            for (let i = 0; i < props.locationEvolutionDatas.datas.dates.length; i++) {
+
+                if (i === 0 || i === props.locationEvolutionDatas.datas.dates.length - 1) {
+
+                    let currentDate = new Date(props.locationEvolutionDatas.datas.dates[i]);
+                    currentDate = currentDate.getFullYear() + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getMonth() + 1) + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(currentDate.getDate());
+                    i === 0 ? customPeriodDatesLimit.startDate = currentDate : customPeriodDatesLimit.endDate = currentDate;
+
                 }
 
             }
 
         } else {
 
-            for (const evolutionDatasKeyValue of Object.entries(props.locationEvolutionDatas)) {
+            let hasCustomDatesLimitBeenFilled = false;
 
-                if (evolutionDatasKeyValue[0] !== "creation_date") {
+            for (const [key, value] of Object.entries(props.locationEvolutionDatas)) {
+
+                if (key !== "creation_date") {
 
                     for (const datasKeyValue of Object.entries(datas)) {
 
-                        datas[datasKeyValue[0]][evolutionDatasKeyValue[0]] = {
-                            dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(evolutionDatasKeyValue[0]),
+                        datas[datasKeyValue[0]][key] = {
+                            dataName: datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key),
                             dataNumber: 0
                         }
+
+                    }
+
+                    if (hasCustomDatesLimitBeenFilled === false) {
+
+                        let [earliestDate, latestDate] = [0, 0];
+
+                        for (const dateKeyValue of Object.entries(value)) {
+
+                            const currentDate = new Date(dateKeyValue[0]).getTime();
+
+                            if (currentDate > latestDate || latestDate === 0) {
+                                latestDate = new Date(dateKeyValue[0]).getTime();
+                            }
+                            if (currentDate < earliestDate || earliestDate === 0) {
+                                earliestDate = new Date(dateKeyValue[0]).getTime();
+                            }
+
+                        }
+
+                        earliestDate = new Date(earliestDate);
+                        latestDate = new Date(latestDate);
+
+                        customPeriodDatesLimit.startDate = earliestDate.getFullYear() + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(earliestDate.getMonth() + 1) + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(earliestDate.getDate());
+                        customPeriodDatesLimit.endDate = latestDate.getFullYear() + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(latestDate.getMonth() + 1) + "-" + datasCalculator.dateFunctionalities.getTwoDigitsDateElement(latestDate.getDate());
+
+                        hasCustomDatesLimitBeenFilled = true;
 
                     }
 
@@ -319,7 +356,6 @@ export default {
 
         return {
             secondButtonContent,
-            endDateLimit,
             displayedDatatype,
             displayedDatas,
             datas,
@@ -327,7 +363,8 @@ export default {
             customPeriodSubmission,
             customPeriodBtnContent,
             hasCustomPeriodBeenSubmitted,
-            isCustomPeriodFormDisplayed
+            isCustomPeriodFormDisplayed,
+            customPeriodDatesLimit
         }
 
     },

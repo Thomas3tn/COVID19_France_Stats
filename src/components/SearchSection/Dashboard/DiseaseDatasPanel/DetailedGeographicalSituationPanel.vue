@@ -57,7 +57,7 @@
 import { ref, onMounted, reactive, watch, inject, computed } from "vue";
 
 //Vue Components
-import MapKey from "./DetailedGeoDatasPanel/MapKey.vue";
+import MapKey from "./DetailedGeoDatasPanel/MapKeyPanel.vue";
 import RegionsListPanel from "./DetailedGeoDatasPanel/RegionsListPanel.vue";
 import franceMap from "./DetailedGeoDatasPanel/DetailedGeoDatasPanelMaps/Country/FranceMap.vue";
 import usMap from "./DetailedGeoDatasPanel/DetailedGeoDatasPanelMaps/Country/UsMap.vue";
