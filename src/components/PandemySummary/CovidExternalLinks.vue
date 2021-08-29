@@ -5,33 +5,33 @@
                 <div class="externalLink__headerContainer">
                     <h2 class="externalLink__header externalLink__header--mainHeader">Restez informé !</h2>
                 </div>
-                <img class="externalLink__img externalLink__img--one" src="../../assets/img/externalLinksMosaic/linksHeaderBg2.jpg"/>
+                <img class="externalLink__img externalLink__img--one" src="../../assets/img/externalLinksMosaic/linksHeaderBg.jpg"/>
             </div>
             <a class="externalLink externalLink--two" :href="covidDefinition.url" :title="covidDefinition.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--two">
                     <h3 class="externalLink__header">En savoir plus sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__arrow externalLink__arrow--horizontalArrow" aria-hidden="true"></i></h3>
                 </div>
-                <img class="externalLink__img externalLink__img--two" src="../../assets/img/externalLinksMosaic/covidInfosBg2.jpg" :alt="covidDefinition.imgAltText"/>
+                <img class="externalLink__img externalLink__img--two" src="../../assets/img/externalLinksMosaic/covidInfosBg.jpg" :alt="covidDefinition.imgAltText"/>
             </a>
             <a class="externalLink externalLink--three" :href="covidGuidelines.url" :title="covidGuidelines.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--three">
                     <h3 class="externalLink__header">Conseils de l'OMS</h3>
                     <i class="fas fa-long-arrow-alt-down externalLink__arrow externalLink__arrow--verticalArrow" aria-hidden="true"></i>
                 </div>
-                <img class="externalLink__img externalLink__img--three" src="../../assets/img/externalLinksMosaic/omsTipsBg2.jpg" :alt="covidGuidelines.imgAltText"/>
+                <img class="externalLink__img externalLink__img--three" src="../../assets/img/externalLinksMosaic/omsTipsBg.jpg" :alt="covidGuidelines.imgAltText"/>
             </a>
             <a class="externalLink externalLink--four" :href="covidNews.url" :title="covidNews.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--four">
                     <h3 class="externalLink__header">Dernières actualités</h3>
                     <i class="fas fa-long-arrow-alt-down externalLink__arrow externalLink__arrow--verticalArrow" aria-hidden="true"></i>
                 </div>
-                <img class="externalLink__img externalLink__img--four" src="../../assets/img/externalLinksMosaic/newsBg2.jpg" :alt="covidNews.imgAltText"/>
+                <img class="externalLink__img externalLink__img--four" src="../../assets/img/externalLinksMosaic/newsBg.jpg" :alt="covidNews.imgAltText"/>
             </a>
             <a class="externalLink externalLink--five" :href="covidMyths.url" :title="covidMyths.title">
                 <div class="externalLink__headerContainer externalLink__headerContainer--five">
                     <h3 class="externalLink__header">Idées reçues sur le COVID-19 <i class="fas fa-long-arrow-alt-right externalLink__arrow externalLink__arrow--horizontalArrow" aria-hidden="true"></i></h3>
                 </div>
-                <img id="img" class="externalLink__img externalLink__img--five" src="../../assets/img/externalLinksMosaic/fakeNewsBg2.jpg" :alt="covidMyths.imgAltText"/>
+                <img id="img" class="externalLink__img externalLink__img--five" src="../../assets/img/externalLinksMosaic/fakeNewsBg.jpg" :alt="covidMyths.imgAltText"/>
             </a>
         </div>
     </div>
@@ -76,7 +76,7 @@ export default {
 
 <style lang="scss">
 @mixin headerFontSize {
-    font-size: clamp(1.8rem, 3vw, 5rem);;
+    font-size: clamp(1.8rem, 3vw, 5rem);
 }
 
 .externalLinks {
@@ -137,7 +137,7 @@ export default {
     &:hover:not(div) {
         cursor: pointer;
         img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         .externalLink__arrow--verticalArrow {
             transform: translateY(25%);
@@ -188,7 +188,7 @@ export default {
         }
     }
     &__arrow {
-        transition: all 300ms;
+        transition: all 300ms ease-out;
         &--horizontalArrow {
             transform: translateX(0%);
             transform-origin: left;
@@ -200,9 +200,8 @@ export default {
     }
     &__img {
         max-width: 100%;
-        object-fit: fill;
         transform: scale(1);
-        transition: all 300ms;
+        transition: all 300ms ease-out;
         position: absolute;
         -webkit-user-drag: none;
         &--one {
@@ -233,7 +232,13 @@ export default {
             object-fit: cover;
         }
         &--five {
-            min-width: 100%;
+            height: 100%;
+            max-width: fit-content;
+            @media (min-width: 768px) {
+                height: auto;
+                margin-top: -8%;
+                max-width: 100%;
+            }
         }
     }
 }
