@@ -14,11 +14,11 @@
 
 <script>
 import CurrentSituationPanel from "./DiseaseDatasPanel/CurrentSituationPanel.vue";
-import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue";
-import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
-import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
+import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeographicalSituationPanel.vue";
+import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyEvolutionPanel.vue";
+import VaccinationChart from "./DiseaseDatasPanel/VaccinationPanel.vue";
 import TwitterPanel from "./DiseaseDatasPanel/TwitterPanelGlobal.vue";
-import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph.vue";
+import LocationEvolutionGraph from "./DiseaseDatasPanel/EvolutionPanel.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
 
 export default {

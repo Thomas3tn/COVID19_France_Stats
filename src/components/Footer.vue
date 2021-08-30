@@ -48,7 +48,7 @@ export default {
 	&__topPageBtn {
 		width: 100%;
 		height: 100%;
-        background-color: #334455;
+        background-color: $secondary-dark;
 		color: white;
 		border: none;
 		cursor: pointer;
@@ -61,14 +61,14 @@ export default {
             bottom: 0;
             left: 50%;
             height: 1px;
-            background-color: #e6f0f0;
+            background-color: $secondary-light;
             width: 5%;
             min-width: 4rem;
             transform: translateX(-50%);
             transition: all 350ms ease-out;
         }
 		&:hover {
-			background-color: lighten(#334455, 7%);
+			background-color: lighten($secondary-dark, 7%);
             &:after {
                 width: 100%;
             }
@@ -79,7 +79,7 @@ export default {
         flex-direction: column;
 		justify-content: space-around;
 		align-items: center;
-        background-color: #334455;
+        background-color: $secondary-dark;
 		color: white;
 		padding: 1rem 4%;
         @media (min-width: 1024px) {
@@ -101,7 +101,7 @@ export default {
     @media (min-width: 1024px) {
         margin-right: 3rem;
         padding-right: 3rem;
-        border-right: 1px solid #e6f0f0;
+        border-right: 1px solid $secondary-light;
     }
     @media (min-width: 1120px) {
         flex: 4;

@@ -73,18 +73,18 @@ h4 {
     &:hover {
       background-color: #EB4647;
       border-color: #EB4647;
-      color: white;
+      color: $white;
     }
   }
   &--info {
-    border-color: #457b9d;
-    background-color: #457b9d;
-    color: white;
+    border-color: $secondary;
+    background-color: $secondary;
+    color: $white;
     text-decoration: none;
     transition: all 300ms;
     &:hover {
-      background-color: darken(#457b9d, 10%);
-      border-color: darken(#457b9d, 10%);
+      background-color: darken($secondary, 10%);
+      border-color: darken($secondary, 10%);
     }
   }
 }

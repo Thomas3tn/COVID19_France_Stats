@@ -12,7 +12,7 @@
         <div class="covidInfo__cardsContainer">
             <covid-info-card v-for="item in cardsContent" :title="item.title" :subTitle="item.subTitle" :content="item.content" :key="item.title"></covid-info-card>
         </div>
-        <div class="covidInfo__infosAccordionsContainer">
+        <div class="covidInfo__detailsContainer">
             <dropdown-element v-for="item in cardsContent" :key="item.title" :detailsElementId="item.title">
                 <template v-slot:header>
                     <h3>{{ item.title }}</h3>
@@ -94,8 +94,8 @@ export default {
 
 <style lang="scss">
 .covidInfo {
-    background-color: #457b9d;
-    color: white;
+    background-color: $secondary;
+    color: $white;
     padding: 3rem 0rem;
     overflow: hidden;
     position: relative;
@@ -135,33 +135,24 @@ export default {
         justify-content: center;
         position: relative;
         height: 28vw;
-        //left: 60px;
         left: 7vw;
         display: none;
         @media (min-width: 1024px) {
             display: flex;
         }
     }
-    &__infosAccordionsContainer {
+    &__detailsContainer {
         display: flex;
         flex-direction: column;
         position: relative;
-        left: 8%;
+        margin: 0 auto;
         width: 85%;
         @media (min-width: 1024px) {
             display: none;
         }
-    }
-    &__accordionDetails {
-        cursor: pointer;
-        margin: 0.5rem 0;
         p {
             text-align: justify;
         }
-    }
-    &__accordionSummary > * {
-        display: inline;
-        font-size: clamp(1rem, 1.1vw, 2.5rem);
     }
 }
 </style>

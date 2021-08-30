@@ -19,11 +19,11 @@
 
 <script>
 import CurrentSituationPanel from "./DiseaseDatasPanel/CurrentSituationPanel.vue";
-import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue";
-import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
-import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
+import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeographicalSituationPanel.vue";
+import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyEvolutionPanel.vue";
+import VaccinationChart from "./DiseaseDatasPanel/VaccinationPanel.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
-import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph";
+import LocationEvolutionGraph from "./DiseaseDatasPanel/EvolutionPanel.vue";
 
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 

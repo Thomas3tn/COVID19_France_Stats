@@ -11,8 +11,8 @@
 
 <script>
 import CurrentSituationPanel from "./DiseaseDatasPanel/CurrentSituationPanel.vue";
-import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeoDatasPanel.vue";
-import VaccinationChart from "./DiseaseDatasPanel/VaccinationChart.vue";
+import DetailedGeoDatasPanel from "./DiseaseDatasPanel/DetailedGeographicalSituationPanel.vue";
+import VaccinationChart from "./DiseaseDatasPanel/VaccinationPanel.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
 
 export default {

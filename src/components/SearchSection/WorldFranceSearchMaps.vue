@@ -130,7 +130,7 @@ export default {
         border-radius: 0 2px 2px 0;
         padding: 2rem 0.5rem;
         background-color: #334455;
-        color: white;
+        color: $white;
         animation: buttonAppearance 500ms ease-out both;
         position: absolute;
         top: 50%;

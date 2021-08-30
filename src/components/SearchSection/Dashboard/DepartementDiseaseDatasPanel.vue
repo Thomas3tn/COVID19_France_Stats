@@ -10,9 +10,9 @@
 <script>
 //Vue components
 import CurrentSituationPanel from "./DiseaseDatasPanel/CurrentSituationPanel.vue";
-import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyDatasPanel.vue";
+import WeeklyDailyDatasPanel from "./DiseaseDatasPanel/WeeklyDailyEvolutionPanel.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
-import LocationEvolutionGraph from "./DiseaseDatasPanel/LocationEvolutionGraph.vue";
+import LocationEvolutionGraph from "./DiseaseDatasPanel/EvolutionPanel.vue";
 
 
 export default {

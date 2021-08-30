@@ -272,7 +272,7 @@ export default {
         getPeriodEvolutionDatas();
 
         onMounted(() => {
-            document.getElementById(displayedDatatype.value + "EvoBtn").className += " selectedBtn";
+            document.getElementById(displayedDatatype.value + "EvoBtn").className += " dashboardSelectedElement";
         });
 
         watch(displayedDatatype, (newValue, oldValue) => {
@@ -288,11 +288,11 @@ export default {
 
                         let currentElementClasses = btns[i].className.split(" ");
 
-                        if (currentElementClasses.includes("selectedBtn")) {
+                        if (currentElementClasses.includes("dashboardSelectedElement")) {
 
                             for (let c = 0; c < currentElementClasses.length; c++) {
 
-                                if (currentElementClasses[c] === "selectedBtn") {
+                                if (currentElementClasses[c] === "dashboardSelectedElement") {
                                     currentElementClasses.splice(c, 1);
                                     break;
                                 }
@@ -305,7 +305,7 @@ export default {
 
                     }
 
-                    //document.getElementById(newValue.value + "EvoBtn").className += " selectedBtn";
+                    //document.getElementById(newValue.value + "EvoBtn").className += " dashboardSelectedElement";
 
                 }
 
@@ -329,7 +329,7 @@ export default {
                 }
 
                 document.getElementById("customPeriodForm").className = customPeriodFormClasses.join(" ");
-                document.getElementById("customPeriodFormToggleBtn").className += " selectedBtn";
+                document.getElementById("customPeriodFormToggleBtn").className += " dashboardSelectedElement";
                 document.getElementById("customPeriodFormToggleBtn").setAttribute("arai-hidden", "false");
 
             } else if (newValue === false) {
@@ -340,7 +340,7 @@ export default {
 
                 for (let i = 0; i < formToggleBtnClasses.length; i++) {
 
-                    if (formToggleBtnClasses[i] === "selectedBtn") {
+                    if (formToggleBtnClasses[i] === "dashboardSelectedElement") {
                         formToggleBtnClasses.splice(i, 1);
                         break;
                     }
@@ -375,10 +375,6 @@ export default {
 </script>
 
 <style lang="scss">
-.selectedBtn {
-    color: lightblue;
-}
-
 .weeklyDailyDatasPanel {
     &__headerContainer {
         display: flex;
@@ -398,7 +394,7 @@ export default {
         padding: 0;
         transition: all 300ms;
         &:hover {
-            color: lightblue;
+            color: $dashboard-selection;
         }
         &--left {
             margin-right: 0.25rem;
@@ -433,7 +429,7 @@ export default {
         transform: translate(-50%, -50%);
         width: 100%;
         height: 100%;
-        background-color: white;
+        background-color: $white;
         @media (min-width: 1024px) {
             flex-direction: row;
         }

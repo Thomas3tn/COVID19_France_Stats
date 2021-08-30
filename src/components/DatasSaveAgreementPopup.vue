@@ -102,15 +102,15 @@ export default {
         width: 100%;
     }
     &__closeBtn {
-        background-color: #457b9d;
-        color: white;
+        background-color: $secondary;
+        color: $white;
         width: 60%;
         border: none;
         padding: 0.5rem 0;
         transition: all 300ms;
         &:hover {
             cursor: pointer;
-            background-color: lighten(#457b9d, 5%);
+            background-color: lighten($secondary, 5%);
         }
     }
     &__moreInfosLink {

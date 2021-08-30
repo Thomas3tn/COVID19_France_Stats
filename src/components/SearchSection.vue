@@ -2,14 +2,17 @@
     <section id="searchSection" class="searchSection">
 
         <world-france-search-maps :formSelectedLocation="addedFormLocation" @clicked-location="transmitClickedLocation"></world-france-search-maps>
+
         <search-form @form-submitted="onFormSubmission" @added-form-location="transmitAddedFormLocation" :clickedLocation="clickedLocation"></search-form>
         <div class="resultsContainer" id="locationDashboard">
             <app-loader v-if="isContentLoading === true && areRequestResultsReceived === false"></app-loader>
+            <!--<app-loader v-if="1 === 1"></app-loader>-->
             <country-dashboard v-if="isContentLoading === false && areRequestResultsReceived === true" :formRequestCriteria="formRequestCriteria"></country-dashboard>
             <div v-if="isContentLoading === false && areRequestResultsReceived === false" class="resultsContainer__noDatasPlaceholderContainer">
                 <p class="resultsContainer__noDatasPlaceholder">Aucune données à afficher</p>
             </div>
         </div>
+
     </section>
 </template>
 
@@ -168,7 +171,7 @@ export default {
 
 <style lang="scss">
 .searchSection {
-    background-color: white;
+    background-color: $white;
 }
 
 .resultsContainer {
@@ -179,9 +182,9 @@ export default {
     justify-content: center;
     align-items: center;
     min-height: 25vw;
-    background: #e6f0f0;
+    background: $secondary-light;
     &__noDatasPlaceholderContainer {
-        background: url("../assets/img/dashboard/bacteriaCellCovid.png") no-repeat, #e6f0f0;
+        background: url("../assets/img/dashboard/bacteriaCellCovid.png") no-repeat, $secondary-light;
         background-position: center;
         background-size: 80%;
         min-height: 300px;

@@ -41,7 +41,7 @@ export default {
 }
 
 .appLoader__container {
-    background-color: #fbfcfd;
+    background-color: $primary;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -49,7 +49,7 @@ export default {
 }
 
 .appLoader {
-    width: 5%;
+    width: calc(min(80px, 5%));
     &__img {
         width: 100%;
         height: auto;

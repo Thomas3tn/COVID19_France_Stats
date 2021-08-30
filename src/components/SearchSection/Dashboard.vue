@@ -195,18 +195,6 @@ export default {
 </script>
 
 <style lang="scss">
-$selectionColor: lightblue;
-
-//Status color variables
-$confirmedColor: #FF6866;
-$deathsColor: #A0A0A0;
-$recoveredColor: #3CF525;
-$hospitalizationsColor: #FFC042;
-$intensiveCareColor: #FF6866;
-$peopleVaccinatedColor: #334455;
-$peoplePartiallyVaccinatedColor: #457b9d;
-$inactiveColor: black;
-
 $selectableStatusVerticalPadding: calc(max(0.2rem, 0.2vw));
 $selectableStatusHorizontalPadding: calc(max(0.5rem, 0.5vw));
 
@@ -239,7 +227,7 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         display: none;
         border: none;
         position: absolute;
-        background-color: #FFF;
+        background-color: inherit;
         right: 103.7%;
         top: 50%;
         height: 10%;
@@ -256,7 +244,7 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
 
 .dashboardBackToTopBtn {
     display: block;
-    background-color: white;
+    background-color: $white;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -281,7 +269,7 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
 
 .datasPanel {
     overflow: hidden;
-    background-color: white;
+    background-color: $white;
     margin: 3vw 0;
     padding-left: $datasPanelPadding;
     padding-right: $datasPanelPadding;
@@ -315,8 +303,8 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         }
         &:hover {
             cursor: pointer;
-            border-color: lightblue;
-            color: lightblue;
+            border-color: $dashboard-selection;
+            color: $dashboard-selection;
         }
     }
 }
@@ -356,9 +344,14 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
     }
 }
 
+.dashboardSelectedElement {
+    color: $dashboard-selection;
+    border-color: $dashboard-selection;
+}
+
 .selectableStatus {
     background-color: inherit;
-    border: 2px solid black;
+    border: 2px solid $inactive;
     font-size: clamp(1.5rem, 1.6vw, 3.5rem);
     padding-top: $selectableStatusVerticalPadding;
     padding-bottom: $selectableStatusVerticalPadding;
@@ -379,36 +372,36 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         border-style: dashed;
     }
     &--confirmedActive {
-        border-color: $confirmedColor;
-        color: $confirmedColor;
+        border-color: $confirmed;
+        color: $confirmed;
     }
     &--deathsActive {
-        border-color: $deathsColor;
-        color: $deathsColor;
+        border-color: $deaths;
+        color: $deaths;
     }
     &--recoveredActive {
-        border-color: $recoveredColor;
-        color: $recoveredColor;
+        border-color: $recovered;
+        color: $recovered;
     }
     &--hospitalizationsActive {
-        border-color: $hospitalizationsColor;
-        color: $hospitalizationsColor;
+        border-color: $hospitalizations;
+        color: $hospitalizations;
     }
     &--new_hospitalizationsActive {
-        border-color: $hospitalizationsColor;
-        color: $hospitalizationsColor;
+        border-color: $hospitalizations;
+        color: $hospitalizations;
     }
     &--intensive_careActive {
-        border-color: $intensiveCareColor;
-        color: $intensiveCareColor;
+        border-color: $intensive-care;
+        color: $intensive-care;
     }
     &--new_intensive_careActive {
-        border-color: $intensiveCareColor;
-        color: $intensiveCareColor;
+        border-color: $intensive-care;
+        color: $intensive-care;
     }
     &--inactive {
-        border-color: $inactiveColor;
-        color: $inactiveColor;
+        border-color: $inactive;
+        color: $inactive;
     }
 }
 </style>

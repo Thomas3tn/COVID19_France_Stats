@@ -17,9 +17,8 @@
 <style lang="scss">
 .covidOrigin {
     position: relative;
-    background-color: #fbfcfd;
+    background-color: $primary;
     min-height: 35vw;
-    //height: 35vw;
     display: flex;
     justify-content: center;
     align-items: center;

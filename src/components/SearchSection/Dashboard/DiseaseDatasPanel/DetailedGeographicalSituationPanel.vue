@@ -801,24 +801,24 @@ export default {
             width: auto;
         }
         &--confirmed:hover {
-            color: #FF6866;
-            border-color: #FF6866;
+            color: $confirmed;
+            border-color: $confirmed;
         }
         &--deaths:hover {
-            color: #3A3A3A;
-            border-color: #3A3A3A;
+            color: $deaths;
+            border-color: $deaths;
         }
         &--recovered:hover {
-            color: #3CF525;
-            border-color: #3CF525;
+            color: $recovered;
+            border-color: $recovered;
         }
-        &--hospitalizations {
-            color: #FFC042;
-            border-color: #FFC042;
+        &--hospitalizations:hover {
+            color: $hospitalizations;
+            border-color: $hospitalizations;
         }
-        &--intensive_care {
-            color: #FF6866;
-            border-color: #FF6866;
+        &--intensive_care:hover {
+            color: $intensive-care;
+            border-color: $intensive-care;
         }
     }
 }

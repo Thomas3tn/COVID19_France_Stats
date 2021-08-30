@@ -741,7 +741,6 @@ export default {
   justify-content: flex-start;
   align-items: center;
   padding: 1.3rem 0;
-  background-color: white;
   &--hidden {
     display: none;
   }

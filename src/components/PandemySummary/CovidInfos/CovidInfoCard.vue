@@ -251,7 +251,6 @@ export default {
         color: #303030;
         opacity: 1;
         transition: all 600ms;
-        background-color: white;
         width: 100%;
         text-transform: uppercase;
         background-color: rgb(235, 235, 235);

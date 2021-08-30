@@ -292,7 +292,7 @@ export default {
 $locationDetailsPadding: calc(max(1rem, 1vw));
 
 .locationDetails {
-    background-color: white;
+    background-color: $white;
     padding-top: $locationDetailsPadding;
     padding-bottom: $locationDetailsPadding;
     padding-left: $locationDetailsPadding;
@@ -368,7 +368,7 @@ $locationDetailsPadding: calc(max(1rem, 1vw));
         transition: all 300ms;
         &:hover {
             cursor: pointer;
-            color: lightblue;
+            color: $dashboard-selection;
         }
         div {
             display: flex;

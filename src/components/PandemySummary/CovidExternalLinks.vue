@@ -80,7 +80,7 @@ export default {
 }
 
 .externalLinks {
-    background-color: #e6f0f0;
+    background-color: $secondary-light;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,7 +93,6 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
     gap: 4vw;
-    color: white;
     font-family: "Open-Sans", sans-serif;
     @media (min-width: 1024px) {
         grid-template-columns: repeat(4, 1fr);
@@ -153,7 +152,7 @@ export default {
         flex-direction: column;
         z-index: 1;
         text-align: center;
-        color: white;
+        color: $white;
         &--two {
             width: 50%;
             @media (min-width: 1024px) {

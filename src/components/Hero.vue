@@ -50,7 +50,7 @@
 
 .hero {
 	animation: appearance 800ms both ease-in-out;
-	color: white;
+	color: $white;
 	height: 100vh;
 	display: flex;
 	justify-content: center;
@@ -78,7 +78,6 @@
 	}
 	&__firstTitle {
 		letter-spacing: 0.2rem;
-		//font-size: 8vw;
 		font-size: clamp(1.2rem, 8vw, 3rem);
 		margin: 0;
 		text-transform: uppercase;
@@ -88,7 +87,6 @@
 		}
 	}
 	&__secondTitle {
-		//font-size: 15vw;
 		letter-spacing: 0.5rem;
 		margin: 0;
 		text-transform: uppercase;
@@ -111,7 +109,7 @@
 		border: none;
 		text-decoration: none;
 		background-color: rgba(0, 0, 0, 0);
-		color: white;
+		color: $white;
 		cursor: pointer;
 		text-align: center;
 		scroll-behavior: smooth;

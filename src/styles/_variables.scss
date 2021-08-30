@@ -1,1 +1,25 @@
-$test: red;
+//Color Palette
+
+$primary: #fbfcfd;
+$secondary: #457b9d;
+$secondary-light: #e6f0f0;
+$secondary-dark: #334455;
+$brightColor: #ffa600;
+
+$white: #FFF;
+
+//Selectable Status Colors
+
+$confirmed: #FF6866;
+$deaths: #A0A0A0;
+//$deaths:#3A3A3A;
+$recovered: #3CF525;
+$hospitalizations: #FFC042;
+$intensive-care: #FF6866;
+$vaccinated-people: #334455;
+$partially-vaccinated-people: #457b9d;
+$inactive: #000000;
+
+//Dashboard Selected Item Color
+
+$dashboard-selection: lightblue;

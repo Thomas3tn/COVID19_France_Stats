@@ -161,7 +161,7 @@ export default {
 <style lang="scss">
 .regionsListPanel {
     display: block;
-    background-color: white;
+    background-color: $white;
     &--hidden {
         display: none;
     }

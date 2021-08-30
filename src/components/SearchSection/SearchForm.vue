@@ -452,9 +452,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
     flex-wrap: wrap;
-    background-color: #334455;
-    border-radius: 3px;
-    color: white;
+    background-color: $secondary-dark;
+    color: $white;
     padding: 0.7% 1.4%;
     @media (min-width: 1024px) {
         flex-direction: row;
@@ -462,6 +461,7 @@ export default {
         margin: 0 auto;
         position: relative;
         top: 2.4vw;
+        border-radius: 3px;
     }
 	&__inputsContainer {
 		display: flex;
@@ -487,7 +487,7 @@ export default {
 	&__submitBtn {
         font-size: clamp(1rem, 1.1vw, 2.5rem);
         border-radius: 3px;
-		color: white;
+		color: inherit;
 		background-color: #ffa600;
 		border: none;
 		cursor: pointer;

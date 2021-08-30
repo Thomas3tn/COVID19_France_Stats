@@ -389,11 +389,11 @@ export default {
         padding: 0 3rem;
     }
     &--france {
-        background-color: #fbfcfd;
+        background-color: $primary;
     }
     &--world {
-        background-color: #457b9d;
-        color: white;
+        background-color: $secondary;
+        color: $white;
     }
     &__container {
         display: flex;
