@@ -24,7 +24,7 @@
 //Vue Elements
 import { computed, watch, reactive, ref, provide } from "vue";
 import { useStore } from "vuex";
-import { faLongArrowAltUp } from "@fortawesome/free-solid-svg-icons";
+import { faLongArrowAltUp, faCross, faHospitalUser, faMale, faProcedures, faSyringe, faWalking, faUsers, faMapMarkedAlt, faHourglassStart, faHourglassEnd, faListAlt, faList, faSearch, faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 
 //Vue components
 import LocationAsidePanel from "./Dashboard/LocationAsidePanel.vue";
@@ -48,7 +48,33 @@ export default {
     },
     setup(props) {
 
-        console.log(props.formRequestCriteria);
+        //Contains icons that are shared and used among dashboard components
+        const dashboardIcons = reactive({
+            status: {
+                confirmed: faMale,
+                deaths: faCross,
+                recovered: faWalking,
+                hospitalizations: faHospitalUser,
+                new_hospitalizations: faHospitalUser,
+                intensive_care: faProcedures,
+                new_intensive_care: faProcedures,
+                people_vaccinated: faSyringe,
+            },
+            form: {
+                datatype: faListAlt,
+                data_list: faList,
+                start_date: faHourglassStart,
+                end_date: faHourglassEnd,
+                search: faSearch,
+                add_custom_period: faCalendarPlus
+            },
+            relativeDatas: {
+                thousands_of_habs: faUsers,
+                km2: faMapMarkedAlt
+            }
+        });
+
+        provide("dashboardIcons", dashboardIcons);
 
         //Charts status colors
         const chartStatusKey = reactive({
@@ -63,7 +89,7 @@ export default {
                 administered: "#2DFF90",
                 population: "#5caddf",
                 new_hospitalizations: "#FFC042",
-                new_intensive_care: "#FF6866"
+                new_intensive_care: "#FF6866",
             },
             statusGradient: {
                 confirmed: {
@@ -161,14 +187,11 @@ export default {
                 } else if (newValue.locationType === "departement") {
                     datas = dashboardDatasCreator.getDepartementDatas(newValue.departement, newValue.country, datas, departementsLiveDatas.value, departementsStaticDatas);
                     datas.diseaseDatas.evolutionDatas = franceDepartementsEvolutionDatas.value[newValue.departement];
-                    console.log(datas);
                 } else if (newValue.locationType === "continent") {
                     datas = dashboardDatasCreator.getContinentDatas(newValue.continent, datas, worldLiveDatas.value, continentsStaticDatas);
-                    console.log(datas);
                 } else if (newValue.locationType === "global") {
                     datas = dashboardDatasCreator.getGlobalDatas(datas, worldLiveDatas.value);
                     datas.diseaseDatas.evolutionDatas = worldLocationEvolutionDatas.value[newValue.continent];
-                    console.log(datas);
                 }
 
                 areDatasComputed.value = true;
@@ -300,6 +323,7 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         width: 100%;
         @media (min-width: 1024px) {
             width: auto;
+            margin-bottom: 0;
         }
         &:hover {
             cursor: pointer;
@@ -375,13 +399,25 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         border-color: $confirmed;
         color: $confirmed;
     }
+    &--confirmedInactiveHover:hover {
+        border-color: lighten($confirmed, 10%);
+        color: lighten($confirmed, 10%);
+    }
     &--deathsActive {
         border-color: $deaths;
         color: $deaths;
     }
+    &--deathsInactiveHover:hover {
+        border-color: lighten($deaths, 10%);
+        color: lighten($deaths, 10%);
+    }
     &--recoveredActive {
         border-color: $recovered;
         color: $recovered;
+    }
+    &--recoveredInactiveHover:hover {
+        border-color: lighten($recovered, 10%);
+        color: lighten($recovered, 10%);
     }
     &--hospitalizationsActive {
         border-color: $hospitalizations;
@@ -391,6 +427,10 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
         border-color: $hospitalizations;
         color: $hospitalizations;
     }
+    &--hospitalizationsInactiveHover:hover, &--new_hospitalizationsInactiveHover:hover {
+        border-color: lighten($hospitalizations, 10%);
+        color: lighten($hospitalizations, 10%);
+    }
     &--intensive_careActive {
         border-color: $intensive-care;
         color: $intensive-care;
@@ -398,6 +438,10 @@ $datasPanelPadding: calc(max(1rem, 1.3vw));
     &--new_intensive_careActive {
         border-color: $intensive-care;
         color: $intensive-care;
+    }
+    &--intensive_careInactiveHover:hover, &--new_intensive_careInactiveHover:hover {
+        border-color: lighten($intensive-care, 10%);
+        color: lighten($intensive-care, 10%);
     }
     &--inactive {
         border-color: $inactive;

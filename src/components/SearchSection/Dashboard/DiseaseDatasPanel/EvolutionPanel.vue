@@ -2,13 +2,13 @@
   <div class="datasPanel">
     <header class="datasPanel__headerContainer locationEvolutionDatasPanel__headerContainer">
       <h3 class="datasPanel__header">Évolution épidémique quotidienne</h3>
-      <button class="datasPanel__toggleFormBtn" title="Ajouter période personnalisée" id="locationEvolutionDatasPanelCustomPeriodFormToggleBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><i class="far fa-calendar-plus" aria-hidden="true"></i><span class="screenreaderText">Ajouter période personnalisée</span></button>
+      <button class="datasPanel__toggleFormBtn" title="Ajouter période personnalisée" id="locationEvolutionDatasPanelCustomPeriodFormToggleBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><font-awesome-icon :icon="dashboardIcons.form.add_custom_period" aria-hidden="true" class="datasPanelForm__logoLabel"/><span class="screenreaderText">Ajouter période personnalisée</span></button>
     </header>
     <div class="locationEvolutionDatasPanel__contentContainer">
       <div class="locationEvolutionDatasPanel__formsContainer">
         <form class="locationEvolutionDatasForm" id="ledpDatasForm">
           <div class="locationEvolutionDatasForm__datastypeContainer">
-            <label for="locationEvolutionGraphDatasTypeInput"><i class="far fa-list-alt datasPanelForm__logoLabel" aria-hidden="true"></i><span class="screenreaderText">Type de données</span></label>
+            <label for="locationEvolutionGraphDatasTypeInput"><font-awesome-icon :icon="dashboardIcons.form.datatype" aria-hidden="true" class="datasPanelForm__logoLabel"/><span class="screenreaderText">Type de données</span></label>
             <select v-model="chartType" class="datasPanelForm__input datasPanelForm__inputPart" id="locationEvolutionGraphDatasTypeInput" title="Sélectionner un type de données">
               <option value="cumulativeDatas" selected="true">Données cumulatives</option>
               <option value="dailyDatas">Données quotidiennes</option>
@@ -24,20 +24,20 @@
         </form>
         <form @submit.prevent="onCustomDatesSubmission" id="ledpCustomPeriodForm" class="ledCustomPeriodForm ledCustomPeriodForm--hidden">
           <div class="datasPanelForm__inputContainer">
-            <i class="fas fa-hourglass-start datasPanelForm__logoLabel"></i>
+            <font-awesome-icon :icon="dashboardIcons.form.start_date" aria-hidden="true" class="datasPanelForm__logoLabel"/>
             <div class="datasPanelForm__inputPart">
               <label for="wdpStartDate" class="datasPanelForm__label">Date de début <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.startDate">?</abbr></label>
               <input type="date" placeholder="Ex: 12/03/2020" class="datasPanelForm__input" v-model="customPeriodDates.startDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate"/>
             </div>
           </div>
           <div class="datasPanelForm__inputContainer">
-            <i class="fas fa-hourglass-end datasPanelForm__logoLabel"></i>
+            <font-awesome-icon :icon="dashboardIcons.form.end_date" aria-hidden="true" class="datasPanelForm__logoLabel"/>
             <div class="datasPanelForm__inputPart">
               <label for="wdpEndDate" class="datasPanelForm__label">Date de fin <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.endDate">?</abbr></label>
               <input type="date" placeholder="Ex: 24/05/2021" class="datasPanelForm__input" v-model="customPeriodDates.endDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate"/>
             </div>
           </div>
-          <button type="submit" class="selectableStatus"><i class="fas fa-search" aria-hidden="true"></i><span class="screenreaderText">Valider la période personnalisée</span></button>
+          <button type="submit" class="selectableStatus"><font-awesome-icon :icon="dashboardIcons.form.search" aria-hidden="true" class="datasPanelForm__logoLabel"/><span class="screenreaderText">Valider la période personnalisée</span></button>
         </form>
       </div>
       <div class="locationEvolutionGraph__graphContainer">
@@ -62,8 +62,6 @@ import Chart from "./SharedComponents/Chart.vue";
 //JS Script
 import DatasCalculator from "../../../../assets/JSClasses/DatasCalculator.js";
 
-import { faCross, faMale, faWalking, faHospitalUser, faHospital, faAmbulance, faProcedures } from "@fortawesome/free-solid-svg-icons";
-
 //Lodash (deep object cloning)
 import _ from "lodash";
 
@@ -83,6 +81,7 @@ export default {
 
     let datasCalculator = new DatasCalculator();
     const chartStatusKey = inject("chartStatusKey", {});
+    const dashboardIcons = inject("dashboardIcons", {});
 
     //Chart type & Chart criteria
     const chartType = ref("dailyDatas");
@@ -171,9 +170,9 @@ export default {
 
     function onKeyboardInput(event) {
 
-        if (event.key === "Enter") {
-          chartCriteria[event.target.htmlFor.split("_")[0]] = !chartCriteria[event.target.htmlFor.split("_")[0]];
-        }
+      if (event.key === "Enter") {
+        chartCriteria[event.target.htmlFor.split("_")[0]] = !chartCriteria[event.target.htmlFor.split("_")[0]];
+      }
 
     }
 
@@ -183,8 +182,6 @@ export default {
     });
 
     function createChartLine(statusName, dataset, chartStatusKey, chartLineTemplate, customPeriodDates) {
-
-      console.log(customPeriodDates);
 
       let currentCumulativeChartLine = _.cloneDeep(chartLineTemplate);
       let currentDailyChartLine = _.cloneDeep(chartLineTemplate);
@@ -216,8 +213,6 @@ export default {
       //Reverse datas arrays to be in chronological order
       currentCumulativeChartLine.data = currentCumulativeChartLine.data.reverse();
 
-      console.log(currentCumulativeChartLine)
-
       //Compute and push daily datas from cumulative datas by substraction
       for (let i = 0; i < currentCumulativeChartLine.data.length; i++) {
 
@@ -230,15 +225,11 @@ export default {
 
       currentCumulativeChartLine.data.unshift();
 
-      console.log(currentDailyChartLine);
-
       return {cumulativeChartLine: currentCumulativeChartLine, dailyChartLine: currentDailyChartLine};
 
     }
 
     function createDepartementChartLine(statusName, dataset, chartStatusKey, chartLineTemplate, datesList, customPeriodDates) {
-
-      console.log(customPeriodDates);
 
       let currentChartLine = _.cloneDeep(chartLineTemplate);
       currentChartLine.label = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(statusName);
@@ -318,7 +309,6 @@ export default {
             let currentChartLines = createChartLine(key, value, chartStatusKey, chartLineTemplate, {customStartDate, customEndDate});
 
             datas.dailyDatas[key] = currentChartLines.dailyChartLine;
-            console.log(datas.dailyDatas[key]);
             datas.cumulativeDatas[key] = currentChartLines.cumulativeChartLine;
 
           }
@@ -399,24 +389,7 @@ export default {
 
             statusInfos.idName = keyValue[0];
             statusInfos.dashboardName = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(keyValue[0]);
-
-            switch (keyValue[0]) {
-              case "confirmed":
-                statusInfos.logo = faMale;
-                break;
-
-              case "deaths":
-                statusInfos.logo = faCross;
-                break;
-
-              case "recovered":
-                statusInfos.logo = faWalking;
-                break;
-            
-              default:
-                statusInfos.logo = "";
-                break;
-            }
+            statusInfos.logo = dashboardIcons.status[keyValue[0]];
 
             for (let statusCheckboxesListKeyValue of Object.entries(statusCheckboxesList)) {
               statusCheckboxesListKeyValue[1][keyValue[0]] = statusInfos;
@@ -440,36 +413,7 @@ export default {
               statusCheckboxesList[key][statusKeyValue[0]] = {};
               statusCheckboxesList[key][statusKeyValue[0]]["idName"] = statusKeyValue[0];
               statusCheckboxesList[key][statusKeyValue[0]]["dashboardName"] = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(statusKeyValue[0]);
-
-              switch (statusKeyValue[0]) {
-                case "hospitalizations":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faHospital;
-                  break;
-
-                case "deaths":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faCross;
-                  break;
-
-                case "recovered":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faWalking;
-                  break;
-
-                case "intensive_care":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faProcedures;
-                  break;
-
-                case "new_hospitalizations":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faHospitalUser;
-                  break;
-
-                case "new_intensive_care":
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = faAmbulance;
-                  break;
-              
-                default:
-                  statusCheckboxesList[key][statusKeyValue[0]]["logo"] = "";
-                  break;
-              }
+              statusCheckboxesList[key][statusKeyValue[0]]["logo"] = dashboardIcons.status[statusKeyValue[0]];
 
             }
 
@@ -568,15 +512,15 @@ export default {
             let newActiveLabel = document.getElementById(key + "Label");
             newActiveLabel.setAttribute("aria-pressed", "true");
 
-            if (newActiveLabel.className.split(" ").includes("selectableStatus--inactive")) {
+            if (newActiveLabel.className.split(" ").includes("selectableStatus--inactive") || newActiveLabel.className.match(/InactiveHover/)) {
 
               let newActiveLabelClasses = newActiveLabel.className.split(" ");
 
               for (let i = 0; i < newActiveLabelClasses.length; i++) {
 
-                  if (newActiveLabelClasses[i] === "selectableStatus--inactive") {
+                  if (newActiveLabelClasses[i] === "selectableStatus--inactive" || newActiveLabelClasses[i].match(/InactiveHover/)) {
                     newActiveLabelClasses.splice(i, 1);
-                    break;
+                    i--;
                   }
 
               }
@@ -609,7 +553,7 @@ export default {
             }
 
             //Delete selected className
-            document.getElementById(key + "Label").className = "selectableStatus selectableStatus--horizontalDisplay selectableStatus--inactive";
+            document.getElementById(key + "Label").className = "selectableStatus selectableStatus--horizontalDisplay selectableStatus--inactive selectableStatus--" + document.getElementById(key + "Label").id.match(/^[a-z]*/)[0] + "InactiveHover";
             document.getElementById(key + "Label").setAttribute("aria-pressed", "false");
 
           }
@@ -651,7 +595,8 @@ export default {
       onCustomDatesSubmission,
       onKeyboardInput,
       customPeriodDatesLimit,
-      isCustomPeriodFormDisplayed
+      isCustomPeriodFormDisplayed,
+      dashboardIcons
     }
 
   },

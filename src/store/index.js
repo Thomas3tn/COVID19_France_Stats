@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 
 import DatasCalculator from "../assets/JSClasses/DatasCalculator.js";
-import VuexFunctionalities from "../assets/JSClasses/VuexFunctionalities.js";
+import VuexFunctionalities from '../assets/JSClasses/VuexFunctionalities.js';
 import FranceCovidDatas from "../assets/staticDatas/FranceCovidDatas.js";
 
 export default createStore({
@@ -143,159 +143,32 @@ export default createStore({
 
       return new Promise((resolve, reject) => {
 
+        const vuexFunctionalities = new VuexFunctionalities();
+
         try {
 
-          //If datas exist in local storage
-          if (localStorage.getItem("worldLiveDatas") !== null) {
-            
-            const worldLiveDatas = JSON.parse(localStorage.getItem("worldLiveDatas"));
-            const wldCreationDate = worldLiveDatas.creation_date;
-  
-            //If local storage datas are not older than 6 hours
-            if ((Date.now() - 21600000) < wldCreationDate) {
-
-              //Copy local storage datas in Vuex store
-              commit("SET_WORLD_LIVE_DATAS", worldLiveDatas.datas);
-              commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
-              resolve(true);
-  
-            } else {
-              throw "localStorageDatasOutaded";
-            }
-
-          } else {
-            throw "noLocalStorageDatas";
-          }
+          let localStorageDatas = vuexFunctionalities.doesLocalStorageDatasExists("worldLiveDatas");
+          commit("SET_WORLD_LIVE_DATAS", localStorageDatas.datas);
+          commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
+          resolve(true);
 
         } catch (e) {
 
-          let worldLiveDatas = {};
+          vuexFunctionalities.setWorldLiveDatas.requestsManager()
+          .then(worldLiveDatas => {
 
-          fetch("https://covid-api.mmediagroup.fr/v1/cases")
-          .then(response => response.json())
-          .then(response => {
+            commit("SET_WORLD_LIVE_DATAS", worldLiveDatas);
+            commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
+            commit("SAVE_WORLD_LIVE_DATAS_TO_LOCAL_STORAGE");
+            resolve(true);
 
-            worldLiveDatas = response;
-            fetch("https://covid-api.mmediagroup.fr/v1/vaccines")
-            .then(response => response.json())
-            .then(response => {
-
-              //Add vaccines datas for each country
-              for (const [vaccKey, vaccValue] of Object.entries(response)) {
-
-                //Test if the both vaccines country and cases country have the same country name
-                if (typeof worldLiveDatas[vaccKey] !== "undefined") {
-
-                  worldLiveDatas[vaccKey]["All"]["administered"] = vaccValue.All.administered;
-                  worldLiveDatas[vaccKey]["All"]["people_vaccinated"] = vaccValue.All.people_vaccinated;
-                  worldLiveDatas[vaccKey]["All"]["people_partially_vaccinated"] = vaccValue.All.people_partially_vaccinated;
-
-                }
-
-              }
-
-              fetch("https://coronavirusapi-france.now.sh/FranceLiveGlobalData")
-              .then(response => response.json())
-              .then(response => {
-                console.log(response);
-                let datas = response.FranceGlobalLiveData[0];
-                console.log(datas);
-                if (typeof datas === "undefined") {
-                  datas = FranceCovidDatas.worldLiveDatas;
-                }
-
-                worldLiveDatas["France"]["All"]["hospitalizations"] = datas.hospitalises + datas.nouvellesHospitalisations;
-                worldLiveDatas["France"]["All"]["intensive_care"] = datas.reanimation + datas.nouvellesReanimations;
-
-                fetch("https://restcountries.eu/rest/v2/all")
-                .then(response => response.json())
-                .then(response => {
-
-                  const restCountriesKeys = ["latlng", "demonym", "gini", "currencies", "languages", "regionalBlocs", "translations"];
-
-                  for (let i = 0; i < response.length; i++) {
-
-                    const currentCountry = response[i];
-
-                    //Trying to match worldLiveDatas country and restCountries country by name
-                    if (typeof worldLiveDatas[currentCountry.name] !== "undefined") {
-
-                      for (const [key, value] of Object.entries(currentCountry)) {
-
-                        if (restCountriesKeys.includes(key)) {
-
-                          if (key === "latlng" && (typeof worldLiveDatas[currentCountry.name]["All"]["lat"] === "undefined" && typeof worldLiveDatas[currentCountry.name]["All"]["long"] === "undefined")) {
-
-                            worldLiveDatas[currentCountry.name]["All"]["lat"] = currentCountry.latlng[0];
-                            worldLiveDatas[currentCountry.name]["All"]["long"] = currentCountry.latlng[1];
-
-                          } else if (key === "translations") {
-
-                            worldLiveDatas[currentCountry.name]["All"]["fr_name"] = value.fr;
-
-                          } else {
-
-                            worldLiveDatas[currentCountry.name]["All"][key] = value;
-
-                          }
-
-                        }
-
-                      }
-                    
-                    } else {
-
-                      //Trying to match worldLiveDatas country and restCountries country by abbreviation
-                      for (const keyValue of Object.entries(worldLiveDatas)) {
-
-                        if (keyValue[1].All.abbreviation === currentCountry.alpha2Code) {
-
-                          for (const [subKey, subValue] of Object.entries(currentCountry)) {
-
-                            if (restCountriesKeys.includes(subKey)) {
-
-                              if (subKey === "latlng" && (typeof keyValue[1]["All"]["lat"] === "undefined" && typeof keyValue[1]["All"]["long"] === "undefined")) {
-
-                                keyValue[1]["All"]["lat"] = subValue[0];
-                                keyValue[1]["All"]["long"] = subValue[1];
-
-                              } else if (subKey === "translations") {
-
-                                keyValue[1]["All"]["fr_name"] = subValue.fr;
-    
-                              } else {
-
-                                keyValue[1]["All"][subKey] = subValue;
-
-                              }
-
-                            }
-
-                          }
-
-                        }
-
-                      }
-
-                    }
-
-                  }
-
-                  commit("SET_WORLD_LIVE_DATAS", worldLiveDatas);
-                  commit("SET_WORLD_LIVE_DATAS_RECEIVED_CONFIRMATION");
-                  commit("SAVE_WORLD_LIVE_DATAS_TO_LOCAL_STORAGE");
-                  resolve(true);
-
-                })
-
-              })
-
-            })
-            
           })
-          .catch(() => {
+          .catch(error => {
+
             console.error("An error has occured while retrieving world datas.");
+            console.error(error);
             reject(false);
+
           });
 
         }
@@ -307,27 +180,16 @@ export default createStore({
 
       return new Promise((resolve, reject) => {
 
+        const vuexFunctionalities = new VuexFunctionalities();
+
         try {
-          
-          if (localStorage.getItem("weeklyEvolutionDatas")) {
 
-            const weeklyEvolutionDatas = JSON.parse(localStorage.getItem("weeklyEvolutionDatas"));
-            const wedCreationDate = weeklyEvolutionDatas.creation_date;
+          let localStorageDatas = vuexFunctionalities.doesLocalStorageDatasExists("weeklyEvolutionDatas");
 
-            if ((Date.now() - 21600000) < wedCreationDate) {
-
-              //Copy local storage datas in Vuex store
-              commit("SET_WEEKLY_EVOLUTION_DATAS", weeklyEvolutionDatas.datas);
-              commit("SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION");
-              resolve(true);
-  
-            } else {
-              throw "localStorageDatasOutaded";
-            }
-
-          } else {
-            throw "noLocalStorageDatas";
-          }
+          //Copy local storage datas in Vuex store
+          commit("SET_WEEKLY_EVOLUTION_DATAS", localStorageDatas.datas);
+          commit("SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION");
+          resolve(true);
 
         } catch {
 
@@ -339,23 +201,7 @@ export default createStore({
           .then(results => results.json())
           .then(results => {
 
-            results = results.allFranceDataByDate;
-            let franceWeekAgoDatas;
-
-            if (results.length === 0) {
-
-              for (let i = 0; i < results.length; i++) {
-
-                if (results[i].nom === "France") {
-                  franceWeekAgoDatas = results[i];
-                  break;
-                }
-  
-              }
-
-            } else {
-              franceWeekAgoDatas = FranceCovidDatas.weeklyEvolutionDatas;
-            }
+            let franceWeekAgoDatas = vuexFunctionalities.setWeeklyEvolutionDatas.sortOutWeeklyEvolutionDatas(results, FranceCovidDatas);
 
             commit("SET_WEEKLY_EVOLUTION_DATAS", franceWeekAgoDatas);
             commit("SET_WEEKLY_EVOLUTION_DATAS_RECEIVED_CONFIRMATION");
@@ -380,17 +226,17 @@ export default createStore({
         //If the action is called for the first time
         //Insert all in date datas in the worldLocationEvolutionDatas object
         commit("COPY_LOCAL_STORAGE_WORLD_LOCATION_EVOLUTION_DATAS");
-        //Vérifier si intègre copie global request creation date
 
-        let requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.setRequestParameters(params);
-        console.log(requestParameters);
-        requestParameters = VuexFunctionalities.worldLocationEvolutionDatas.filterNecessaryRequest(state.worldLocationEvolutionDatas, state.areWorldEvolutionDatasRequestsReceived, requestParameters);
+        const vuexFunctionalities = new VuexFunctionalities();
+
+        let requestParameters = vuexFunctionalities.setWorldLocationEvolutionDatas.setRequestParameters(params);
+        requestParameters = vuexFunctionalities.setWorldLocationEvolutionDatas.filterNecessaryRequest(state.worldLocationEvolutionDatas, state.areWorldEvolutionDatasRequestsReceived, requestParameters);
 
         if (requestParameters.urlStatusKeysValues.length === 0) {
           resolve(true);
         }
 
-        VuexFunctionalities.worldLocationEvolutionDatas.requestsManager(requestParameters)
+        vuexFunctionalities.setWorldLocationEvolutionDatas.requestsManager(requestParameters)
         .then(locationEvolutionDatas => {
 
           if (locationEvolutionDatas.isRequestSuccessful === true) {
@@ -430,27 +276,16 @@ export default createStore({
 
       return new Promise((resolve, reject) => {
 
+        const vuexFunctionalities = new VuexFunctionalities();
+
         try {
 
-          if (localStorage.getItem("departementsLiveDatas") !== null) {
+          let localStorageDatas = vuexFunctionalities.doesLocalStorageDatasExists("departementsLiveDatas");
 
-            const departementsLiveDatas = JSON.parse(localStorage.getItem("departementsLiveDatas"));
-            const dldCreationDate = departementsLiveDatas.creation_date;
-
-            if ((Date.now() - 21600000) < dldCreationDate) {
-  
-              //Copy local storage datas in Vuex store
-              commit("SET_DEPARTEMENTS_LIVE_DATAS", { datas: departementsLiveDatas.datas });
-              commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
-              resolve(true);
-  
-            } else {
-              throw "localStorageDatasOutaded";
-            }
-
-          } else {
-            throw "noLocalStorageDatas";
-          }
+          //Copy local storage datas in Vuex store
+          commit("SET_DEPARTEMENTS_LIVE_DATAS", { datas: localStorageDatas.datas });
+          commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
+          resolve(true);
 
         } catch (e) {
 
@@ -458,33 +293,12 @@ export default createStore({
           .then(response => response.json())
           .then(response => {
 
-              let departementsLiveDatas = {};
-              let datasArray = response.allLiveFranceData;
-              let datasCalculator = new DatasCalculator();
+            let departementsLiveDatas = vuexFunctionalities.setDepartementsLiveDatas.sortOutDepartementsLiveDatas(response, FranceCovidDatas);
 
-              if (datasArray.length === 0) {
-                datasArray = FranceCovidDatas.departementsLiveDatas.allLiveFranceData;
-              }
-
-              for (let i = 0; i < datasArray.length; i++) {
-
-                //We only want datas related to France departements (not France or 2015 new regions) that are created by Santé publique France Data
-                if (datasArray[i].sourceType !== "opencovid19-fr" && (datasArray[i].code !== "FRA" || datasArray[i].code.split("-")[0] !== "REG")) {
-
-                  departementsLiveDatas[datasArray[i].code] = {};
-
-                  for (const [key, value] of Object.entries(datasArray[i])) {
-                    departementsLiveDatas[datasArray[i].code][datasCalculator.translationFunctionalities.getTranslatedKeyFromFra(key)] = value;
-                  }
-
-                }
-
-              }
-
-              commit("SET_DEPARTEMENTS_LIVE_DATAS", { creation_date: Date.now(), datas: departementsLiveDatas });
-              commit("SAVE_DEPARTEMENTS_LIVE_DATAS_TO_LOCAL_STORAGE");
-              commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
-              resolve(true);
+            commit("SET_DEPARTEMENTS_LIVE_DATAS", { creation_date: Date.now(), datas: departementsLiveDatas });
+            commit("SAVE_DEPARTEMENTS_LIVE_DATAS_TO_LOCAL_STORAGE");
+            commit("SET_DEPARTEMENTS_LIVE_DATAS_RECEIVED_CONFIRMATION");
+            resolve(true);
 
           })
           .catch(() => {
@@ -531,7 +345,7 @@ export default createStore({
           .then(response => response.json())
           .then(response => {
   
-            response = response.allDataByDepartement;
+            /*response = response.allDataByDepartement;
 
             let departementEvolutionDatas = {
               creation_date: Date.now(),
@@ -640,9 +454,11 @@ export default createStore({
                 }
               }
 
-            }
+            }*/
 
-            console.log(departementEvolutionDatas);
+            const vuexFunctionalities = new VuexFunctionalities();
+
+            let departementEvolutionDatas = vuexFunctionalities.setFranceDepartementsEvolutionDatas.getDepartementEvolutionDatas(response);
 
             commit("SET_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS", { datas: departementEvolutionDatas, departementName: departementCodeName.code });
             commit("SAVE_FRANCE_DEPARTEMENTS_EVOLUTION_DATAS_TO_LOCAL_STORAGE");

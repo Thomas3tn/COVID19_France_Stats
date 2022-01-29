@@ -5,11 +5,11 @@
         </header>
         <div class="datasPanel__contentContainer relativeDatasPanel__contentParentContainer">
             <div class="relativeDatasPanel__contentChildContainer">
-                <stat-item :statName="translatedDisplayedDatatype + '/km²'" :statNumber="displayedDatas.statPerKms"></stat-item>
-                <stat-item :statName="translatedDisplayedDatatype + '/milliers d\'habs'" :statNumber="displayedDatas.statPerThousand"></stat-item>
+                <stat-item :statName="translatedDisplayedDatatype + '/km²'" :statNumber="displayedDatas.statPerKms" :dataType="'relativeDatas'"></stat-item>
+                <stat-item :statName="translatedDisplayedDatatype + '/milliers d\'habs'" :statNumber="displayedDatas.statPerThousand" :dataType="'relativeDatas'"></stat-item>
             </div>
             <div class="relativeDatasPanel__btnsContainer">
-                <button v-for="item in statusBtnsList" :key="item.idName" class="selectableStatus selectableStatus--verticalDisplay" :id="item.idName + 'RelativeDatasBtn'" @click="updateDisplayedDatatype" :value="item.idName" :title="item.dashboardName">
+                <button v-for="item in statusBtnsList" :key="item.idName" :class="'selectableStatus selectableStatus--verticalDisplay selectableStatus--' + item.idName + 'InactiveHover'" :id="item.idName + 'RelativeDatasBtn'" @click="updateDisplayedDatatype" :value="item.idName" :title="item.dashboardName">
                     <font-awesome-icon :icon="item.logo" aria-hidden="true"/>
                     <span class="screenreaderText">{{item.dashboardName}}</span>
                 </button>
@@ -20,9 +20,8 @@
 
 <script>
 import StatItem from "./SharedComponents/statItem.vue";
-import { computed, reactive, ref, watch, onMounted } from "vue";
+import { computed, reactive, ref, watch, onMounted, inject } from "vue";
 import DatasCalculator from "../../../../assets/JSClasses/DatasCalculator.js";
-import { faCross, faMale, faWalking, faProcedures, faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 
 export default {
     props: {
@@ -33,9 +32,8 @@ export default {
     },
     setup(props) {
 
-        console.log(props.relativeDatas);
-
         const datasCalculator = new DatasCalculator();
+        const dashboardIcons = inject("dashboardIcons", {});
         const defaultValue = "N/A";
 
         //Current datatype displayed
@@ -67,32 +65,7 @@ export default {
                 statusBtnsList[key] = {};
                 statusBtnsList[key]["idName"] = key;
                 statusBtnsList[key]["dashboardName"] = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(key);
-
-                switch (key) {
-                    case "confirmed":
-                        statusBtnsList[key]["logo"] = faMale;
-                        break;
-
-                    case "deaths":
-                        statusBtnsList[key]["logo"] = faCross;
-                        break;
-
-                    case "recovered":
-                        statusBtnsList[key]["logo"] = faWalking;
-                        break;
-
-                    case "hospitalizations":
-                        statusBtnsList[key]["logo"] = faHospitalUser;
-                        break;
-
-                    case "intensive_care":
-                        statusBtnsList[key]["logo"] = faProcedures;
-                        break;
-                
-                    default:
-                        statusBtnsList[key]["logo"] = "";
-                        break;
-                }
+                statusBtnsList[key]["logo"] = dashboardIcons.status[key];
 
                 datas[key] = {};
                 typeof props.relativeDatas.sq_km_area !== "undefined" ? datas[key]["statPerKms"] = computed(() => datasCalculator.numberFunctionalities.roundFloatNumber(value / props.relativeDatas.sq_km_area)) : datas[key]["statPerKms"] = defaultValue;
@@ -121,7 +94,7 @@ export default {
                     let statusBtns = Array.from(document.querySelectorAll(".relativeDatasPanel__btnsContainer button"));
 
                     for (let i = 0; i < statusBtns.length; i++) {
-                        statusBtns[i].className = "selectableStatus selectableStatus--verticalDisplay selectableStatus--inactive";
+                        statusBtns[i].className = "selectableStatus selectableStatus--verticalDisplay selectableStatus--inactive selectableStatus--" + statusBtns[i].id.match(/^[a-z]*/) + "InactiveHover";
                     }
 
 
@@ -132,9 +105,9 @@ export default {
 
                         for (let i = 0; i < newActiveStatusClasses.length; i++) {
 
-                            if (newActiveStatusClasses[i] === "selectableStatus--inactive") {
+                            if (newActiveStatusClasses[i] === "selectableStatus--inactive" || newActiveStatusClasses[i].match(/InactiveHover/)) {
                                 newActiveStatusClasses.splice(i, 1);
-                                break;
+                                i--;
                             }
 
                         }

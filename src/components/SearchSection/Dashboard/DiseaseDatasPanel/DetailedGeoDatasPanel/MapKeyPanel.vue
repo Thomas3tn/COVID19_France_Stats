@@ -100,6 +100,7 @@ export default {
     margin: 1rem 0;
     &:hover {
         transform: translate(0%, -50%);
+        cursor: help;
     }
     @media (min-width: 768px) {
         margin: 0;

@@ -164,7 +164,7 @@ export default class DashboardDatasCreator {
         console.log(continent, datas, worldLiveDatas, continentsStaticDatas);
 
         const locationDatasAuthKeys = {
-            locationInfos: ["country", "population", "sq_km_area", "gini"],
+            locationInfos: ["fr_name", "population", "sq_km_area", "gini", "country"],
             currentSituation: ["confirmed", "deaths", "recovered", "people_vaccinated"],
             vaccinationDatas: ["population", "administered", "people_vaccinated", "people_partially_vaccinated"],
             relativeDatas: ["confirmed", "deaths", "recovered", "population", "sq_km_area"]
@@ -173,12 +173,14 @@ export default class DashboardDatasCreator {
         datas.locationInfos = continentsStaticDatas[continent.toLowerCase().split(" ").join("_")];
         datas.diseaseDatas.country = continent;
 
+        if (Object.entries(datas.diseaseDatas.regionsDatas).length > 0) {
+            datas.diseaseDatas.regionsDatas = {};
+        }
+
         //Iterate over each country in world live datas
         for (const worldLiveDatasKeyValue of Object.entries(worldLiveDatas)) {
 
             if (worldLiveDatasKeyValue[1].All.continent === continent) {
-
-                console.log(worldLiveDatasKeyValue[1].All.country);
 
                 datas.diseaseDatas.regionsDatas[worldLiveDatasKeyValue[0]] = worldLiveDatasKeyValue[1].All;
 
@@ -230,9 +232,9 @@ export default class DashboardDatasCreator {
                             if (typeof datas[key] !== "undefined") {
 
                                 //If current property has to be into an array
-                                if (currentCountryKey === "country" || currentCountryKey === "gini") {
+                                if (currentCountryKey === "fr_name" || currentCountryKey === "gini") {
 
-                                    if (currentCountryKey === "country") {
+                                    if (currentCountryKey === "fr_name") {
                                         typeof datas.locationInfos.countriesList === "undefined" ? datas.locationInfos.countriesList = [currentCountryValue] : datas.locationInfos.countriesList.push(currentCountryValue);
                                     } else {
                                         typeof datas[key][currentCountryKey] === "undefined" ? datas[key][currentCountryKey] = [currentCountryValue] : datas[key][currentCountryKey].push(currentCountryValue);

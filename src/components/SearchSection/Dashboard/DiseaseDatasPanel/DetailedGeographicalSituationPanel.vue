@@ -27,7 +27,7 @@
             <form class="detailedGeoDatasForm" @submit.prevent>
                 <div class="detailedGeoDatasForm__mapInputs">
                     <div class="detailedGeoDatasForm__datatypeContainer">
-                        <label for="datasTypeDetailMapInput"><i class="far fa-list-alt datasPanelForm__logoLabel" aria-hidden="true"></i><span class="screenreaderText">Type de données</span></label>
+                        <label for="datasTypeDetailMapInput"><font-awesome-icon :icon="dashboardIcons.form.datatype" aria-hidden="true" class="datasPanelForm__logoLabel"/><span class="screenreaderText">Type de données</span></label>
                         <select v-model="formCriteria.displayedDatastype" class="datasPanelForm__input datasPanelForm__inputPart" id="datasTypeDetailMapInput">
                             <option value="relativeDatas">Données relatives</option>
                             <option value="rawDatas">Données brutes</option>
@@ -41,12 +41,12 @@
                             </template>
                             <template v-else>
                                 <input type="radio" @click="changeDisplayedDatas" class="detailedGeoDatasForm__radioInput" :id="item.idName + '_DetailedMapInput'" name="displayedStatus" :value="item.idName" :title="item.dashboardName" aria-pressed="false"/>
-                                <label :for="item.idName + '_DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" class="selectableStatus selectableStatus--horizontalDisplay" :title="item.dashboardName" @keyup="onKeyboardInput" tabindex="0" role="button"><font-awesome-icon :icon="item.logo" aria-hidden="true"/><span class="screenreaderText">{{ item.dashboardName }}</span></label>
+                                <label :for="item.idName + '_DetailedMapInput'" :id="item.idName + 'DetailedMapLabel'" :class="'selectableStatus selectableStatus--horizontalDisplay selectableStatus--' + item.idName + 'InactiveHover'" :title="item.dashboardName" @keyup="onKeyboardInput" tabindex="0" role="button"><font-awesome-icon :icon="item.logo" aria-hidden="true"/><span class="screenreaderText">{{ item.dashboardName }}</span></label>
                             </template>
                         </template>
                     </div>
                 </div>
-                <button @click="isDetailedChartListDisplayed = !isDetailedChartListDisplayed" id="detailedGeoDatasPanelToggleContentBtn" class="detailedGeoDatasForm__contentToggleBtn" title="Alterner carte/liste"><font-awesome-icon :icon="faList" aria-hidden="true"/><span class="screenreaderText">Altérner affichage carte/liste des régions</span></button>
+                <button @click="isDetailedChartListDisplayed = !isDetailedChartListDisplayed" id="detailedGeoDatasPanelToggleContentBtn" class="detailedGeoDatasForm__contentToggleBtn" title="Alterner carte/liste"><font-awesome-icon :icon="dashboardIcons.form.data_list" aria-hidden="true"/><span class="screenreaderText">Altérner affichage carte/liste des régions</span></button>
             </form>
         </div>
     </div>
@@ -74,8 +74,6 @@ import AsiaMap from "./DetailedGeoDatasPanel/DetailedGeoDatasPanelMaps/Continent
 import OceniaMap from "./DetailedGeoDatasPanel/DetailedGeoDatasPanelMaps/Continent/OceniaMap.vue";
 import WorldMap from "./DetailedGeoDatasPanel/DetailedGeoDatasPanelMaps/WorldMap.vue";
 
-import { faCross, faMale, faWalking, faProcedures, faHospitalUser, faList } from "@fortawesome/free-solid-svg-icons";
-
 //JS Class
 import DatasCalculator from "../../../../assets/JSClasses/DatasCalculator.js";
 
@@ -88,7 +86,7 @@ export default {
         },
         locationRegionsDatas: {
             type: Object,
-            required: false
+            required: true
         }
     },
     setup(props) {
@@ -97,6 +95,7 @@ export default {
 
         const datasCalculator = new DatasCalculator();
         const chartStatusKey = inject("chartStatusKey", {});
+        const dashboardIcons = inject("dashboardIcons", {});
 
         //Form
         let formCriteria = reactive({
@@ -258,7 +257,7 @@ export default {
         function setDetailedMap(displayedDatastype, displayedDatas, locationDatas, mapKeys) {
 
             let mapPaths = document.querySelectorAll("#currentSituationMap svg a");
-            console.log(displayedDatastype, displayedDatas, locationDatas, mapKeys);
+            console.log(mapPaths.length);
 
             //Check if country/continent is equal to 0
             //In that case each province/country data is add to the displayedDatasTotal variable
@@ -286,6 +285,8 @@ export default {
 
             for (let i = 0; i < mapPaths.length; i++) {
 
+                //console.log(locationDatas[mapPaths[i].id]);
+
                 if (typeof locationDatas[mapPaths[i].id] !== "undefined") {
 
                     let currentRegionData;
@@ -295,13 +296,16 @@ export default {
                         displayedDatastype === "relativeDatas" ? currentRegionData = 100 * (locationDatas[mapPaths[i].id][displayedDatas] / displayedDatasTotal) : currentRegionData = locationDatas[mapPaths[i].id][displayedDatas];
                     }
 
+                    //console.log(currentRegionData);
+
                     for (const keyValue of Object.entries(mapKeys[displayedDatastype])) {
 
                         if (currentRegionData >= keyValue[1].min && currentRegionData <= keyValue[1].max) {
-
+                            
                             let currentMapPathChildren = mapPaths[i].children;
                             for (let a = 0; a < currentMapPathChildren.length; a++) {
                                 currentMapPathChildren[a].setAttribute("style", "fill: " + keyValue[1].color);
+                                console.log(currentMapPathChildren[a].style);
                             }
 
                         }
@@ -323,8 +327,6 @@ export default {
         }
 
         function highlightRegions(color) {
-
-            console.log(color);
 
             let mapPaths = document.querySelectorAll("#currentSituationMap svg a");
 
@@ -373,7 +375,7 @@ export default {
 
         if (props.displayedCountry === "Global") {
 
-            currentStatusKeys = [{idName: "confirmed", dashboardName: "Cas confirmés", logo: faMale}, {idName: "deaths", dashboardName: "Décès", logo: faCross}, {idName: "recovered", dashboardName: "Guéris", logo: faWalking}];
+            currentStatusKeys = [{idName: "confirmed", dashboardName: "Cas confirmés", logo: dashboardIcons.status.confirmed}, {idName: "deaths", dashboardName: "Décès", logo: dashboardIcons.status.deaths}, {idName: "recovered", dashboardName: "Guéris", logo: dashboardIcons.status.recovered}];
 
         } else {
 
@@ -384,32 +386,7 @@ export default {
                     let currentStatus = {};
                     currentStatus.idName = keyValue[0],
                     currentStatus.dashboardName = datasCalculator.translationFunctionalities.getTranslatedKeyFromEng(keyValue[0]);
-
-                    switch (keyValue[0]) {
-                        case "confirmed":
-                            currentStatus["logo"] = faMale;
-                            break;
-
-                        case "deaths":
-                            currentStatus["logo"] = faCross;
-                            break;
-
-                        case "recovered":
-                            currentStatus["logo"] = faWalking;
-                            break;
-
-                        case "hospitalizations":
-                            currentStatus["logo"] = faHospitalUser;
-                            break;
-
-                        case "intensive_care":
-                            currentStatus["logo"] = faProcedures;
-                            break;
-                    
-                        default:
-                            currentStatus["logo"] = "";
-                            break;
-                    }
+                    currentStatus.logo = dashboardIcons.status[keyValue[0]];
 
                     currentStatusKeys.push(currentStatus);
 
@@ -450,11 +427,9 @@ export default {
 
         watch(() => { return { ...formCriteria }}, ((newValue, oldValue) => {
 
-            console.log(oldValue, newValue);
-
             displayedDatas.value = newValue.displayedStatus;
 
-            //Update mapKeys values
+            //Update mapKeys values if datatype has changed (mapKeys are not the same)
             if ((newValue.displayedDatastype === "rawDatas" && oldValue.displayedDatastype !== "rawDatas")) {
 
                 for (const [key, value] of Object.entries(mapKeys[newValue.displayedDatastype])) {
@@ -466,30 +441,31 @@ export default {
 
             }
 
-            //Update mapKeys color to the new status
+            //Update mapKeys object color properties to the new status
             for (const [key, value] of Object.entries(mapKeys[newValue.displayedDatastype])) {
                 value.color = chartStatusKey.statusGradient[displayedDatas.value][key.split("")[key.split("").length - 1]];
             }
 
             setDetailedMap(newValue.displayedDatastype, newValue.displayedStatus, props.locationRegionsDatas, mapKeys);
 
+            //Styles status buttons according to form new state
             let statusLabels = document.querySelectorAll(".detailedGeoDatasForm__statusContainer label");
 
             for (let i = 0; i < statusLabels.length; i++) {
-                statusLabels[i].className = "selectableStatus selectableStatus--horizontalDisplay selectableStatus--inactive";
+                statusLabels[i].className = "selectableStatus selectableStatus--horizontalDisplay selectableStatus--inactive selectableStatus--" + statusLabels[i].id.match(/^[a-z]*/)[0] + "InactiveHover";
                 statusLabels[i].setAttribute("aria-pressed", "false");
             }
 
             let newActiveStatus = document.getElementById(newValue.displayedStatus + "DetailedMapLabel");
-            if (newActiveStatus.className.split(" ").includes("selectableStatus--inactive")) {
+            if (newActiveStatus.className.split(" ").includes("selectableStatus--inactive") || newActiveStatus.className.match(/InactiveHover/)) {
 
                 let newActiveStatusClasses = newActiveStatus.className.split(" ");
 
                 for (let i = 0; i < newActiveStatusClasses.length; i++) {
 
-                    if (newActiveStatusClasses[i] === "selectableStatus--inactive") {
+                    if (newActiveStatusClasses[i] === "selectableStatus--inactive" || newActiveStatusClasses[i].match(/InactiveHover/)) {
                         newActiveStatusClasses.splice(i, 1);
-                        break;
+                        i--;
                     }
 
                 }
@@ -564,12 +540,11 @@ export default {
             formCriteria,
             isDetailedChartListDisplayed,
             mapKeys,
-            faList,
             highlightRegions,
             removeRegionsHighlight,
             onKeyboardInput,
-            mapKeysRawDatasValues
-
+            mapKeysRawDatasValues,
+            dashboardIcons
         }
 
     },

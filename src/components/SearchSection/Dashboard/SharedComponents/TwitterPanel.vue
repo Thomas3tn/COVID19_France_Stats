@@ -24,7 +24,7 @@ export default {
                 url = "https://twitter.com/Covid_infoFR"
                 break;
 
-            case "United Stats":
+            case "United States":
                 url = "https://twitter.com/WHCOVIDResponse";
                 break;
 
@@ -114,12 +114,6 @@ export default {
         &--colored {
             background-color: red;
         }
-    }
-    &__chevronLogo {
-        /*margin-right: 0.5rem;
-        border: 2px solid black;
-        border-radius: 5px;
-        padding: 0.3rem;*/
     }
     &__feedContainer {
         overflow: auto;

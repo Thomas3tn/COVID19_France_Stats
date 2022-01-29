@@ -10,7 +10,7 @@
                     <button @click="displayedDatatype = 'customPeriodDatas'" id="customPeriodDatasEvoBtn" class="weeklyDailyDatasPanel__btn" :title="customPeriodBtnContent"><h3 class="datasPanel__header">{{ customPeriodBtnContent }}</h3></button>
                 </template>
             </header>
-            <button id="customPeriodFormToggleBtn" title="Ajouter période personnalisée" class="datasPanel__toggleFormBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><i class="far fa-calendar-plus"></i></button>
+            <button id="customPeriodFormToggleBtn" title="Ajouter période personnalisée" class="datasPanel__toggleFormBtn" @click="isCustomPeriodFormDisplayed = !isCustomPeriodFormDisplayed"><font-awesome-icon :icon="dashboardIcons.form.add_custom_period" aria-hidden="true"/><span class="screenreaderText">Ajouter une période personnalisée</span></button>
         </div>
         <div class="datasPanel__contentContainer weeklyDailyDatasPanel__contentContainer">
             <template v-for="item in datas[displayedDatatype]" :key="item.dataName">
@@ -18,20 +18,20 @@
             </template>
             <form @submit.prevent="customPeriodSubmission" id="customPeriodForm" class="weeklyDailyDatasPanel__customPeriodForm weeklyDailyDatasPanel__customPeriodForm--hidden" aria-hidden="true">
                 <div class="datasPanelForm__inputContainer">
-                    <i class="fas fa-hourglass-start datasPanelForm__logoLabel"></i>
+                    <font-awesome-icon :icon="dashboardIcons.form.start_date" aria-hidden="true" class="datasPanelForm__logoLabel"/>
                     <div class="datasPanelForm__inputPart">
                         <label for="wdpStartDate" class="datasPanelForm__label">Date de début <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.startDate">?</abbr></label>
                         <input type="date" placeholder="Ex: 24/05/2021" class="datasPanelForm__input" id="wdpStartDate" v-model="customPeriodDates.startDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate" required aria-required="true"/>
                     </div>
                 </div>
                 <div class="datasPanelForm__inputContainer">
-                    <i class="fas fa-hourglass-end datasPanelForm__logoLabel"></i>
+                    <font-awesome-icon :icon="dashboardIcons.form.end_date" aria-hidden="true" class="datasPanelForm__logoLabel"/>
                     <div class="datasPanelForm__inputPart">
                         <label for="wdpEndDate" class="datasPanelForm__label">Date de fin <abbr :title="'Si non renseignée, cette date est fixée au ' + customPeriodDatesLimit.endDate">?</abbr></label>
                         <input type="date" placeholder="Ex: 05/09/2020" class="datasPanelForm__input" id="wdpEndDate" v-model="customPeriodDates.endDate" :min="customPeriodDatesLimit.startDate" :max="customPeriodDatesLimit.endDate" required aria-required="true"/>
                     </div>
                 </div>
-                <button type="submit" title="Valider la période personnalisée" class="selectableStatus"><i class="fas fa-search" aria-hidden="true"></i><span class="screenreaderText">Valider la période personnalisée</span></button>
+                <button type="submit" title="Valider la période personnalisée" class="selectableStatus"><font-awesome-icon :icon="dashboardIcons.form.search" aria-hidden="true"/><span class="screenreaderText">Valider la période personnalisée</span></button>
             </form>
         </div>
     </div>
@@ -39,7 +39,7 @@
 
 <script>
 import StatItem from "./SharedComponents/statItem.vue";
-import { ref, reactive, watch, computed, onMounted } from "vue";
+import { ref, reactive, watch, computed, onMounted, inject } from "vue";
 
 import DatasCalculator from "../../../../assets/JSClasses/DatasCalculator.js";
 
@@ -59,6 +59,7 @@ export default {
         console.log(props.locationEvolutionDatas, props.locationType);
 
         let datasCalculator = new DatasCalculator();
+        const dashboardIcons = inject("dashboardIcons", {});
 
         let isCustomPeriodFormDisplayed = ref(false);
         let hasCustomPeriodBeenSubmitted = ref(false);
@@ -364,7 +365,8 @@ export default {
             customPeriodBtnContent,
             hasCustomPeriodBeenSubmitted,
             isCustomPeriodFormDisplayed,
-            customPeriodDatesLimit
+            customPeriodDatesLimit,
+            dashboardIcons
         }
 
     },

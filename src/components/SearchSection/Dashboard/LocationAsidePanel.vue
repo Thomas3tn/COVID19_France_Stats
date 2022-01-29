@@ -1,6 +1,6 @@
 <template>
     <aside v-if="currentlyDisplayed === true" class="locationDetails">
-        <button class="locationDetails__toggleDisplayBtn" title="Cacher les détails de la localisation" @click="test"><i class="fas fa-chevron-left" aria-hidden="true"></i><span class="screenreaderText">Cacher les détails de la localisation</span></button>
+        <button class="locationDetails__toggleDisplayBtn" title="Cacher les détails de la localisation" @click="toggleLocationAsidePanelDisplay"><i class="fas fa-chevron-left" aria-hidden="true"></i><span class="screenreaderText">Cacher les détails de la localisation</span></button>
         <header class="locationDetails__locationName">
             <img v-if="locationLogo !== '' && isLocationLogoUrlValid === true" :src="locationLogo" :title="locationInfos.nom || locationInfos.fr_name" :alt="locationLogoAltTag" @error="onLocationLogoError">
             <font-awesome-icon v-if="isLocationLogoUrlValid === false || locationLogo === ''" :icon="defaultLocationLogo" class="locationDetails__defaultLogo"/>
@@ -18,7 +18,7 @@
             >
                 <Marker :options="{ position: {lat: parseInt(locationInfos.lat, 10), lng: parseInt(locationInfos.long, 10)}}" />
             </GoogleMap>
-        <dropdown-element :detailsElementId="'locationDetails'" :openByDefault="true">
+        <dropdown-element :detailsElementId="'locationDetails'" :openByDefault="true" :activeClassName="'active'" :inactiveClassName="'inactive'">
             <template v-slot:header>
                 <div><i class="far fa-compass" aria-hidden="true"></i><h3> Aperçu</h3></div>
             </template>
@@ -37,13 +37,19 @@
 
                 <li>Gentilé: {{ locationInfos.demonym }}</li>
 
-                <li v-if="locationType === 'continent'">Pays: {{ countriesList }} ({{ countriesTotalNumber }})</li>
+                <li v-if="locationType === 'continent'">Pays: 
+                    <template v-if="isCountriesListDisplayed === true">{{ countriesList.entireList }}</template>
+                    <template v-else>{{ countriesList.listExtract }}</template>
+                    <button v-if="isCountriesListDisplayed === false" class="locationDetails__listBtn"  @click="isCountriesListDisplayed = !isCountriesListDisplayed" title="Voir la liste complète">...</button>
+                    ({{ countriesTotalNumber }})
+                    <button v-if="isCountriesListDisplayed === true" class="locationDetails__listBtn" @click="isCountriesListDisplayed = !isCountriesListDisplayed" title="Réduire la liste"><i class="fas fa-caret-left"></i></button>
+                </li>
 
                 </ul>
                 <ul class="locationDetails__list">
                     <li>Population: {{ formattedPopulation }} habs</li>
                     <li>Espérance de vie: {{ locationInfos.life_expectancy }} ans</li>
-                    <li v-if="locationType === 'country' || locationType === 'continent'">Indice <abbr title="L'indice de GINI mesure l'inégalité des revenus d'un pays, allant de 0 (égalité parfaite) à 100 (inégalité parfaite).">GINI</abbr>: {{ locationInfos.gini}}</li>
+                    <li v-if="locationType === 'country' || locationType === 'continent'">Indice <abbr title="L'indice de GINI mesure l'inégalité des revenus d'un pays, allant de 0 (égalité parfaite) à 100 (inégalité parfaite).">GINI</abbr>: {{ formattedGini }}</li>
                 </ul>
                 <ul class="locationDetails__list" v-if="locationType === 'country' && formattedUpdateDateDatas !== ''">
                     <li>Dernière mise à jour: {{ formattedUpdateDateDatas }}</li>
@@ -67,8 +73,8 @@
 <script>
 //Vue Components
 import { GoogleMap, Marker } from "vue3-google-map";
-import TwitterPanel from "./LocationAsidePanel/TwitterPanel.vue";
-import DropdownElement from "./LocationAsidePanel/DropdownElement.vue";
+import TwitterPanel from "./SharedComponents/TwitterPanel.vue";
+import DropdownElement from "../../SharedComponents/DropdownElement.vue";
 
 //Vue Elements
 import { computed, ref } from "vue";
@@ -174,6 +180,17 @@ export default {
 
         let formattedSurfaceArea = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.locationInfos.sq_km_area));
         let formattedPopulation = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.locationInfos.population));
+        let formattedGini = computed(() => {
+
+            if (props.locationType === "country" || props.locationType === "continent") {
+                return datasCalculator.numberFunctionalities.roundFloatNumber(props.locationInfos.gini);
+            } else {
+                return "";
+            }
+
+        })
+
+        let isCountriesListDisplayed = ref(false);
 
         let countriesTotalNumber = computed(() => {
 
@@ -188,18 +205,29 @@ export default {
 
             if (props.locationType === "continent") {
 
-                let currentCountryList = "";
+                let currentCountryList = {
+                    entireList: "",
+                    listExtract: ""
+                };
 
                 for (let i = 0; i < props.locationInfos.countriesList.length; i++) {
+
                     let currentCountry = " " + props.locationInfos.countriesList[i];
-                    if (props.locationInfos.countriesList[i + 1] !== "undefined") {
+                    if (i !== (props.locationInfos.countriesList.length - 1)) {
                         currentCountry += ",";
                     }
-                    currentCountryList += currentCountry;
+                    
+                    currentCountryList.entireList += currentCountry;
+
+                    if (i < 2) {
+                        currentCountryList.listExtract += currentCountry;
+                    } else if (i === 2) {
+                        currentCountryList.listExtract += currentCountry.split("").slice(0, currentCountry.split("").length - 1).join("");
+                    }
+
                 }
 
                 return currentCountryList;
-
 
             } else {
                 return "";
@@ -252,9 +280,8 @@ export default {
             isLocationLogoUrlValid.value = false;
         }
 
-        function test() {
+        function toggleLocationAsidePanelDisplay() {
             context.emit("toggle-location-panel-display");
-
         }
 
         //Add Google Map script tag
@@ -275,7 +302,9 @@ export default {
             isLocationLogoUrlValid,
             defaultLocationLogo,
             formattedDepartementCode,
-            test,
+            toggleLocationAsidePanelDisplay,
+            isCountriesListDisplayed,
+            formattedGini
         }
 
     },
@@ -316,6 +345,10 @@ $locationDetailsPadding: calc(max(1rem, 1vw));
     }
     h3 {
         font-size: clamp(1.5rem, 1.5vw, 2.7rem);
+    }
+    summary:hover {
+        color: $dashboard-selection;
+        transition: all 300ms;
     }
     &__toggleDisplayBtn {
         z-index: -1;
@@ -397,5 +430,20 @@ $locationDetailsPadding: calc(max(1rem, 1vw));
             }
         }
     }
+    &__listBtn {
+        border: none;
+        background-color: inherit;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+.active {
+    color: lightblue;
+}
+
+.inactive {
+    color: black;
 }
 </style>

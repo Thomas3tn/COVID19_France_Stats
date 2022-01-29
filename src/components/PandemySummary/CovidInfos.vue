@@ -27,7 +27,7 @@
 
 <script>
 import CovidInfoCard from "./CovidInfos/CovidInfoCard.vue";
-import DropdownElement from "../SearchSection/Dashboard/LocationAsidePanel/DropdownElement.vue";
+import DropdownElement from "../SharedComponents/DropdownElement.vue";
 
 export default {
     setup() {

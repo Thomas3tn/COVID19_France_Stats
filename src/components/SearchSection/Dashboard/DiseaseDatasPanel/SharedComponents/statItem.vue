@@ -1,6 +1,6 @@
 <template>
     <div class="statContainer">
-		<font-awesome-icon :icon="logo" class="statContainer__statusLogo"/>
+		<font-awesome-icon v-if="logo !== ''" :icon="logo" class="statContainer__statusLogo"/>
         <div class="statContainer__statPart">
 			<div class="statContainer__numberContainer">
 				<p class="statContainer__number" id="confCasesStat">{{ number }}</p>
@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { faCross, faHospitalUser, faMale, faMapMarkedAlt, faProcedures, faSyringe, faUsers, faWalking, faAngleDoubleUp, faChevronDown, faGripLines } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleUp, faChevronDown, faGripLines } from "@fortawesome/free-solid-svg-icons";
 import DatasCalculator from "../../../../../assets/JSClasses/DatasCalculator.js";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 
 export default {
 	props: {
@@ -28,62 +28,33 @@ export default {
 			required: false,
 			default: "N/A"
         },
+		//dataType can be status (rawDatas), evolutionDatas or relativeDatas
 		dataType: {
 			type: String,
 			required: false,
-			default: "currentDatas"
+			default: "status"
 		}
     },
 	setup(props) {
 
 		const datasCalculator = new DatasCalculator();
+		const dashboardIcons = inject("dashboardIcons", {});
 
-		let logo;
-		switch (props.statName) {
-			case "Cas confirmés":
-				logo = faMale;
-				break;
+		let logo = computed(() => {
 
-			case "Guéris":
-				logo = faWalking;
-				break;
+			if (typeof dashboardIcons !== "undefined") {
 
-			case "Décès":
-				logo = faCross;
-				break;
+				if (props.dataType === "relativeDatas") {
+					return dashboardIcons[props.dataType][datasCalculator.translationFunctionalities.getTranslatedKeyFromFra(datasCalculator.textFunctionalities.formatStatusLogosPropName(props.statName.split("/")[1]))];
+				} else {
+					return dashboardIcons.status[datasCalculator.translationFunctionalities.getTranslatedKeyFromFra(datasCalculator.textFunctionalities.formatStatusLogosPropName(props.statName))];
+				}
 
-			case "Personnes vaccinées":
-				logo = faSyringe;
-				break;
+			} else {
+				return "";
+			}
 
-			case "Hospitalisations":
-				logo = faHospitalUser;
-				break;
-
-			case "Réanimations":
-				logo = faProcedures;
-				break;
-
-			case "Cas confirmés/milliers d'habs":
-			case "Guéris/milliers d'habs":
-			case "Décès/milliers d'habs":
-			case "Hospitalisations/milliers d'habs":
-			case "Réanimations/milliers d'habs":
-				logo = faUsers;
-				break;
-
-			case "Cas confirmés/km²":
-			case "Guéris/km²":
-			case "Décès/km²":
-			case "Hospitalisations/km²":
-			case "Réanimations/km²":
-				logo = faMapMarkedAlt;
-				break;
-
-			default:
-				logo = faMale;
-				break;
-		}
+		});
 
 		let number = computed(() => datasCalculator.numberFunctionalities.formatNumber(props.statNumber));
 		let formattedDataName = computed(() => {

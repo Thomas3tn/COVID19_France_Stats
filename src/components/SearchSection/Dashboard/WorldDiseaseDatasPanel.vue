@@ -4,7 +4,10 @@
         <detailed-geo-datas-panel :locationRegionsDatas="diseaseDatas.regionsDatas" :displayedCountry="diseaseDatas.country"></detailed-geo-datas-panel>
         <relative-datas-panel :relativeDatas="diseaseDatas.relativeDatas"></relative-datas-panel>
         <div class="diseaseDatasPanel__vaccRelDatasContainer">
-            <vaccination-chart :vaccinationDatas="diseaseDatas.vaccinationDatas"></vaccination-chart>
+            <div class="test">
+                <vaccination-chart :vaccinationDatas="diseaseDatas.vaccinationDatas"></vaccination-chart>
+                <regions-proportional-datas-panel :locationRegionsDatas="diseaseDatas.regionsDatas"></regions-proportional-datas-panel>
+            </div>
             <twitter-panel></twitter-panel>
         </div>
         <weekly-daily-datas-panel :locationEvolutionDatas="diseaseDatas.evolutionDatas" :locationType="'global'"></weekly-daily-datas-panel>
@@ -20,6 +23,7 @@ import VaccinationChart from "./DiseaseDatasPanel/VaccinationPanel.vue";
 import TwitterPanel from "./DiseaseDatasPanel/TwitterPanelGlobal.vue";
 import LocationEvolutionGraph from "./DiseaseDatasPanel/EvolutionPanel.vue";
 import RelativeDatasPanel from "./DiseaseDatasPanel/RelativeDatasPanel.vue";
+import RegionsProportionalDatasPanel from "./DiseaseDatasPanel/RegionsProportionalDatasPanel.vue";
 
 export default {
     props: {
@@ -35,7 +39,8 @@ export default {
         VaccinationChart,
         TwitterPanel,
         LocationEvolutionGraph,
-        RelativeDatasPanel
+        RelativeDatasPanel,
+        RegionsProportionalDatasPanel
     }
 }
 </script>

@@ -62,6 +62,14 @@ export default {
 
             let currentKey = "";
             switch (key) {
+                case "personnes_vaccinees":
+                    currentKey = "people_vaccinated";
+                    break;
+
+                case "cas_confirmes":
+                    currentKey = "confirmed";
+                    break;
+
                 case "deces":
                     currentKey = "deaths";
                     break;
@@ -84,6 +92,14 @@ export default {
                 
                 case "nouvellesReanimations":
                     currentKey = "new_intensive_care";
+                    break;
+
+                case "milliers_d_habs":
+                    currentKey = "thousands_of_habs";
+                    break;
+
+                case "km2":
+                    currentKey = "km2";
                     break;
             
                 default:

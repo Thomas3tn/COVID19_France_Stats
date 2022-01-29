@@ -1,15 +1,17 @@
 <template>
-    <div class="datasPanel">
+    <div class="datasPanel globalTwitterPanel">
         <div class="datasPanel__headerContainer">
             <h3 class="datasPanel__header">Dernières actualités mondiales</h3>
         </div>
-        <div class="datasPanel__contentContainer twitterPanelGlobal__feedContainer">
-            <a class="twitter-timeline" href="https://twitter.com/COVID_19_Latest" data-chrome="noscrollbar noheader nofooter noborders">>A Twitter List by TwitterDev</a>
+        <div class="globalTwitterPanel__feedContainer">
+            <twitter-feed></twitter-feed>
         </div>
     </div>
 </template>
 
 <script>
+import TwitterFeed from "../SharedComponents/TwitterPanel.vue";
+
 export default {
     setup() {
 
@@ -18,17 +20,15 @@ export default {
         mapInit.setAttribute("charset", "utf-8");
         document.head.appendChild(mapInit);
 
+    },
+    components: {
+        TwitterFeed
     }
 }
 </script>
 
 <style lang="scss">
-.twitterPanelGlobal {
-    &__feedContainer {
-        overflow: hidden;
-        height: 536px;
-        overflow-y: auto;
-        margin: 2rem 1rem
-    }
+.globalTwitterPanel > div:last-child {
+    margin-top: 1rem;
 }
 </style>

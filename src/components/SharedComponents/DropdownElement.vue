@@ -12,6 +12,8 @@
 //Vue Element
 import { ref, watch, onMounted } from "vue";
 
+import DatasCalculator from "../../assets/JSClasses/DatasCalculator.js";
+
 export default {
     props: {
         detailsElementId: {
@@ -22,16 +24,28 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        },
+        activeClassName: {
+            type: String,
+            required: false,
+            default: ""
+        },
+        inactiveClassName: {
+            type: String,
+            required: false,
+            default: ""
         }
     },
     setup(props) {
 
         let isContentDisplayed = ref(false);
 
+        const datasCalculator = new DatasCalculator();
+
         watch(() => isContentDisplayed.value, newValue => {
 
+            //Update chevron position
             let chevronClasses = document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.lastElementChild.className;
-            console.log(chevronClasses);
             let chevronClassesArray = chevronClasses.split(" ");
 
             for (let i = 0; i < chevronClassesArray.length; i++) {
@@ -46,12 +60,24 @@ export default {
             newValue === true ? chevronClassesArray.push("chevronNormalPosition") : chevronClassesArray.push("chevronUpsideDown");
             document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.lastElementChild.className = chevronClassesArray.join(" ");
 
+            //Add summary tag active/inactive className
+            if (props.activeClassName !== "" || props.inactiveClassName !== "") {
+
+                let summaryElementClass = document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.className;
+                newValue === true ? summaryElementClass = datasCalculator.textFunctionalities.updateClassName(summaryElementClass, {newClassNames: props.activeClassName, oldClassNames: props.inactiveClassName}) : summaryElementClass = datasCalculator.textFunctionalities.updateClassName(summaryElementClass, {newClassNames: props.inactiveClassName, oldClassNames: props.activeClassName});
+                document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.className = summaryElementClass;
+
+            }
+
         });
 
         onMounted(() => {
             
             if (props.openByDefault === true) {
+
                 document.getElementById(props.detailsElementId + "DropdownElement").setAttribute("open", "true");
+                document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.className = datasCalculator.textFunctionalities.updateClassName(document.getElementById(props.detailsElementId + "DropdownElement").firstElementChild.className, {newClassName: props.activeClassName});
+                
             }
 
         })
@@ -112,6 +138,10 @@ export default {
         align-items: center;
         text-align: left;
         padding-bottom: calc(max(1rem, 1vw));
+        list-style: none;
+        &::-webkit-details-marker {
+            display: none;
+        }
         div {
             display: flex;
             justify-content: center;
