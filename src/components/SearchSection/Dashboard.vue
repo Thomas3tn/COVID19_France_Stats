@@ -34,8 +34,8 @@ import ContinentDiseaseDatasPanel from "./Dashboard/ContinentDiseaseDatasPanel.v
 import WorldDiseaseDatasPanel from "./Dashboard/WorldDiseaseDatasPanel.vue";
 
 //Static Datas
-import departementsStaticDatas from "../../assets/staticDatas/franceDepartementsDatas.js";
-import continentsStaticDatas from "../../assets/staticDatas/continentsStaticDatas.js";
+import departementsStaticDatas from "../../assets/staticDatas/Departements.js";
+import continentsStaticDatas from "../../assets/staticDatas/Continents.js";
 
 import DashboardDatasCreator from "../../assets/JSClasses/dashboardDatasCreator.js";
 

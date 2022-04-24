@@ -1,46 +1,43 @@
 
 
-export default {
-    arrayFunctionalities: {
-        sortRegionsArray(array) {
+export default class ArrayCustomMethods {
+    static sortRegionsArray(array) {
 
-            let newArray = [];
+        let newArray = [];
 
-            for (let i = 0; i < array.length; i++) {
+        for (let i = 0; i < array.length; i++) {
 
-                if (newArray.length === 0) {
+            if (newArray.length === 0) {
 
-                    newArray.push(array[i]);
+                newArray.push(array[i]);
 
-                } else {
+            } else {
 
-                    for (let c = 0; c < newArray.length; c++) {
+                for (let c = 0; c < newArray.length; c++) {
 
-                        if (array[i].locationData < newArray[c].locationData) {
+                    if (array[i].locationData < newArray[c].locationData) {
 
-                            if (c === 0) {
+                        if (c === 0) {
 
-                                newArray.unshift(array[i]);
+                            newArray.unshift(array[i]);
 
-                            } else if (array[i].locationData > newArray[c - 1].locationData) {
-
-                                newArray.splice(c, 0, array[i]);
-
-                            }
-
-                            break;
-
-                        } else if (array[i].locationData === newArray[c].locationData) {
+                        } else if (array[i].locationData > newArray[c - 1].locationData) {
 
                             newArray.splice(c, 0, array[i]);
-                            break;
-
-                        } else if (c === newArray.length - 1 && array[i].locationData > newArray[c].locationData) {
-
-                            newArray.push(array[i]);
-                            break;
 
                         }
+
+                        break;
+
+                    } else if (array[i].locationData === newArray[c].locationData) {
+
+                        newArray.splice(c, 0, array[i]);
+                        break;
+
+                    } else if (c === newArray.length - 1 && array[i].locationData > newArray[c].locationData) {
+
+                        newArray.push(array[i]);
+                        break;
 
                     }
 
@@ -48,9 +45,10 @@ export default {
 
             }
 
-            console.log(newArray);
-            return newArray;
-
         }
+
+        console.log(newArray);
+        return newArray;
+
     }
 }

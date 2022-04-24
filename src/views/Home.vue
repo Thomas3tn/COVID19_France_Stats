@@ -13,7 +13,7 @@
 
 <script>
 //Vue Elements
-import { ref, reactive, watch } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
 
 //Components
@@ -31,88 +31,13 @@ export default {
     //Vuex
     const store = useStore();
 
-    const datasCheckers = reactive({
-      areWorldLiveDatasReceived: false,
-      areWorldEvolutionDatasReceived: false,
-      areFranceEvolutionDatasReceived: false,
-      areGlobalEvolutionDatasReceived: false,
-      areDepartementsLiveDatasReceived: false,
-      areWeeklyEvolutionDatasReceived: false
-    });
-
-    const areDatasReceived = ref(false);
+    const areDatasReceived = computed(() => store.state.haveInitialRequestsBeenCompleted);
     
     let isDatasSaveAgreementPopupDisplayed = ref(true);
 
     function unmountDSAPopup() {
       isDatasSaveAgreementPopupDisplayed.value = false;
     }
-
-    //APIs Calls
-    store.dispatch("setWorldLiveDatas")
-    .then(response => {
-      datasCheckers.areWorldLiveDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areWorldLiveDatasReceived = response;
-    });
-
-    store.dispatch("setWorldLocationEvolutionDatas", {status: "confirmed"})
-    .then(response => {
-      datasCheckers.areWorldEvolutionDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areWorldEvolutionDatasReceived = response;
-    });
-
-    store.dispatch("setWorldLocationEvolutionDatas", {location: "France", status: ["confirmed", "deaths"]})
-    .then(response => {
-      datasCheckers.areFranceEvolutionDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areFranceEvolutionDatasReceived = response;
-    });
-
-    store.dispatch("setWorldLocationEvolutionDatas", {location: "Global", status: ["confirmed", "deaths"]})
-    .then(response => {
-      datasCheckers.areGlobalEvolutionDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areGlobalEvolutionDatasReceived = response;
-    });
-
-    store.dispatch("setDepartementsLiveDatas")
-    .then(response => {
-      datasCheckers.areDepartementsLiveDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areDepartementsLiveDatasReceived = response;
-    });
-
-    store.dispatch("setWeeklyEvolutionDatas")
-    .then(response => {
-      datasCheckers.areWeeklyEvolutionDatasReceived = response;
-    })
-    .catch(response => {
-      datasCheckers.areWeeklyEvolutionDatasReceived = response;
-    })
-
-    watch(() => { return { ...datasCheckers }}, newValue => {
-
-      const datasCheckersRequestsAmount = Object.entries(newValue).length;
-      let successfulRequests = 0;
-
-      for (const keyValue of Object.entries(newValue)) {
-        
-        if (keyValue[1] === true) {
-          successfulRequests++;
-        }
-
-      }
-
-      datasCheckersRequestsAmount === successfulRequests ? areDatasReceived.value = true : areDatasReceived.value = false;
-
-    }, {deep: true});
 
     return {
       areDatasReceived,

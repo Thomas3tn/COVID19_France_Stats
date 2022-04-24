@@ -1,8 +1,12 @@
 import { createApp } from "vue";
-import App from "./App.vue";
+import VueApp from "./App.vue";
 import store from "./store";
+import AppIgniter from "./assets/JSClasses/App.js";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import router from './router'
+import router from './router';
 
-createApp(App).use(router).component("font-awesome-icon", FontAwesomeIcon).use(store).mount("#app");
+createApp(VueApp).use(router).component("font-awesome-icon", FontAwesomeIcon).use(store).mount("#app");
+
+const appIgniter = new AppIgniter(store);
+appIgniter.ignit();

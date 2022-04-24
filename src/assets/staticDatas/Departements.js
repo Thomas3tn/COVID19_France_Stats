@@ -1,5 +1,5 @@
 export default {
-    DEP01: {
+    DEP1: {
         location: "Auvergne-Rhône-Alpes",
         sq_km_area: 5762,
         capital_city: "Bourg-en-Bresse",
@@ -9,7 +9,7 @@ export default {
         long: 5.2847803,
         demonym: "Aindinois(es)"
     },
-    DEP02: {
+    DEP2: {
         location: "Hauts-de-France",
         sq_km_area: 7361,
         capital_city: "Laon",
@@ -19,7 +19,7 @@ export default {
         long: 3.606899,
         demonym: "Axonais(es)"
     },
-    DEP03: {
+    DEP3: {
         population: 337171,
         location: "Auvergne-Rhône-Alpes",
         sq_km_area: 7340,
@@ -29,7 +29,7 @@ export default {
         long: 3.1638828,
         demonym: "Bourbonnais(es)"
     },
-    DEP04: {
+    DEP4: {
         population: 164068,
         location: "Provence-Alpes-Côte d'Azur",
         sq_km_area: 6925,
@@ -39,7 +39,7 @@ export default {
         long: 6.1878515,
         demonym: "Bas-Alpins/Alpins de Haute-Provence"
     },
-    DEP05: {
+    DEP5: {
         population: 140698,
         location: "Provence-Alpes-Côte d'Azur",
         sq_km_area: 5549,
@@ -49,7 +49,7 @@ export default {
         long: 6.3520246,
         demonym: "Haut-Alpins"
     },
-    DEP06: {
+    DEP6: {
         population: 1086219,
         location: "Provence-Alpes-Côte d'Azur",
         sq_km_area: 4299,
@@ -59,7 +59,7 @@ export default {
         long: 7.1790785,
         demonym: "Maralpins"
     },
-    DEP07: {
+    DEP7: {
         population: 326606,
         location: "Auvergne-Rhône-Alpes",
         sq_km_area: 5529,
@@ -69,7 +69,7 @@ export default {
         long: 4.3986525,
         demonym: "Ardéchois"
     },
-    DEP08: {
+    DEP8: {
         population: 271845,
         location: "Grand Est",
         sq_km_area: 5229,
@@ -79,7 +79,7 @@ export default {
         long: 4.6716005,
         demonym: "Ardennais"
     },
-    DEP09: {
+    DEP9: {
         population: 153066,
         location: "Occitanie",
         sq_km_area: 4890,

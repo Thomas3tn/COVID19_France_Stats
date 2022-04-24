@@ -441,7 +441,7 @@
 
 <script>
 //Departements Static Datas
-import departementsStaticDatas from "../../../assets/staticDatas/franceDepartementsDatas.js";
+import departementsStaticDatas from "../../../assets/staticDatas/Departements.js";
 
 //Vue Elements
 import { computed, watch, onMounted } from "vue";
