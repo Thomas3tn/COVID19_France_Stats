@@ -1,19 +1,19 @@
 <template>
-    <div class="appLoader__container">
-        <div class="appLoader">
-            <img src="../assets/logo.png" class="appLoader__img"/>
+
+    <div class="appLoader">
+
+        <div class="imgContainer">
+
+            <img src="../assets/logo.png" class="img"/>
+
         </div>
+
     </div>
+
 </template>
 
-<script>
-export default {
-    
-}
-</script>
-
-<style lang="scss">
-@keyframes appLoader {
+<style lang="scss" scoped>
+@keyframes spinning {
     12% {
         transform: rotateX(0deg) rotateY(0deg);
     }
@@ -39,25 +39,23 @@ export default {
         transform: rotateX(360deg) rotateY(360deg);
     }
 }
-
-.appLoader__container {
+.appLoader {
     background-color: $primary;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
-.appLoader {
+.imgContainer {
     width: calc(min(80px, 5%));
-    &__img {
-        width: 100%;
-        height: auto;
-        animation: appLoader 3000ms ease-in-out;
-        animation-iteration-count: infinite;
-        background-color: #d9e4e4;
-        padding: 0.5rem;
-        border-radius: 10px;
-    }
+}
+.img {
+    width: 100%;
+    height: auto;
+    animation: spinning 3000ms ease-in-out;
+    animation-iteration-count: infinite;
+    background-color: #d9e4e4;
+    padding: 0.5rem;
+    border-radius: 10px;
 }
 </style>

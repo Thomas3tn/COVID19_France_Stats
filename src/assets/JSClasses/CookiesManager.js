@@ -1,27 +1,17 @@
-export default {
-    isDsaCookieValid() {
+export default class CookiesManager {
+    static DATAS_SAVE_AGREEMENT_COOKIE_NAME = "dsa";
+    static EXPIRATION_DATE = 3600000;//= 1Hour
+    static doesDSACookieExists() {
 
-        let browserCookies = document.cookie.split(";");
-        console.log(browserCookies);
+        const cookies = document.cookie.split(";");
+        const isDSACookieExists = cookies.find(cookie => cookie.split("=")[0] === CookiesManager.DATAS_SAVE_AGREEMENT_COOKIE_NAME);
+        return isDSACookieExists ? true : false;
 
-        for (let i = 0; i < browserCookies.length; i++) {
+    }
+    static createDSACookie() {
 
-            if (browserCookies[i].split("=")[0] === "dsa") {
-                return true;
-            }
-
-        }
-
-        return false;
-
-    },
-    createDsaCookie() {
-
-        let currentDate = new Date(Date.now());
-        currentDate = currentDate.setHours(currentDate.getHours() + 1, currentDate.getMinutes(), currentDate.getSeconds());
-        currentDate = new Date(currentDate);
-
-        document.cookie = "dsa=true; expires=" + currentDate.toString();
+        let expirationDate = new Date(Date.now() + CookiesManager.EXPIRATION_DATE).toString();
+        document.cookie = `${CookiesManager.DATAS_SAVE_AGREEMENT_COOKIE_NAME}=true; expires${expirationDate}`;
 
     }
 }

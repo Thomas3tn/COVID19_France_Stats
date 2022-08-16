@@ -2,6 +2,34 @@
   <router-view/>
 </template>
 
+<script>
+import { onMounted, provide } from "vue";
+import { useStore } from "vuex";
+import LocalStorageManager from "./assets/JSClasses/LocalStorage/Save.js";
+
+import World from "./assets/JSClasses/Models/Location/Locations/World.js"
+import Continent from "./assets/JSClasses/Models/Location/Locations/Continent.js";
+import Country from "./assets/JSClasses/Models/Location/Locations/Country.js";
+import Departement from "./assets/JSClasses/Models/Location/Locations/Departement.js";
+
+export default {
+  setup() {
+
+    provide("LOCATION_TYPES", {
+      WORLD: World.type,
+      CONTINENT: Continent.type,
+      COUNTRY: Country.type,
+      DEPARTEMENT: Departement.type
+    });
+    
+    onMounted(() => {
+      window.addEventListener('unload', () => LocalStorageManager.save({store: useStore()}));
+    });
+
+  }
+}
+</script>
+
 <style lang="scss">
 
 //Global styles

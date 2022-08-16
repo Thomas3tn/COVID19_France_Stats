@@ -1,19 +1,19 @@
-import World from "../Models/Locations/World.js"
-import Continent from "../Models/Locations/Continent.js";
-import Country from "../Models/Locations/Country.js";
-import Departement from "../Models/Locations/Departement.js";
+import World from "../Models/Location/Locations/World.js"
+import Continent from "../Models/Location/Locations/Continent.js";
+import Country from "../Models/Location/Locations/Country.js";
+import Departement from "../Models/Location/Locations/Departement.js";
 
 export default class LocationTypesFactory {
     constructor({datas, type}) {
 
         let location;
-        if (type === "world") {
+        if (type === World.type) {
             location = new World(datas);
-        } else if (["continent"].includes(type)) {
+        } else if (type === Continent.type) {
             location = new Continent(datas);
-        } else if (["country", "world"].includes(type)) {
+        } else if (type === Country.type) {
             location = new Country(datas);
-        } else if (["departement"].includes(type)) {
+        } else if (type === Departement.type) {
             location = new Departement(datas);
         } else {
             throw "Unknown type format";

@@ -2,22 +2,22 @@ import { createStore } from 'vuex';
 
 import APIsDatas from './modules/APIsDatas';
 import APIsStatus from './modules/APIsStatus';
-import LocalStorageDatas from './modules/LocalStorageDatas';
+import LocalStorageDatas from './modules/LocalStorage';
+import UserSelections from "./modules/UserSelections.js";
+import DashboardAssets from './modules/DashboardAssets.js';
 
 export default createStore({
   state: {
-    requestDate: 0,
-    //6 Hours
-    REQUEST_DATE_LIMIT: 21600000,
+    REQUEST_DATE_LIMIT: 21600000 /* 6 Hours */,
     LOCAL_STORAGE_DATAS_NAME: "covid19Datas",
+    requestDate: 0,
+    weekAgoTimestamp: Date.now() - 604800000,
     haveInitialRequestsBeenCompleted: false
   },
   getters: {},
   mutations: {
     CONFIRM_REQUESTS(state) {
-      console.log("confirming requests");
       state.haveInitialRequestsBeenCompleted = true;
-      console.log(state.haveInitialRequestsBeenCompleted);
     },
     SET_REQUEST_DATE(state, payload) {
       state.requestDate = payload.requestDate;
@@ -27,6 +27,8 @@ export default createStore({
   modules: {
     APIsDatas,
     APIsStatus,
-    LocalStorageDatas
+    LocalStorageDatas,
+    UserSelections,
+    DashboardAssets
   }
 });

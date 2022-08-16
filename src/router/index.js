@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Home.vue";
-import DatasSaveAgreement from "../views/DatasSaveAgreement.vue";
+import DatasBackup from "../views/DatasBackup.vue";
 
 const routes = [
   {
@@ -9,15 +9,24 @@ const routes = [
     component: Home
   },
   {
-    path: "/datas_save_agreement",
-    name: "Datas Save Agreement",
-    component: DatasSaveAgreement
+    path: "/datas-backup",
+    name: "Datas Backup",
+    component: DatasBackup
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
-})
+  routes,
+  scrollBehavior(to) {
 
-export default router
+    if (to.hash) {
+      return {
+        el: to.hash
+      }
+    }
+
+  }
+});
+
+export default router;

@@ -1,36 +1,39 @@
-import Tree from "../../assets/JSClasses/DatasStructures/Tree.js";
+import Tree from "../../assets/JSClasses/DatasStructures/Tree/Tree.js";
 
 export default {
     namespaced: true,
     state: () => ({
-        worldCovidDatas: null,
-        franceCovidDatas: null,
-        countriesInfosDatas: null
+        datas: new Tree({
+            type: "root",
+            status: true,
+        })
     }),
     mutations: {
-        CREATE_TREE(state, {APIType, datas}) {
-            state[APIType] = new Tree(datas);
+        CREATE_TREE(state, {datas}) {
+            state = new Tree(datas);
         },
-        COPY_LOCAL_STORAGE_DATAS(state, {APIType, requestsStatus}) {
-            state[APIType] = requestsStatus;
+        COPY_LOCAL_STORAGE_DATAS(state, {requestsStatus}) {
+            state = requestsStatus;
         },
-        ADD_NODE(state, {APIType, datas, parentKeysValues, idKeysValues}) {
-            state[APIType].add({datas, parentKeysValues, idKeysValues});
+        ADD_NODE(state, {infos, parentKeysValues, idKeysValues}) {
+            state.datas.add({datas: infos, parentKeysValues, idKeysValues});
         },
-        REMOVE_NODE(state, {APIType, type, name}) {
-            state[APIType].remove({type, name});
+        REMOVE_NODE(state, {type, name}) {
+            state.remove({type, name});
         },
+        SHOW_TREE(state) {
+            console.log(state.datas);
+        }
     },
     actions: {
         copyLocalStorageDatas({ commit }, datas) {
 
-            Object.entries(datas).forEach(([key, value]) => commit("COPY_LOCAL_STORAGE_DATAS", {APIType: key, requestsStatus: value}))
+            Object.values(datas).forEach(APIRequest => commit("COPY_LOCAL_STORAGE_DATAS", {requestsStatus: APIRequest}))
 
         },
-        addNode({ commit, state }, {APIType, datas, parentKeysValues, idKeysValues}) {
+        addNode({ commit }, {infos, parentKeysValues, idKeysValues}) {
 
-            const mutationName = state[APIType] === null ? "CREATE_TREE" : "ADD_NODE";
-            commit(mutationName, {APIType, datas, parentKeysValues, idKeysValues});
+            commit("ADD_NODE", {infos, parentKeysValues, idKeysValues});
 
         },
         remove({ commit }, {type, name}) {
@@ -38,8 +41,14 @@ export default {
         }
     },
     getters: {
-        find: (state) => ({APIType, keysValues}) => {
-            return state[APIType].find({keysValues});
-        }
+        find: (state) => ({keysValues}) => {
+            return state.datas.find({keysValues});
+        },
+        getTree: (state) => () => {
+            return state.datas;
+        },
+        forEachBreadthFirst: (state) => (callback) => {
+            state.datas.forEachBreadthFirst(callback);
+        },
     }
 }

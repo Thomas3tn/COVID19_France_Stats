@@ -1,10 +1,11 @@
 export default {
     Others: {
         name: "Others",
-        frName: "Autres"
+        frName: "Autres",
+        abbreviation: "COT"
     },
     Europe: {
-        abbreviation: "EU",
+        abbreviation: "CEU",
         name: "Europe",
         frName: "Europe",
         demonym: "Européen",
@@ -13,7 +14,7 @@ export default {
         life_expectancy: 81.5,
     },
     Africa: {
-        abbreviation: "AF",
+        abbreviation: "CAF",
         name: "Africa",
         frName: "Afrique",
         demonym: "Africain",
@@ -22,7 +23,7 @@ export default {
         life_expectancy: 63.5,
     },
     SouthAmerica: {
-        abbreviation: "SA",
+        abbreviation: "CSA",
         name: "South America",
         frName: "Amérique du Sud",
         demonym: "Sud américain",
@@ -31,7 +32,7 @@ export default {
         life_expectancy: 75.5,
     },
     NorthAmerica: {
-        abbreviation: "NA",
+        abbreviation: "CNA",
         name: "North America",
         frName: "Amérique du Nord",
         demonym: "Nord américain",
@@ -40,7 +41,7 @@ export default {
         life_expectancy: 79,
     },
     Asia: {
-        abbreviation: "AS",
+        abbreviation: "CAS",
         name: "Asia",
         frName: "Asie",
         demonym: "Asiatique",
@@ -49,7 +50,7 @@ export default {
         life_expectancy: 78,
     },
     Oceania: {
-        abbreviation: "OC",
+        abbreviation: "COC",
         name: "Oceania",
         frName: "Océanie",
         demonym: "Océanien",
@@ -58,7 +59,7 @@ export default {
         life_expectancy: 79,
     },
     Antarctica: {
-        abbreviation: "AQ",
+        abbreviation: "CAQ",
         name: "Antarctica",
         frName: "Antarctique",
         demonym: "",

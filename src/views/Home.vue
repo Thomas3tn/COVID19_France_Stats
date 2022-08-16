@@ -1,63 +1,61 @@
 <template>
+
   <template v-if="areDatasReceived === true">
+
     <hero></hero>
-    <pandemy-summary></pandemy-summary>
+    <covid-summary></covid-summary>
     <search-section></search-section>
-    <page-footer></page-footer>
-    <datas-save-agreement-popup v-if="isDatasSaveAgreementPopupDisplayed === true" @close-dsa-popup="unmountDSAPopup"></datas-save-agreement-popup>
+    <app-footer></app-footer>
+    <datas-backup-popup></datas-backup-popup>
+    
   </template>
+
   <template v-else>
+
     <app-loader></app-loader>
+
   </template>
+
 </template>
 
 <script>
-//Vue Elements
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
-
-//Components
 import AppLoader from "../components/AppLoader.vue";
 import Hero from "../components/Hero.vue";
-import searchSection from "../components/SearchSection.vue";
-import pageFooter from "../components/Footer.vue";
-import PandemySummary from "../components/PandemySummary.vue";
-import DatasSaveAgreementPopup from "../components/DatasSaveAgreementPopup.vue";
+import SearchSection from "../components/SearchSection.vue";
+import AppFooter from "../components/Footer.vue";
+import CovidSummary from "../components/Summary.vue";
+import DatasBackupPopup from "../components/DatasBackupPopup.vue";
 
 export default {
   name: "App",
   setup() {
 
-    //Vuex
     const store = useStore();
 
-    const areDatasReceived = computed(() => store.state.haveInitialRequestsBeenCompleted);
-    
-    let isDatasSaveAgreementPopupDisplayed = ref(true);
-
-    function unmountDSAPopup() {
-      isDatasSaveAgreementPopupDisplayed.value = false;
-    }
-
     return {
-      areDatasReceived,
-      isDatasSaveAgreementPopupDisplayed,
-      unmountDSAPopup
+      areDatasReceived: computed(() => store.state.haveInitialRequestsBeenCompleted),
     }
 
   },
   components: {
     AppLoader,
     Hero,
-    PandemySummary,
-    searchSection,
-    pageFooter,
-    DatasSaveAgreementPopup
+    CovidSummary,
+    SearchSection,
+    AppFooter,
+    DatasBackupPopup
   }
 };
 </script>
 
 <style lang="scss">
 $blue: #5F9EA0;
+
+.dashboardSelectedElement {
+  color: $dashboard-selection;
+  border-color: $dashboard-selection;
+}
 </style>
 
